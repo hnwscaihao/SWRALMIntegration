@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="SWAPI:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ce00db9a-2a00-490d-9881-c58424aaf360" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.mvn/wrapper/MavenWrapperDownloader.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libs/jacob.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libs/jsoup-1.8.1.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libs/mksapi.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mvnw" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mvnw.cmd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/Error/MsgArgumentException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/Error/MsgArgumentExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/SwapiApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/controller/AlmController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/damain/Project.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/damain/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/interceptor/LoginHandlerInterceptor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/interceptor/MyMvcConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/AnalysisXML.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/ApplicationContextUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/Attachment.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/BaseDoc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/Constants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/ConvertRTFToHtml.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/DealService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/Listener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/MKSCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/Obj.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/ResultJson.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Category.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/ehcache.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/file.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/sw.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/sw/SWAPI/SwapiApplicationTests.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="FxmlFile" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="localRepository" value="E:\repository" />
+        <option name="mavenHome" value="$PROJECT_DIR$/../../java/apache-maven-3.6.3/bin" />
+        <option name="userSettingsFile" value="G:\lxg\java\apache-maven-3.6.3\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="vmOptionsForImporter" value="-Xmx768m" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1ekjN2QwaQaNQDEYM0JPo3I52mj" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/META-INF" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.5609195" />
+    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="G:\lxg\workProject\SWAPI\src\main\resources" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.sw.SWAPI.util" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="G:\lxg\workProject\SWAPI\libs" />
+      <recent name="G:\lxg\workProject\SWAPI\target\classes" />
+      <recent name="G:\lxg\workProject\SWAPI\src\main\java\com\sw\SWAPI\util" />
+      <recent name="G:\lxg\workProject\SWAPI\src\main\resources" />
+      <recent name="G:\lxg\workProject\SWAPI\src\main\java" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.SwapiApplication">
+    <configuration name="AnalysisXML" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.sw.SWAPI.util.AnalysisXML" />
+      <module name="SWAPI" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sw.SWAPI.util.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ConvertRTFToHtml" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.sw.SWAPI.util.ConvertRTFToHtml" />
+      <module name="SWAPI" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sw.SWAPI.util.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="rtf" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.sw.SWAPI.util.rtf" />
+      <module name="SWAPI" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sw.SWAPI.util.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SwapiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="SWAPI" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sw.SWAPI.SwapiApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.AnalysisXML" />
+        <item itemvalue="Application.ConvertRTFToHtml" />
+        <item itemvalue="Application.rtf" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ce00db9a-2a00-490d-9881-c58424aaf360" name="Default Changelist" comment="" />
+      <created>1594872440246</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1594872440246</updated>
+      <workItem from="1594872445874" duration="5979000" />
+      <workItem from="1594880081304" duration="103000" />
+      <workItem from="1594880222939" duration="12434000" />
+      <workItem from="1594951976346" duration="12429000" />
+      <workItem from="1595208531130" duration="17360000" />
+      <workItem from="1595290481458" duration="15334000" />
+      <workItem from="1595380362967" duration="13629000" />
+      <workItem from="1595465841457" duration="19986000" />
+      <workItem from="1595503714999" duration="203000" />
+      <workItem from="1595503939837" duration="46399000" />
+      <workItem from="1595760612195" duration="534000" />
+      <workItem from="1595761186402" duration="442000" />
+      <workItem from="1595762119371" duration="368000" />
+      <workItem from="1595812714341" duration="15050000" />
+      <workItem from="1595832673396" duration="4822000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="137" y="18" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1595575443348">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="137" y="18" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1595575443348" />
+    <state x="488" y="69" key="#com.intellij.ide.util.MemberChooser" timestamp="1595496870758">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="488" y="69" key="#com.intellij.ide.util.MemberChooser/0.0.1366.728@0.0.1366.728" timestamp="1595496870758" />
+    <state x="492" y="156" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1595838022738">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="492" y="156" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1366.728@0.0.1366.728" timestamp="1595838022738" />
+    <state x="459" y="230" width="447" height="274" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1595555070664">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="459" y="230" width="447" height="274" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1366.728@0.0.1366.728" timestamp="1595555070664" />
+    <state x="69" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1595464432181">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="69" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1366.728@0.0.1366.728" timestamp="1595464432181" />
+    <state x="413" y="110" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1595499660733">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="413" y="110" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.728@0.0.1366.728" timestamp="1595499660733" />
+    <state width="452" height="361" key="DebuggerActiveHint" timestamp="1595826177472">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="452" height="361" key="DebuggerActiveHint/0.0.1366.728@0.0.1366.728" timestamp="1595826177472" />
+    <state x="75" y="87" key="FileChooserDialogImpl" timestamp="1595837846198">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="75" y="87" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1595837846198" />
+    <state width="1323" height="155" key="GridCell.Tab.0.bottom" timestamp="1595838748877">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1595838748877" />
+    <state width="1323" height="155" key="GridCell.Tab.0.center" timestamp="1595838748877">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1595838748877" />
+    <state width="1323" height="155" key="GridCell.Tab.0.left" timestamp="1595838748877">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1595838748877" />
+    <state width="1323" height="155" key="GridCell.Tab.0.right" timestamp="1595838748877">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1595838748877" />
+    <state width="1323" height="155" key="GridCell.Tab.1.bottom" timestamp="1595838748878">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1595838748878" />
+    <state width="1323" height="155" key="GridCell.Tab.1.center" timestamp="1595838748877">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1595838748877" />
+    <state width="1323" height="155" key="GridCell.Tab.1.left" timestamp="1595838748877">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1595838748877" />
+    <state width="1323" height="155" key="GridCell.Tab.1.right" timestamp="1595838748877">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1595838748877" />
+    <state width="1323" height="155" key="GridCell.Tab.2.bottom" timestamp="1595838748878">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.2.bottom/0.0.1366.728@0.0.1366.728" timestamp="1595838748878" />
+    <state width="1323" height="155" key="GridCell.Tab.2.center" timestamp="1595838748878">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.2.center/0.0.1366.728@0.0.1366.728" timestamp="1595838748878" />
+    <state width="1323" height="155" key="GridCell.Tab.2.left" timestamp="1595838748878">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.2.left/0.0.1366.728@0.0.1366.728" timestamp="1595838748878" />
+    <state width="1323" height="155" key="GridCell.Tab.2.right" timestamp="1595838748878">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="155" key="GridCell.Tab.2.right/0.0.1366.728@0.0.1366.728" timestamp="1595838748878" />
+    <state x="213" y="18" key="Maven.ArtifactSearchDialog" timestamp="1595471402991">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="213" y="18" key="Maven.ArtifactSearchDialog/0.0.1366.728@0.0.1366.728" timestamp="1595471402991" />
+    <state x="263" y="13" width="998" height="708" key="SettingsEditor" timestamp="1595838236746">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="263" y="13" width="998" height="708" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1595838236746" />
+    <state x="626" y="364" key="classpath-attribute-editor" timestamp="1595838233552">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="626" y="364" key="classpath-attribute-editor/0.0.1366.728@0.0.1366.728" timestamp="1595838233552" />
+    <state x="402" y="255" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1595503492961">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="402" y="255" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/0.0.1366.728@0.0.1366.728" timestamp="1595503492961" />
+    <state x="384" y="96" width="598" height="536" key="find.popup" timestamp="1594889330133">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="384" y="96" width="598" height="536" key="find.popup/0.0.1366.728@0.0.1366.728" timestamp="1594889330133" />
+    <state x="339" y="162" key="run.anything.popup" timestamp="1595381459164">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="339" y="162" key="run.anything.popup/0.0.1366.728@0.0.1366.728" timestamp="1595381459164" />
+    <state x="375" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1595820386103">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="375" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728@0.0.1366.728" timestamp="1595820386103" />
+  </component>
+</project>

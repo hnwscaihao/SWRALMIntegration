@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fieldMapping>
+	<!-- swr属性标识在SWR中的属性名称，alm标识在alm中的属性名称 -->
+	<!-- -->
+	<documentType swr="Feature Function List" alm="Vehicle Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+		<!-- <field swr="ItemName" alm="ItemName" ></field>  --><!-- 已在接口方案中定义 -->
+		<field swr="Function ID" alm="Function ID"></field>
+	</documentType>
+	
+	<!-- 功能技术规范 -->
+	<documentType swr="Functional Technology Specification" alm="Vehicle Requirement Specification Document"><!-- 在ALM中的类型需要定义补充 -->
+		<!-- <field swr="ItemName" alm="ItemName" ></field>  --><!-- 已在接口方案中定义 -->
+		<field swr="Function ID" alm="Function ID"></field>
+		<field swr="Document reference" alm="Document reference"></field>
+	</documentType>
+	
+	<!-- 架构技术规范 -->
+	<documentType swr="Architecture Technology Specification" alm="Vehicle Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+		<!-- <field swr="ItemName" alm="ItemName" ></field>  --><!-- 已在接口方案中定义 -->
+		<field swr="Quiescent current(NS)" alm="Quiescent current(NS)"></field>
+		<field swr="Quiescent current(DS)" alm="Quiescent current(DS)"></field>
+	</documentType>
+	
+	<!-- 架构需求规范 -->
+	<documentType swr="Architecture Requirement Specification" alm="Vehicle System Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+		<!-- <field swr="ItemName" alm="ItemName" ></field>  --><!-- 已在接口方案中定义 -->
+		<field swr="Voltage Max" alm="Voltage Max"></field>
+		<field swr="Voltage Min" alm="Voltage Min"></field>
+		<field swr="Current consumption" alm="Current consumption"></field>
+		<field swr="Upper limit" alm="Upper limit"></field>
+		<field swr="Lower limit" alm="Lower limit"></field>
+		<field swr="Quiescent current(NS)" alm="Quiescent current(NS)"></field>
+		<field swr="Quiescent current(DS)" alm="Quiescent current(DS)"></field>
+		<field swr="Compu method" alm="Compu method"></field>
+		<field swr="ASIL" alm="ASIL"></field>
+		<field swr="PMHF" alm="PMHF"></field>
+		<field swr="MFHTI" alm="MFHTI"></field>
+		<field swr="Satety State" alm="Satety State"></field>
+		<field swr="Verification method" alm="Verification method"></field>
+	</documentType>
+	
+	<!-- 零部件技术规范 -->
+	<documentType swr="Part Technology Specification" alm="Component requirements Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+		<!-- <field swr="ItemName" alm="ItemName" ></field>  --><!-- 已在接口方案中定义 -->
+		<field swr="Voltage Max" alm="Voltage Max"></field>
+		<field swr="Voltage Min" alm="Voltage Min"></field>
+		<field swr="Voltage Rated" alm="Voltage Rated"></field>
+		<field swr="Current Max" alm="Current Max"></field>
+		<field swr="Current Min" alm="Current Min"></field>
+		<field swr="Current Rated" alm="Current Rated"></field>
+		<field swr="Weight" alm="Weight"></field>
+		<field swr="Quiescent current(NS)" alm="Quiescent current(NS)"></field>
+		<field swr="Quiescent current(DS)" alm="Quiescent current(DS)"></field>
+		<field swr="Text Voltage" alm="Text Voltage"></field>
+		<field swr="Power management" alm="Power management"></field>
+		<field swr="Nominal load current" alm="Nominal load current"></field>
+		<field swr="Quiescent current" alm="Quiescent current"></field>
+		<field swr="Operating temperature" alm="Operating temperature"></field>
+		<field swr="Storage temperature" alm="Storage temperature"></field>
+		<field swr="International Protection" alm="International Protection"></field>
+		<field swr="Wire Section" alm="Wire Section"></field>
+		<field swr="Compu method" alm="Compu method"></field>
+		<field swr="ASIL" alm="ASIL"></field>
+		<field swr="PMHF" alm="PMHF"></field>
+		<field swr="MFHTI" alm="MFHTI"></field>
+		<field swr="Satety State" alm="Satety State"></field>
+		<field swr="Verification method" alm="Verification method"></field>
+		<field swr="Upper limit" alm="Upper limit"></field>
+		<field swr="Lower limit" alm="Lower limit"></field>
+	</documentType>
+<!--测试 系统需求-->
+	<documentType swr="System Requirement Specification Document" alm="System Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+		<field swr="SW_SID" alm="SW_SID"></field>
+		<field swr="SW_ID" alm="SW_ID"></field>
+		<field swr="SW_OSID" alm="SW_OSID"></field>
+		<field swr="DOC_UUID" alm="DOC_UUID"></field>
+		<field swr="item_name" alm="SWR NAME"></field>
+		<field swr="issue_id" alm="issue_id"></field>
+
+		<field swr="issue_text" alm="Document Short Title"></field>
+		<field swr="project" alm="Project"></field>
+		<field swr="Category" alm="Category"></field>
+		<field swr="Comment" alm="Comment"></field>
+		<field swr="Summary" alm="Summary"></field>
+
+	</documentType>
+	<!--测试 系统需求-->
+	<documentType swr="System Requirement Specification" alm="System Requirement Specification"> <!-- 在ALM中的类型需要定义补充 -->
+		<field swr="SW_SID" alm="SW_SID"></field>
+		<field swr="SW_ID" alm="SW_ID"></field>
+		<field swr="SW_OSID" alm="SW_OSID"></field>
+		<field swr="DOC_UUID" alm="DOC_UUID"></field>
+		<field swr="item_name" alm="SWR NAME"></field>
+		<field swr="issue_id" alm="issue_id"></field>
+
+		<field swr="Text" alm="Text"></field>
+		<field swr="project" alm="Project"></field>
+		<field swr="Category" alm="Category"></field>
+		<field swr="Comment" alm="Comment"></field>
+		<field swr="Summary" alm="Summary"></field>
+
+	</documentType>
+
+	<!--变更请求-->
+	<documentType swr="Change Request" alm="Change Request"> <!-- 在ALM中的类型需要定义补充 -->
+		<field swr="SW_SID" alm="SW_SID"></field>
+		<field swr="SW_ID" alm="SW_ID"></field>
+		<field swr="CO_ID" alm="CO_ID"></field>
+
+		<field swr="project" alm="Project"></field>
+		<field swr="Comment" alm="Comment"></field>
+		<field swr="Summary" alm="Summary"></field>
+	</documentType>
+
+	<!--变更订单-->
+	<documentType swr="Change Order" alm="Change Order"> <!-- 在ALM中的类型需要定义补充 -->
+		<field swr="SW_SID" alm="SW_SID"></field>
+		<field swr="SW_ID" alm="SW_ID"></field>
+		<field swr="CO_ID" alm="CO_ID"></field>
+
+		<field swr="project" alm="Project"></field>
+		<field swr="Comment" alm="Comment"></field>
+		<field swr="Summary" alm="Summary"></field>
+	</documentType>
+</fieldMapping>
+
+
