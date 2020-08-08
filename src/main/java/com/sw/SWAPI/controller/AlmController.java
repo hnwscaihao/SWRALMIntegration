@@ -186,6 +186,7 @@ public class AlmController {
     public JSONObject AddDoc(JSONObject jsonData,MKSCommand mks){
         String issue_Type = IsNull(jsonData.get("Issue_Type"));//创建文档类型或创建条目类型(创建时必须)
         String SWID = IsNull(jsonData.get("SW_ID"));
+        String DOC_UUID = IsNull(jsonData.get("DOC_UUID"));
 
         if(docID.equals("")){  //首次创建条目 先创建文档
             //先判断是否创建过
@@ -201,15 +202,25 @@ public class AlmController {
                 for(String key : docmap.keySet()){
                     String strKey = IsNull(jsonData.get(key));
                     if(!strKey.equals("")){
-                        if(key.equals("SW_SID") || strKey.equals("SW_ID")){
+                        if(key.equals("SW_ID")){
                             docdataMap.put(docmap.get(key),"doc_"+strKey);
-                        }else {
+                        }else if(key.equals("SW_SID")){
+                            docdataMap.put(docmap.get(key),"doc_"+strKey);
+                        }else{
                             docdataMap.put(docmap.get(key),strKey);
                         }
                     }
                 }
+                //rtf
+                Object Text1 = jsonData.get("issue_text");
+                Map<String,String> richDataMap = new HashMap<>();//富文本字段
+                if(Text1 != null){
+                    InputStream text = (InputStream)Text1;
+                    String htmlStr = new AlmController().rtfString(text,DOC_UUID);
+                    richDataMap.put("Description",htmlStr);
+                }
                 try {
-                    String doc_Id =   mks.createDocument(docType,docdataMap);
+                    String doc_Id =   mks.createDocument(docType,docdataMap,richDataMap);
                     docID = doc_Id;
                     log.info("创建的文档id： "+doc_Id);
                 } catch (APIException e) {
@@ -227,6 +238,7 @@ public class AlmController {
             log.info("已经存在的条目id： "+SWID);
         }else {
             Map<String,String> dataMap = new HashMap<>();//普通字段
+            Map<String,String> richDataMap = new HashMap<>();//富文本字段
             String entryType = issue_Type.replace(" Document", "");
             String entryType1 = new AnalysisXML().resultType(entryType);
             Map<String,String> map =  new AnalysisXML().resultFile(entryType);
@@ -238,14 +250,24 @@ public class AlmController {
             }
             String Category = IsNull(jsonData.get("Category")).equals("")?"Requirement":IsNull(jsonData.get("Category"));
             dataMap.put("Category",Category);
+            //rtf
+            Object Text1 = jsonData.get("issue_text");
+            if(Text1 != null){
+                InputStream text = (InputStream)Text1;
+                String htmlStr = new AlmController().rtfString(text,DOC_UUID);
+                richDataMap.put("Description",htmlStr);
+            }
+
             try {
-                String tm_id = mks.createcontent(entryType1,docID,dataMap);
+                String tm_id = mks.createcontent(entryType1,docID,dataMap,richDataMap);
                 log.info("创建的条目id： "+tm_id);
                 //附件
-                JSONArray Attachments1 = (JSONArray)jsonData.get("Attachments");
-                if(Attachments1 != null && Attachments1.size()>0){
-                    for(int i=0;i<Attachments1.size();i++){
-                        new AlmController().test3((JSONObject) Attachments1.get(i),tm_id,mks);
+                Object Attachments1 =  jsonData.get("Attachments");
+                if(Attachments1 != null){
+                    String[] Attachments2 = (String[])Attachments1;
+                    for(int i=0;i<Attachments2.length;i++){
+                        JSONObject j = JSONObject.parseObject(Attachments2[i]);
+                        new AlmController().test3(j,tm_id,mks);
                     }
                 }
             } catch (APIException e) {
@@ -283,10 +305,13 @@ public class AlmController {
             mks.editIssue(id,dataMap,richDataMap);
             log.info("修改的文档： "+id);
             //附件
-            Object Attachments1 = jsonData.get("Attachments");
+            Object Attachments1 =  jsonData.get("Attachments");
             if(Attachments1 != null){
-                JSONObject attachment = (JSONObject)Attachments1;
-                new AlmController().test3(attachment,id,mks);
+                String[] Attachments2 = (String[])Attachments1;
+                for(int i=0;i<Attachments2.length;i++){
+                    JSONObject j = JSONObject.parseObject(Attachments2[i]);
+                    new AlmController().test3(j,id,mks);
+                }
             }
         } catch (APIException e) {
             log.info("error: " + "修改文档出错！"+ e.getMessage());
@@ -728,10 +753,13 @@ public class AlmController {
 
 
     public static void main(String[] str){
-        MKSCommand mks = new MKSCommand();
-        mks.initMksCommand("192.168.120.128",7001,"admin","admin");
-//        String isNO = mks.getProjectNameById("22324");
-        String id = mks.getDocIdsByType("SW_ID","85125614","type");
-        System.out.println(id);
+//        MKSCommand mks = new MKSCommand();
+//        mks.initMksCommand("192.168.120.128",7001,"admin","admin");
+////        String isNO = mks.getProjectNameById("22324");
+//        String id = mks.getDocIdsByType("SW_ID","85125614","type");
+        JSONObject j = new JSONObject();
+        j.put("cs",new String[]{});
+        String[] s = (String[])j.get("cs");
+        System.out.println(s.length);
     }
 }

@@ -7,21 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce00db9a-2a00-490d-9881-c58424aaf360" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/RelationshipFile.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/controller/AlmController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/controller/AlmController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/interceptor/LoginHandlerInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/interceptor/LoginHandlerInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/interceptor/MyMvcConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/interceptor/MyMvcConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/AnalysisXML.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/AnalysisXML.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/MKSCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/MKSCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/ResultJson.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/ResultJson.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Category.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Category.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/file.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/file.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/124841.htm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/124843.htm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Category.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Category.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/file.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/file.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -176,8 +164,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.AnalysisXML" />
         <item itemvalue="Application.AlmController" />
+        <item itemvalue="Application.AnalysisXML" />
         <item itemvalue="Application.ConvertRTFToHtml" />
         <item itemvalue="Application.rtf" />
       </list>
@@ -218,7 +206,7 @@
       <workItem from="1596590010934" duration="15435000" />
       <workItem from="1596632977484" duration="606000" />
       <workItem from="1596683044750" duration="1199000" />
-      <workItem from="1596772492141" duration="21323000" />
+      <workItem from="1596772492141" duration="25398000" />
     </task>
     <servers />
   </component>
@@ -253,62 +241,62 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="413" y="110" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.728@0.0.1366.728" timestamp="1595499660733" />
-    <state width="459" height="361" key="DebuggerActiveHint" timestamp="1596853318703">
+    <state width="459" height="361" key="DebuggerActiveHint" timestamp="1596862708131">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="459" height="361" key="DebuggerActiveHint/0.0.1366.728@0.0.1366.728" timestamp="1596853318703" />
+    <state width="459" height="361" key="DebuggerActiveHint/0.0.1366.728@0.0.1366.728" timestamp="1596862708131" />
     <state x="75" y="87" key="FileChooserDialogImpl" timestamp="1596788621154">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="75" y="87" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1596788621154" />
-    <state width="1323" height="152" key="GridCell.Tab.0.bottom" timestamp="1596857448278">
+    <state width="1323" height="152" key="GridCell.Tab.0.bottom" timestamp="1596861146363">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1596857448278" />
-    <state width="1323" height="152" key="GridCell.Tab.0.center" timestamp="1596857448278">
+    <state width="1323" height="152" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1596861146363" />
+    <state width="1323" height="152" key="GridCell.Tab.0.center" timestamp="1596861146363">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1596857448278" />
-    <state width="1323" height="152" key="GridCell.Tab.0.left" timestamp="1596857448278">
+    <state width="1323" height="152" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1596861146363" />
+    <state width="1323" height="152" key="GridCell.Tab.0.left" timestamp="1596861146363">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1596857448278" />
-    <state width="1323" height="152" key="GridCell.Tab.0.right" timestamp="1596857448278">
+    <state width="1323" height="152" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1596861146363" />
+    <state width="1323" height="152" key="GridCell.Tab.0.right" timestamp="1596861146363">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1596857448278" />
-    <state width="1323" height="152" key="GridCell.Tab.1.bottom" timestamp="1596857448158">
+    <state width="1323" height="152" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1596861146363" />
+    <state width="1323" height="152" key="GridCell.Tab.1.bottom" timestamp="1596861139901">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1596857448158" />
-    <state width="1323" height="152" key="GridCell.Tab.1.center" timestamp="1596857448158">
+    <state width="1323" height="152" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1596861139901" />
+    <state width="1323" height="152" key="GridCell.Tab.1.center" timestamp="1596861139901">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1596857448158" />
-    <state width="1323" height="152" key="GridCell.Tab.1.left" timestamp="1596857448158">
+    <state width="1323" height="152" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1596861139901" />
+    <state width="1323" height="152" key="GridCell.Tab.1.left" timestamp="1596861139901">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1596857448158" />
-    <state width="1323" height="152" key="GridCell.Tab.1.right" timestamp="1596857448158">
+    <state width="1323" height="152" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1596861139901" />
+    <state width="1323" height="152" key="GridCell.Tab.1.right" timestamp="1596861139901">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1596857448158" />
-    <state width="1323" height="152" key="GridCell.Tab.2.bottom" timestamp="1596857448158">
+    <state width="1323" height="152" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1596861139901" />
+    <state width="1323" height="152" key="GridCell.Tab.2.bottom" timestamp="1596861146761">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.2.bottom/0.0.1366.728@0.0.1366.728" timestamp="1596857448158" />
-    <state width="1323" height="152" key="GridCell.Tab.2.center" timestamp="1596857448158">
+    <state width="1323" height="152" key="GridCell.Tab.2.bottom/0.0.1366.728@0.0.1366.728" timestamp="1596861146761" />
+    <state width="1323" height="152" key="GridCell.Tab.2.center" timestamp="1596861146761">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.2.center/0.0.1366.728@0.0.1366.728" timestamp="1596857448158" />
-    <state width="1323" height="152" key="GridCell.Tab.2.left" timestamp="1596857448158">
+    <state width="1323" height="152" key="GridCell.Tab.2.center/0.0.1366.728@0.0.1366.728" timestamp="1596861146761" />
+    <state width="1323" height="152" key="GridCell.Tab.2.left" timestamp="1596861146761">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.2.left/0.0.1366.728@0.0.1366.728" timestamp="1596857448158" />
-    <state width="1323" height="152" key="GridCell.Tab.2.right" timestamp="1596857448158">
+    <state width="1323" height="152" key="GridCell.Tab.2.left/0.0.1366.728@0.0.1366.728" timestamp="1596861146761" />
+    <state width="1323" height="152" key="GridCell.Tab.2.right" timestamp="1596861146761">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="152" key="GridCell.Tab.2.right/0.0.1366.728@0.0.1366.728" timestamp="1596857448158" />
+    <state width="1323" height="152" key="GridCell.Tab.2.right/0.0.1366.728@0.0.1366.728" timestamp="1596861146761" />
     <state x="213" y="18" key="Maven.ArtifactSearchDialog" timestamp="1595471402991">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -337,5 +325,16 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="375" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728@0.0.1366.728" timestamp="1595820386103" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/sw/SWAPI/controller/AlmController.java</url>
+          <line>222</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -1413,7 +1413,7 @@ public class MKSCommand {
     }
 
     //创建文档
-    public String createDocument(String type,Map<String,String> fieldsValue) throws APIException{
+    public String createDocument(String type,Map<String,String> fieldsValue,Map<String,String> richFieldValue) throws APIException{
         Command cmd = new Command("im", "createsegment");
         String id = null;
         OptionList ol = new OptionList();
@@ -1427,6 +1427,11 @@ public class MKSCommand {
                 ol.add(option2);
             }
         }
+        if (richFieldValue != null) {
+            for (Map.Entry<String, String> entrty : richFieldValue.entrySet()) {
+                cmd.addOption(new Option("richContentField", entrty.getKey() + "=" + entrty.getValue()));
+            }
+        }
         cmd.setOptionList(ol);
         Response res =  mksCmdRunner.execute(cmd);
         Result result = res.getResult();
@@ -1437,7 +1442,7 @@ public class MKSCommand {
     }
 
     //创建条目
-    public String createcontent(String type,String parentID,Map<String,String> fieldsValue) throws APIException{
+    public String createcontent(String type,String parentID,Map<String,String> fieldsValue,Map<String,String> richFieldValue) throws APIException{
         Command cmd = new Command("im", "createcontent");
         String id = null;
         OptionList ol = new OptionList();
@@ -1448,6 +1453,11 @@ public class MKSCommand {
             if(value!=null && !value.isEmpty()){
                 Option option2 = new Option("field", field+"="+value);
                 ol.add(option2);
+            }
+        }
+        if (richFieldValue != null) {
+            for (Map.Entry<String, String> entrty : richFieldValue.entrySet()) {
+                cmd.addOption(new Option("richContentField", entrty.getKey() + "=" + entrty.getValue()));
             }
         }
         ol.add( new Option("parentID", parentID));
