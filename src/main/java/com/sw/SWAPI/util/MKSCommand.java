@@ -1397,17 +1397,17 @@ public class MKSCommand {
     }
 
     //关闭integrity链接
-    public void close(){
+    public void close(String hostname,int port,String user){
         List<User> list = new ArrayList<>();
         Command cmd = new Command("aa", "disconnect");
-        cmd.addOption(new Option("hostname", "192.168.120.128"));
-        cmd.addOption(new Option("port", "7001"));
-        cmd.addOption(new Option("user", "admin"));
+        cmd.addOption(new Option("hostname", hostname));
+        cmd.addOption(new Option("port", port+""));
+        cmd.addOption(new Option("user", user));
         try {
             mksCmdRunner.execute(cmd);
-            logger.info("断开链接： "+ "192.168.120.128:7001  admin");
+            logger.info("断开链接： "+hostname);
         } catch (APIException e) {
-            logger.info("断开链接错误 "+ "192.168.120.128:7001  admin");
+            logger.info("断开链接错误 "+ hostname);
             e.printStackTrace();
         }
     }
@@ -1475,14 +1475,67 @@ public class MKSCommand {
                 cmd.addOption(new Option("richContentField", entrty.getKey() + "=" + entrty.getValue()));
             }
         }
+
         cmd.addSelection(id);
         mksCmdRunner.execute(cmd);
+    }
+
+    /**
+     * 添加附件
+     * @param id
+     * @param attach
+     * @param field
+     * @throws APIException
+     */
+    public void addAttachment(String id, Attachment attach, String field) throws APIException {
+
+        Command cmd = new Command("im", "editissue");
+        cmd.setOptionList(getAttachmentOptionList(attach, field));
+        cmd.addSelection(id);
+        try {
+            mksCmdRunner.execute(cmd);
+        } catch (APIException e) {
+            Response res = e.getResponse();
+            if (res.getWorkItemListSize() > 0) {
+                WorkItem wi = res.getWorkItem(id);
+                APIException apiException = wi.getAPIException();
+                logger.error(apiException.getMessage());
+                throw apiException;
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * 得到附件相关信息
+     * @param attach
+     * @param field
+     * @return
+     */
+    public OptionList getAttachmentOptionList(Attachment attach, String field) {
+        OptionList ol = new OptionList();
+        MultiValue mv = new MultiValue(",");
+        mv.add("field=" + field);
+        mv.add("path=" + attach.getPath());
+//        mv.add("path=remote://" + attach.getPath());
+        mv.add("name=" + attach.getName());
+        Option op = new Option("addAttachment", mv);
+        ol.add(op);
+        return ol;
     }
 
     //删除关联关系
     public void removecontent(String id) throws APIException {
         Command cmd = new Command(Command.IM, "removecontent");
         cmd.addOption(new Option("forceConfirm", "yes"));
+        cmd.addSelection(id);
+        mksCmdRunner.execute(cmd);
+    }
+
+    //添加关联关系
+    public void addRelationships(String id,String RelationshipFile,String RelationshipId) throws APIException {
+        Command cmd = new Command(Command.IM, "editissue");
+        cmd.addOption(new Option("addRelationships", RelationshipFile+":"+RelationshipId));
         cmd.addSelection(id);
         mksCmdRunner.execute(cmd);
     }
@@ -1541,6 +1594,39 @@ public class MKSCommand {
             id = result.getField("resultant").getValueAsString();
         }
         return id;
+    }
+//根据SWid获取ALMid
+    public String getDocIdsByType(String SWID,String IDvalue,String file) {
+        List<Map<String, String>> list = new ArrayList<>();
+        String commandName = "issues";
+        Command cmd = new Command("im", commandName);
+        MultiValue mv = new MultiValue();
+        mv.setSeparator(",");
+        mv.add(file);
+        OptionList ol = new OptionList();
+
+        Option op = new Option("fields", mv);
+        ol.add(op);
+
+        Option op2 = new Option("queryDefinition", "( (field["+SWID+"] contains " + IDvalue + ") )");
+        ol.add(op2);
+
+        cmd.setOptionList(ol);
+        String  id= "";
+        Response res = null;
+        try {
+            res = mksCmdRunner.execute(cmd);
+            logger.info("getAllFunctionListDoc cmd : " + cmd);
+            WorkItemIterator it = res.getWorkItems();
+            while (it.hasNext()) {
+                WorkItem wi = it.next();
+                id = wi.getField(file).getValueAsString();
+            }
+        } catch (APIException e) {
+            logger.error("getAllFunctionListDoc Exception", e);
+        }
+        return id;
+
     }
 
 

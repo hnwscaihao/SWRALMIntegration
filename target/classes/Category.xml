@@ -35,6 +35,12 @@
 		<field categorySWR="" categoryalm="Heading"></field>
 		<field categorySWR="" categoryalm="Requirement"></field>
 	</documentType>
+
+	<documentType swr="System Requirement Specification" alm="System Requirement Specification"> <!-- 在ALM中的类型需要定义补充 -->
+		<field categorySWR="" categoryalm="Heading"></field>
+		<field categorySWR="" categoryalm="Requirement"></field>
+		<field categorySWR="" categoryalm="Document"></field>
+	</documentType>
 </fieldMapping>
 
 

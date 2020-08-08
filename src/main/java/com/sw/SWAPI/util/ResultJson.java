@@ -1,13 +1,21 @@
 package com.sw.SWAPI.util;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 public class ResultJson {
 
-    public static JSONObject ResultJson(JSONObject jsonObject){
+    public static JSONObject ResultJson(String str1,String str2){
+        JSONObject resultData = new JSONObject();
+        resultData.put(str1,str2);
+        return resultData;
+    }
 
-
-        return jsonObject;
+    public static JSONObject ResultJsonAry(JSONArray jSONArray){
+        JSONObject resultData = new JSONObject();
+        resultData.put("status",200);
+        resultData.put("data",jSONArray);
+        return resultData;
     }
 
     public static JSONObject ResultStr(String name,String str){

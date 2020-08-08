@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fieldMapping>
+    <documentType alm="System Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="System Requirement Specification" relationShipFile="Spawns"></field>
+    </documentType>
+    <documentType alm="Stakeholder Requirement Document"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="Stakeholder Requirement" relationShipFile="Spawns"></field>
+    </documentType>
+    <documentType alm="Hardware Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="Hardware Requirement Specification" relationShipFile="Spawns"></field>
+    </documentType>
+    <documentType alm="Software Architectural Design Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="Software Architectural Design Specification" relationShipFile="Spawns"></field>
+    </documentType>
+    <documentType alm="Software Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="Software Requirement Specification" relationShipFile="Spawns"></field>
+    </documentType>
+    <documentType alm="System Architectural Design Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="System Architectural Design Specification" relationShipFile="Spawns"></field>
+    </documentType>
+    <documentType alm="Software Detail Design Specification"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="Software Detail Design Specification" relationShipFile="Spawns"></field>
+    </documentType>
+    <documentType alm="Change Request"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="Change Order" relationShipFile="Spawns"></field>
+    </documentType>
+    <documentType alm="Change Order"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="Change Request" relationShipFile="Spawns"></field>
+    </documentType>
+</fieldMapping>
+
+

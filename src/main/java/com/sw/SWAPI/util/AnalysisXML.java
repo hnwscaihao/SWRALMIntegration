@@ -131,8 +131,49 @@ public class AnalysisXML {
         return s;
     }
 
+    public String resultRelationShipFile(String type1,String type2){
+        String RelationShipFile = "";
+        //1.创建Reader对象
+        SAXReader reader = new SAXReader();
+        //2.加载xml
+        Document document = null;
+        SAXReader saxReader = new SAXReader();
+        try {
+
+            //返回读取指定资源的输入流
+            InputStream in = com.sw.SWAPI.util.AnalysisXML.class.getClassLoader().getSystemResourceAsStream("RelationshipFile.xml");
+//           writeToLocal(pathxml,in);
+            document = reader.read(in);
+
+            //3.获取根节点
+            Element rootElement = document.getRootElement();
+            Iterator iterator = rootElement.elementIterator();
+            while (iterator.hasNext()){
+                Element stu = (Element) iterator.next();
+                List<Attribute> attributes = stu.attributes();
+//               System.out.println("======获取属性值======");
+                String s = "";
+                if(stu.attribute("alm").getValue().equals(type1)){
+                    Iterator iterator1 = stu.elementIterator();
+
+                    while (iterator1.hasNext()){
+                        Element stuChild = (Element) iterator1.next();
+                        if(stuChild.attribute("type").getValue().equals(type2)){
+                            RelationShipFile = stuChild.attribute("relationShipFile").getValue();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return RelationShipFile;
+    }
+
    public static void main(String[] arg){
-       new AnalysisXML().resultCategory("Feature Function List");
+       String sl = new AnalysisXML().resultRelationShipFile("System Requirement Specification Document","System Requirement Specification");
+//       new AnalysisXML().resultCategory("Feature Function List");
+       System.out.println(sl);
    }
 
 }

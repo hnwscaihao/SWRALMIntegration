@@ -68,13 +68,37 @@
 		<field swr="Upper limit" alm="Upper limit"></field>
 		<field swr="Lower limit" alm="Lower limit"></field>
 	</documentType>
-<!--测试 系统需求-->
-	<documentType swr="System Requirement Specification Document" alm="System Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+<!--测试 系统需求文档-->
+	<documentType swr="Vehicle System Requirement Specification Document" alm="Vehicle System Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+		<field swr="SW_SID" alm="SW_SID"></field>
+		<field swr="SW_ID" alm="SW_ID"></field>
+		<field swr="Item_Owner" alm="item_name"></field>
+		<field swr="issue_id" alm="issue_id"></field>
+
+		<field swr="item name" alm="Document Short Title"></field>
+		<field swr="project" alm="Project"></field>
+<!--		<field swr="issue_text" alm="Description"></field>-->
+		<field swr="Assigned_User" alm="Assigned User"></field>
+	</documentType>
+	<!--测试 系统需求-->
+	<documentType swr="Vehicle System Requirement Specification" alm="Vehicle System Requirement Specification"> <!-- 在ALM中的类型需要定义补充 -->
+		<field swr="SW_SID" alm="SW_SID"></field>
+		<field swr="SW_ID" alm="SW_ID"></field>
+		<field swr="Item_Owner" alm="item_name"></field>
+		<field swr="issue_id" alm="issue_id"></field>
+
+		<field swr="project" alm="Project"></field>
+		<field swr="Comment" alm="Comment"></field>
+		<field swr="item name" alm="Summary"></field>
+		<field swr="Assigned_User" alm="Assigned User"></field>
+	</documentType>
+
+	<!--测试 软件需求文档-->
+	<documentType swr="Software Requirement Specification Document" alm="Software Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
 		<field swr="SW_SID" alm="SW_SID"></field>
 		<field swr="SW_ID" alm="SW_ID"></field>
 		<field swr="SW_OSID" alm="SW_OSID"></field>
-		<field swr="DOC_UUID" alm="DOC_UUID"></field>
-		<field swr="item_name" alm="SWR NAME"></field>
+		<field swr="Item_Owner" alm="item_name"></field>
 		<field swr="issue_id" alm="issue_id"></field>
 
 		<field swr="issue_text" alm="Document Short Title"></field>
@@ -82,23 +106,19 @@
 		<field swr="Category" alm="Category"></field>
 		<field swr="Comment" alm="Comment"></field>
 		<field swr="Summary" alm="Summary"></field>
-
 	</documentType>
-	<!--测试 系统需求-->
-	<documentType swr="System Requirement Specification" alm="System Requirement Specification"> <!-- 在ALM中的类型需要定义补充 -->
+	<!--测试 软件需求条目-->
+	<documentType swr="Software Requirement Specification" alm="Software Requirement Specification"> <!-- 在ALM中的类型需要定义补充 -->
 		<field swr="SW_SID" alm="SW_SID"></field>
 		<field swr="SW_ID" alm="SW_ID"></field>
 		<field swr="SW_OSID" alm="SW_OSID"></field>
-		<field swr="DOC_UUID" alm="DOC_UUID"></field>
-		<field swr="item_name" alm="SWR NAME"></field>
+		<field swr="item_name" alm="item_name"></field>
 		<field swr="issue_id" alm="issue_id"></field>
 
-		<field swr="Text" alm="Text"></field>
 		<field swr="project" alm="Project"></field>
 		<field swr="Category" alm="Category"></field>
 		<field swr="Comment" alm="Comment"></field>
 		<field swr="Summary" alm="Summary"></field>
-
 	</documentType>
 
 	<!--变更请求-->
@@ -121,6 +141,29 @@
 		<field swr="project" alm="Project"></field>
 		<field swr="Comment" alm="Comment"></field>
 		<field swr="Summary" alm="Summary"></field>
+	</documentType>
+
+	<documentType swr="System Requirement Specification Document" alm="System Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
+		<field swr="SW_SID" alm="SW_SID"></field>
+		<field swr="SW_ID" alm="SW_ID"></field>
+		<field swr="Item_Owner" alm="item_name"></field>
+		<field swr="issue_id" alm="issue_id"></field>
+
+		<field swr="item name" alm="Document Short Title"></field>
+		<field swr="project" alm="Project"></field>
+		<!--		<field swr="issue_text" alm="Description"></field>-->
+		<field swr="Assigned_User" alm="Assigned User"></field>
+	</documentType>
+	<documentType swr="System Requirement Specification" alm="System Requirement Specification"> <!-- 在ALM中的类型需要定义补充 -->
+		<field swr="SW_SID" alm="SW_SID"></field>
+		<field swr="SW_ID" alm="SW_ID"></field>
+		<field swr="Item_Owner" alm="item_name"></field>
+		<field swr="issue_id" alm="issue_id"></field>
+
+		<field swr="project" alm="Project"></field>
+		<field swr="Comment" alm="Comment"></field>
+		<field swr="item name" alm="Summary"></field>
+		<field swr="Assigned_User" alm="Assigned User"></field>
 	</documentType>
 </fieldMapping>
 
