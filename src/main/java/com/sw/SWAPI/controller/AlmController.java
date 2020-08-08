@@ -654,35 +654,37 @@ public class AlmController {
     //测试
     @RequestMapping(value="/test2", method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
     public JSONObject test2(@PathParam("text") InputStream text){
-        String str = filePath + "\\123456.rtf";
-        String str1 = filePath + "\\123456";
-
-
-        //如果文件夹不存在则创建
-        if  (!new File(filePath) .exists()  && !new File(filePath) .isDirectory())
-        {
-            new File(filePath) .mkdir();
-        }
-        //没有文件就创建
-        if(!new File(str).exists()){
-            try {
-                new File(str).createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        new ConvertRTFToHtml().sc(text,str);//输入流保存到本地
-        new ConvertRTFToHtml().RTFToHtml(str,str1);//本地rtf文件转换为html
-        String htmldata = null;//获取html中元素
-        try {
-            htmldata = new ConvertRTFToHtml().readHtml(str1+".htm");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Cache cache = cacheManager.getCache("orgCodeFindAll");
-        cache.put(new Element("swid",htmldata));
-        return ResultStr("msg","1");
+        System.out.println(text);
+        return ResultStr("msg", "1");
+//        String str = filePath + "\\123456.rtf";
+//        String str1 = filePath + "\\123456";
+//
+//
+//        //如果文件夹不存在则创建
+//        if  (!new File(filePath) .exists()  && !new File(filePath) .isDirectory())
+//        {
+//            new File(filePath) .mkdir();
+//        }
+//        //没有文件就创建
+//        if(!new File(str).exists()){
+//            try {
+//                new File(str).createNewFile();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        new ConvertRTFToHtml().sc(text,str);//输入流保存到本地
+//        new ConvertRTFToHtml().RTFToHtml(str,str1);//本地rtf文件转换为html
+//        String htmldata = null;//获取html中元素
+//        try {
+//            htmldata = new ConvertRTFToHtml().readHtml(str1+".htm");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Cache cache = cacheManager.getCache("orgCodeFindAll");
+//        cache.put(new Element("swid",htmldata));
+//        return ResultStr("msg","1");
     }
 
     //输入流转换html string
