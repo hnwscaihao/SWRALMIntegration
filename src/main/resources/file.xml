@@ -75,9 +75,9 @@
 		<field swr="Item_Owner" alm="item_name"></field>
 		<field swr="issue_id" alm="issue_id"></field>
 
-		<field swr="item name" alm="Document Short Title"></field>
-		<field swr="project" alm="Project"></field>
-<!--		<field swr="issue_text" alm="Description"></field>-->
+		<field swr="item_name" alm="Document Short Title"></field>
+		<field swr="Project" alm="Project"></field>
+		<!--		<field swr="issue_text" alm="Description"></field>-->
 		<field swr="Assigned_User" alm="Assigned User"></field>
 	</documentType>
 	<!--测试 系统需求-->
@@ -87,9 +87,8 @@
 		<field swr="Item_Owner" alm="item_name"></field>
 		<field swr="issue_id" alm="issue_id"></field>
 
-		<field swr="project" alm="Project"></field>
+		<field swr="Project" alm="Project"></field>
 		<field swr="Comment" alm="Comment"></field>
-		<field swr="item name" alm="Summary"></field>
 		<field swr="Assigned_User" alm="Assigned User"></field>
 	</documentType>
 
@@ -149,8 +148,8 @@
 		<field swr="Item_Owner" alm="item_name"></field>
 		<field swr="issue_id" alm="issue_id"></field>
 
-		<field swr="item name" alm="Document Short Title"></field>
-		<field swr="project" alm="Project"></field>
+		<field swr="item_name" alm="Document Short Title"></field>
+		<field swr="Project" alm="Project"></field>
 		<!--		<field swr="issue_text" alm="Description"></field>-->
 		<field swr="Assigned_User" alm="Assigned User"></field>
 	</documentType>
@@ -160,9 +159,8 @@
 		<field swr="Item_Owner" alm="item_name"></field>
 		<field swr="issue_id" alm="issue_id"></field>
 
-		<field swr="project" alm="Project"></field>
+		<field swr="Project" alm="Project"></field>
 		<field swr="Comment" alm="Comment"></field>
-		<field swr="item name" alm="Summary"></field>
 		<field swr="Assigned_User" alm="Assigned User"></field>
 	</documentType>
 </fieldMapping>

@@ -21,7 +21,7 @@ public class AnalysisXML {
     private static final Log log = LogFactory.getLog(AnalysisXML.class);
 
     public List<String> resultCategory(String type){
-        List<String> l = new ArrayList<>();
+        List<String> l = new ArrayList<String>();
        String jdsx = type;
        //1.创建Reader对象
        SAXReader reader = new SAXReader();
@@ -56,7 +56,7 @@ public class AnalysisXML {
    }
 
     public Map<String,String> resultFile(String type){
-        Map<String,String> map = new HashMap<>();
+        Map<String,String> map = new HashMap<String, String>();
         String jdsx = type;
         //1.创建Reader对象
         SAXReader reader = new SAXReader();
@@ -95,7 +95,7 @@ public class AnalysisXML {
     }
 
     public String resultType(String type){
-        Map<String,String> map = new HashMap<>();
+        Map<String,String> map = new HashMap<String, String>();
         String jdsx = type;
         //1.创建Reader对象
         SAXReader reader = new SAXReader();

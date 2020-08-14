@@ -275,7 +275,7 @@ public class MKSCommand {
 
     //查询caseid和name
     public Map<String, String> getCaseInfoById(String id, List<String> fields) throws APIException {
-        Map<String, String> list = new HashMap<>();
+        Map<String, String> list = new HashMap<String, String>();
         Command cmd = new Command("im", "issues");
         MultiValue mv = new MultiValue();
         mv.setSeparator(",");
@@ -460,14 +460,14 @@ public class MKSCommand {
      * @throws APIException
      */
     public List<String> allContainID(String documentID) throws APIException {
-        List<String> allContainID = new ArrayList<>();
+        List<String> allContainID = new ArrayList<String>();
         Command command = new Command("im", "issues");
         command.addOption(new Option(FIELDS, CONTAINS));
         command.addSelection(documentID);
         Response res = mksCmdRunner.execute(command);
         WorkItemIterator it = res.getWorkItems();
         SelectionList sl = new SelectionList();
-        List<String> fields = new ArrayList<>();
+        List<String> fields = new ArrayList<String>();
         fields.add("ID");
         while (it.hasNext()) {
             WorkItem wi = it.next();
@@ -933,7 +933,7 @@ public class MKSCommand {
      * @throws Exception
      */
     public static Map<String, String> getSelectedIdList() throws Exception {
-        Map<String, String> list = new HashMap<>();
+        Map<String, String> list = new HashMap<String, String>();
         List<String> caseIds = new ArrayList<String>();
         String issueCount = ENVIRONMENTVAR.get(Constants.MKSSI_NISSUE);
         if (issueCount != null && issueCount.trim().length() > 0) {
@@ -1138,7 +1138,7 @@ public class MKSCommand {
 
     //获取用户的权限和名字
     public static List<String> getAllUserIdAndName1(List<String> users) throws APIException {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<String>();
         Command cmd = new Command(Command.IM, "users");
         cmd.addOption(new Option("fields", "fullname"));
         for (String user : users) {
@@ -1164,7 +1164,7 @@ public class MKSCommand {
 
     //获取所有的用户
     public void getAllUser() throws APIException {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<String>();
         Command cmd = new Command(Command.IM, "users");
         cmd.addOption(new Option("fields", "fullname,isActive"));
         Response res = mksCmdRunner.execute(cmd);
@@ -1227,7 +1227,7 @@ public class MKSCommand {
 
     //查询peoject组用户
     public static Map<String, List<String>> getProjectDynamicGroupsMember1(List<String> Groups, String currentProject) throws APIException {
-        Map<String, List<String>> result = new HashMap<>();
+        Map<String, List<String>> result = new HashMap<String, List<String>>();
         Command cmd = new Command("im", "dynamicgroups");
         cmd.addOption(new Option("fields", "membership"));
         for (String group : Groups) {
@@ -1328,7 +1328,7 @@ public class MKSCommand {
 
     //查询所有用户
     public List<User> getAllUsers(List<String> fields) throws APIException {
-		List<User> list = new ArrayList<>();
+		List<User> list = new ArrayList<User>();
         Command cmd = new Command("im", "users");
         MultiValue mv = new MultiValue();
         mv.setSeparator(",");
@@ -1364,7 +1364,7 @@ public class MKSCommand {
 
     //查询所有project
     public List<Project> getAllprojects(List<String> fields) throws APIException {
-		List<Project> list = new ArrayList<>();
+		List<Project> list = new ArrayList<Project>();
         Command cmd = new Command("im", "projects");
         MultiValue mv = new MultiValue();
         mv.setSeparator(",");
@@ -1398,7 +1398,7 @@ public class MKSCommand {
 
     //关闭integrity链接
     public void close(String hostname,int port,String user){
-        List<User> list = new ArrayList<>();
+        List<User> list = new ArrayList<User>();
         Command cmd = new Command("aa", "disconnect");
         cmd.addOption(new Option("hostname", hostname));
         cmd.addOption(new Option("port", port+""));
@@ -1427,11 +1427,6 @@ public class MKSCommand {
                 ol.add(option2);
             }
         }
-        if (richFieldValue != null) {
-            for (Map.Entry<String, String> entrty : richFieldValue.entrySet()) {
-                cmd.addOption(new Option("richContentField", entrty.getKey() + "=" + entrty.getValue()));
-            }
-        }
         cmd.setOptionList(ol);
         Response res =  mksCmdRunner.execute(cmd);
         Result result = res.getResult();
@@ -1441,29 +1436,35 @@ public class MKSCommand {
         return id;
     }
 
-    //创建条目
-    public String createcontent(String type,String parentID,Map<String,String> fieldsValue,Map<String,String> richFieldValue) throws APIException{
-        Command cmd = new Command("im", "createcontent");
+    /**
+     * 创建Content
+     * @param parentId
+     * @param fields
+     * @param type
+     * @return
+     */
+    public String createContent(String parentId, Map<String, String> fields, String type) throws APIException {
         String id = null;
         OptionList ol = new OptionList();
-        ol.add( new Option("Type", type));
-        Set<String> set = fieldsValue.keySet();
-        for(String field : set){
-            String value = fieldsValue.get(field);
-            if(value!=null && !value.isEmpty()){
-                Option option2 = new Option("field", field+"="+value);
-                ol.add(option2);
+        Option option = new Option("Type", type);
+        ol.add(option);
+        Option op2 = new Option("parentID", parentId);
+        ol.add(op2);
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
+            if (entry.getKey().equals("Text")) {
+                Option op = new Option("richContentField", entry.getKey() + "=" + entry.getValue());
+                ol.add(op);
+            } else {
+                Option op = new Option("field", entry.getKey() + "=" + entry.getValue());
+                ol.add(op);
             }
         }
-        if (richFieldValue != null) {
-            for (Map.Entry<String, String> entrty : richFieldValue.entrySet()) {
-                cmd.addOption(new Option("richContentField", entrty.getKey() + "=" + entrty.getValue()));
-            }
-        }
-        ol.add( new Option("parentID", parentID));
+        String commandName = "createcontent";
+        Command cmd = new Command("im", commandName);
         cmd.setOptionList(ol);
-
-        Response res =  mksCmdRunner.execute(cmd);
+        // 设置cmd
+        currentCommand = Arrays.toString(cmd.toStringArray());
+        Response res = mksCmdRunner.execute(cmd);
         Result result = res.getResult();
         if (result != null) {
             id = result.getField("resultant").getValueAsString();
@@ -1607,7 +1608,6 @@ public class MKSCommand {
     }
 //根据SWid获取ALMid
     public String getDocIdsByType(String SWID,String IDvalue,String file) {
-        List<Map<String, String>> list = new ArrayList<>();
         String commandName = "issues";
         Command cmd = new Command("im", commandName);
         MultiValue mv = new MultiValue();
@@ -1622,7 +1622,7 @@ public class MKSCommand {
         ol.add(op2);
 
         cmd.setOptionList(ol);
-        String  id= "";
+        List<String>  ids= new ArrayList<>();
         Response res = null;
         try {
             res = mksCmdRunner.execute(cmd);
@@ -1630,15 +1630,48 @@ public class MKSCommand {
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
-                id = wi.getField(file).getValueAsString();
+                ids.add(wi.getField(file).getValueAsString());
             }
         } catch (APIException e) {
             logger.error("getAllFunctionListDoc Exception", e);
         }
+        String id ="";
+        for(int i=0;i<ids.size();i++){
+            try {
+                String sw_sid = getTypeById(ids.get(i),"SW_SID");
+                if(IDvalue.equals(sw_sid)){
+                    id =  ids.get(i);
+                    break;
+                }
+            } catch (APIException e) {
+                logger.error("匹配sw_sid出错！", e);
+                e.printStackTrace();
+            }
+        }
         return id;
 
     }
+    //获取静态组
+    public String[] getStaticGroup(String staticGroup){
+        Command cmd = new Command("aa", "groups");
+        cmd.addOption(new Option("members"));
 
+        cmd.addSelection(staticGroup);
+        String  ids = "";
+        Response res = null;
+        try {
+            res = mksCmdRunner.execute(cmd);
+            WorkItemIterator it = res.getWorkItems();
+            while (it.hasNext()) {
+                WorkItem wi = it.next();
+                ids  = wi.getField("members").getValueAsString();
+            }
+        } catch (APIException e) {
+            logger.error("getAllFunctionListDoc Exception", e);
+        }
+        String[] id = ids.split(",");
+        return id;
+    }
 
 
 }

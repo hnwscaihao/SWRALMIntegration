@@ -41,9 +41,9 @@ public class DealService {
 
     public static String REVIEW_STATE = "";
 
-    public static Map<String,List<Map<String,String>>> typeReviewRecord = new HashMap<>();
+    public static Map<String,List<Map<String,String>>> typeReviewRecord = new HashMap<String, List<Map<String, String>>>();
 
-    public static Map<String,String> engineerMapping = new HashMap<>();
+    public static Map<String,String> engineerMapping = new HashMap<String, String>();
 
     public static List<String> reviewEngineer = new ArrayList<String>();
 
@@ -52,22 +52,22 @@ public class DealService {
     /**
      * 记录组成员
      */
-    public static Map<String,List<String>> groupMemberRecord = new HashMap<>();
+    public static Map<String,List<String>> groupMemberRecord = new HashMap<String, List<String>>();
 
     /**
      * 记录查询处理的所有用户
      */
-    public static List<String> allUserList = new ArrayList<>();
+    public static List<String> allUserList = new ArrayList<String>();
 
     /**
      * 记录用户ID Fullname
      */
-    public static Map<String,String> USERID_RECORD = new HashMap<>();
+    public static Map<String,String> USERID_RECORD = new HashMap<String, String>();
 
     /**
      * 记录用户Fullname ID
      */
-    public static Map<String,String> USERNAME_RECORD = new HashMap<>();
+    public static Map<String,String> USERNAME_RECORD = new HashMap<String, String>();
 
     //所用用户
     public static List<String> All_user = new ArrayList();
@@ -104,7 +104,7 @@ public class DealService {
                     fieldMap.put(FIELD_NAME, fieldName);
                     List<Map<String,String>> positionFields = typeReviewRecord.get(fieldName);
                     if(positionFields == null){
-                        positionFields = new ArrayList<>();
+                        positionFields = new ArrayList<Map<String, String>>();
                         typeReviewRecord.put(fieldName, positionFields);
                     }
                     if(field.hasAttribute(FIELD_TYPE)){
