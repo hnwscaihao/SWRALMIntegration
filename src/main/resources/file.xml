@@ -89,6 +89,7 @@
 
 		<field swr="Project" alm="Project"></field>
 		<field swr="Comment" alm="Comment"></field>
+		<field swr="State" alm="State"></field>
 		<field swr="Assigned_User" alm="Assigned User"></field>
 	</documentType>
 
@@ -160,6 +161,7 @@
 		<field swr="issue_id" alm="issue_id"></field>
 
 		<field swr="Project" alm="Project"></field>
+		<field swr="State" alm="State"></field>
 		<field swr="Comment" alm="Comment"></field>
 		<field swr="Assigned_User" alm="Assigned User"></field>
 	</documentType>

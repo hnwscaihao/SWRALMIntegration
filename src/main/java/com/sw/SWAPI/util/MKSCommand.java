@@ -1361,6 +1361,40 @@ public class MKSCommand {
         }
         return list;
     }
+    //根据用户查询用户信息
+    public User getAllUsers1(List<String> fields,String username) throws APIException {
+		List<User> list = new ArrayList<User>();
+        Command cmd = new Command("im", "users");
+        MultiValue mv = new MultiValue();
+        mv.setSeparator(",");
+        for (String field : fields) {
+            mv.add(field);
+        }
+        Option op = new Option("fields", mv);
+        cmd.addOption(op);
+        cmd.addSelection(username);
+        Response res = null;
+        res = mksCmdRunner.execute(cmd);
+        WorkItemIterator it = res.getWorkItems();
+        User user = new User();
+        while (it.hasNext()) {
+            WorkItem wi = it.next();
+            for (String field : fields) {
+                if (field.contains("::")) {
+                    field = field.split("::")[0];
+                }
+                String value = wi.getField(field).getValueAsString();
+                if(field.equals("fullname")){
+                    user.setUserName(value);
+                }else if(field.equals("name")){
+                    user.setLogin_ID(value);
+                }else if(field.equals("Email")){
+                    user.setEmail(value);
+                }
+            }
+        }
+        return user;
+    }
 
     //查询所有project
     public List<Project> getAllprojects(List<String> fields) throws APIException {
@@ -1606,7 +1640,7 @@ public class MKSCommand {
         }
         return id;
     }
-//根据SWid获取ALMid
+    //根据SWid获取ALMid
     public String getDocIdsByType(String SWID,String IDvalue,String file) {
         String commandName = "issues";
         Command cmd = new Command("im", commandName);
@@ -1673,5 +1707,52 @@ public class MKSCommand {
         return id;
     }
 
+    //根据project获取组
+    public List<String> getGroupsByProject(String project ) throws APIException {
+       List<String> gorups = new ArrayList<>();
+        Command cmd = new Command("im", "projects");
+        cmd.addOption(new Option("fields","permittedGroups"));
+        cmd.addSelection(project);
+        Response res = mksCmdRunner.execute(cmd);
+        String str = "";
+        if (res != null) {
+            WorkItemIterator it = res.getWorkItems();
+            while (it.hasNext()) {
+                WorkItem wi = it.next();
+                str = wi.getField("permittedGroups").getValueAsString();
+            }
+        }
+        String[] s = str.split(",");
+        for(int i=0;i<s.length;i++){
+            gorups.add(s[i]);
+        }
+       return gorups;
+    }
+//根据静态组查询用户
+public List<User>  getProjects(String projectName) throws APIException{
+    Command cmd = new Command("im", "issues");
+    cmd.addOption(new Option("fields","TeamMembers"));
+    String query = "((field[Type]=Project)and(field[Project]="+projectName+"))";
+    cmd.addOption(new Option("queryDefinition",query));
+    Response res = mksCmdRunner.execute(cmd);
+    String str = "";
+    if (res != null) {
+        WorkItemIterator it = res.getWorkItems();
+        while (it.hasNext()) {
+            WorkItem wi = it.next();
+            str = wi.getField("TeamMembers").getValueAsString();
+        }
+    }
+    List<User> us = new ArrayList<>();
+    if(str!=null){
+        String[] s = str.split(",");
+        for(int i=0;i<s.length;i++){
+            User u = getAllUsers1(Arrays.asList("fullname","name","Email"),s[i]);
+            us.add(u);
+        }
+    }
+
+    return us;
+}
 
 }
