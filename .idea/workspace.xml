@@ -7,19 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce00db9a-2a00-490d-9881-c58424aaf360" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/SpringUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/SwapiApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/SwapiApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/controller/AlmController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/controller/AlmController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/interceptor/LoginHandlerInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/interceptor/LoginHandlerInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/Listener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/Listener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/MKSCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/MKSCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/Obj.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sw/SWAPI/util/Obj.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/connect/Connection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/connect/IntegrityFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/connect/MksInfo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sw/connect/SessionPool.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/integrity.properties" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -248,7 +237,7 @@
       <workItem from="1597932660651" duration="102000" />
       <workItem from="1597932808794" duration="2000" />
       <workItem from="1597974582315" duration="11925000" />
-      <workItem from="1598020690378" duration="39605000" />
+      <workItem from="1598020690378" duration="39930000" />
     </task>
     <servers />
   </component>

@@ -329,13 +329,13 @@ public class AlmController {
             docID = mks.getDocIdsByType("SW_SID","entry_"+Parent_ID,"ID");
             resultStr =AddDoc(jsonData, mks);
             //添加变更单追溯关系
-            String ALM_CO_ID = IsNull(jsonData.get("ALM_CO_ID"));
-            try {
-                mks.addRelationships(ALM_CO_ID, "Authorizes Changes To", tm_id);
-            } catch (APIException e) {
-                log.info("error: " + "变更添加条目出错！" + e.getMessage());
-                e.printStackTrace();
-            }
+//            String ALM_CO_ID = IsNull(jsonData.get("ALM_CO_ID"));
+//            try {
+//                mks.addRelationships(ALM_CO_ID, "Authorizes Changes To", tm_id);
+//            } catch (APIException e) {
+//                log.info("error: " + "变更添加条目出错！" + e.getMessage());
+//                e.printStackTrace();
+//            }
         } else if (action_Type.equals("update")) {
             resultStr =UpDoc(jsonData, mks);
         } else if (action_Type.equals("delete")) {
