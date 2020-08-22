@@ -6,6 +6,8 @@ import com.sw.SWAPI.damain.Project;
 import com.sw.SWAPI.damain.User;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -14,12 +16,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+@Component
 public class MKSCommand {
-
-    public MKSCommand() {
-
-    }
 
     //	private static final Logger logger = Logger.getLogger(MKSCommand.class.getName());
     private static final Log logger = LogFactory.getLog(MKSCommand.class);
@@ -50,9 +48,13 @@ public class MKSCommand {
     private static List<String> typeList = null;
     private static JComboBox comboBox;
     private static String longinUser;
-
-
+//    private static Connection Connection;
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+
+    public MKSCommand() {
+//        new IntegrityFactory();
+    }
 
     public MKSCommand(String _hostname, int _port, String _user, String _password, int _apimajor, int _apiminor) {
         hostname = _hostname;
@@ -1340,6 +1342,7 @@ public class MKSCommand {
 
         Response res = null;
         res = mksCmdRunner.execute(cmd);
+//        res = mksCmdRunner.execute(cmd);
         WorkItemIterator it = res.getWorkItems();
         while (it.hasNext()) {
 			User user = new User();
@@ -1754,5 +1757,103 @@ public List<User>  getProjects(String projectName) throws APIException{
 
     return us;
 }
+
+    /**
+     *
+     * @param projectName
+     * @param dynamicGroupName
+     * @return
+     * @throws APIException
+     */
+    public List<User> getProjectDynaUsers(String projectName, List<String> dynamicGroups) throws APIException{
+        List<User> users = new ArrayList<User>();
+        Command cmd = new Command("im", "dynamicgroups");
+        cmd.addOption(new Option("fields","membership"));
+        for(String group : dynamicGroups){
+            cmd.addSelection(group);
+        }
+        List<String> userIdList = new ArrayList<String>();
+        Response res = mksCmdRunner.execute(cmd);
+        if (res != null) {
+            WorkItemIterator groupsItemItera = res.getWorkItems();
+            if (groupsItemItera != null) {
+                while(groupsItemItera.hasNext()) {
+                    WorkItem groupItem = groupsItemItera.next();
+                    String groupDGName = groupItem.getId();
+                    List<String> projectUserList = new ArrayList<String>();
+                    Field field = groupItem.getField("membership");
+                    ItemList itemList = (ItemList)field.getValue();
+                    if(!itemList.isEmpty()){
+                        for(int i=0; i<itemList.size(); i++){
+                            Item item = (Item)itemList.get(i);
+                            String project = item.getId();
+                            if(!projectName.equals(project))//只查询当前项目
+                                continue;
+                            Field userField = item.getField("Users");
+                            ItemList userList = (ItemList)userField.getValue();
+                            if(!userList.isEmpty()){
+                                for(int j=0; j<userList.size(); j++){
+                                    Item user = (Item)userList.get(j);
+                                    userIdList.add(user.getId());
+                                }
+                            }
+                            Field groupField = item.getField("Groups");//处理组成员
+                            ItemList groupList = (ItemList)groupField.getValue();
+                            if(!groupList.isEmpty()){
+                                for(int j=0; j<groupList.size(); j++){
+                                    Item group = (Item)groupList.get(j);
+                                    String groupName = group.getId();
+                                    List<String> members = getGroupMembers(groupName);
+                                    if(members!=null && !members.isEmpty()){
+                                        userIdList.addAll(members);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return getAllUsers(Arrays.asList("fullname","name","Email"),userIdList);
+    }
+
+    //根据用户查询用户信息
+    public List<User> getAllUsers(List<String> fields, List<String> userIdList) throws APIException {
+        List<User> list = new ArrayList<User>();
+        Command cmd = new Command("im", "users");
+        MultiValue mv = new MultiValue();
+        mv.setSeparator(",");
+        for (String field : fields) {
+            mv.add(field);
+        }
+        Option op = new Option("fields", mv);
+        cmd.addOption(op);
+        for(String userId : userIdList){
+            cmd.addSelection(userId);
+        }
+        Response res = null;
+        res = mksCmdRunner.execute(cmd);
+        WorkItemIterator it = res.getWorkItems();
+        User user;
+        while (it.hasNext()) {
+            user = new User();
+            WorkItem wi = it.next();
+            for (String field : fields) {
+                if (field.contains("::")) {
+                    field = field.split("::")[0];
+                }
+                String value = wi.getField(field).getValueAsString();
+                if(field.equals("fullname")){
+                    user.setUserName(value);
+                }else if(field.equals("name")){
+                    user.setLogin_ID(value);
+                }else if(field.equals("Email")){
+                    user.setEmail(value);
+                }
+            }
+            list.add(user);
+        }
+        return list;
+    }
 
 }
