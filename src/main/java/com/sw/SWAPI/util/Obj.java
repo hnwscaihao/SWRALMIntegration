@@ -12,6 +12,16 @@ public class Obj {
             return obj.toString();
         }
     }
+    
+    public static boolean isEmptyOrNull(String str){
+    	if(str == null){
+            return true;
+        }else if("".equals(str)){
+            return true;
+        }
+    	return false;
+    }
+    
     //数据验证 创建文档必须的字段
     public static void verification(JSONObject jsonObject){
         if(jsonObject.get("Project") == null){

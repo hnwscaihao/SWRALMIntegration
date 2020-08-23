@@ -1,5 +1,8 @@
 package com.sw.SWAPI.util;
 
+import com.sw.SWAPI.damain.ConfigureField;
+import connect.Connection;
+import connect.IntegrityFactory;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -17,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class Listener implements ApplicationListener<ApplicationReadyEvent> {
 
     @Value("${token}")
-    private String token;
+    public String token;
 
     @Value("${host}")
     private String host;
@@ -25,12 +28,25 @@ public class Listener implements ApplicationListener<ApplicationReadyEvent> {
     @Value("${port}")
     private int port;
 
+    @Value("${loginName}")
+    private String loginName;
+
+    @Value("${passWord}")
+    private String passWord;
 
     @Override
     @SneakyThrows
     public void onApplicationEvent(ApplicationReadyEvent event) {
         String url = "http://" + host + ":" + port;
+        ConfigureField configureField = new ConfigureField();
+        configureField.setHost(host);
+        configureField.setPort(port);
+        configureField.setLoginName(loginName);
+        configureField.setPassWord(passWord);
+        new MKSCommand().conn = new Connection(configureField);
         System.out.println("项目启动成功: " + url);
+
     }
+
 
 }

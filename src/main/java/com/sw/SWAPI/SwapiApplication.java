@@ -12,6 +12,7 @@ public class SwapiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SwapiApplication.class, args);
+
 	}
 
 }

@@ -1,38 +1,16 @@
 package com.sw.SWAPI.controller;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mks.api.response.APIException;
-import com.sw.SWAPI.Error.MsgArgumentException;
-import com.sw.SWAPI.damain.Project;
-import com.sw.SWAPI.damain.User;
-import com.sw.SWAPI.util.AnalysisXML;
-import com.sw.SWAPI.util.Attachment;
-import com.sw.SWAPI.util.ConvertRTFToHtml;
 import com.sw.SWAPI.util.MKSCommand;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import sun.misc.BASE64Decoder;
 
-import javax.websocket.server.PathParam;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
-import static com.sw.SWAPI.util.Obj.IsNull;
-import static com.sw.SWAPI.util.ResultJson.*;
 
 /**
  *  @author: liuxiaoguang

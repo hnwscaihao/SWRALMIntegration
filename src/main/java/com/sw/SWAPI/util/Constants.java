@@ -85,5 +85,13 @@ public class Constants {
 	 * ,MKSSI_FIELD2_WIDTH=150
 	 */
 	public static final String MKSSI_FIELD_X_WIDTH = "MKSSI_FIELD%s_WIDTH";
+	
+	
+	public static final String TYPE_FIELD = "Type";
+	
+	public static final String ID_FIELD = "ID";
+	
+	public static final String SW_ID_FIELD = "SW_ID";
+	
 
 }

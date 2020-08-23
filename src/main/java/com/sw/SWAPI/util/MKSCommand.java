@@ -1,20 +1,25 @@
 package com.sw.SWAPI.util;
 
+
 import com.mks.api.*;
 import com.mks.api.response.*;
 import com.sw.SWAPI.damain.Project;
 import com.sw.SWAPI.damain.User;
+import com.sw.SWAPI.util.Attachment;
+import connect.Connection;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 @Component
 public class MKSCommand {
@@ -43,14 +48,12 @@ public class MKSCommand {
     public static final Map<String, String> ENVIRONMENTVAR = System.getenv();
     public static MKSCommand cmd;
     public static List<String> tsIds = new ArrayList<String>();
-    private static String DOCUMENT_TYPE;
-    private static String documentName;
-    private static List<String> typeList = null;
-    private static JComboBox comboBox;
     private static String longinUser;
 //    private static Connection Connection;
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+     public static Connection conn ;
+//    private static Connection conn = new Connection();
 
     public MKSCommand() {
 //        new IntegrityFactory();
@@ -114,7 +117,7 @@ public class MKSCommand {
     public void exec() {
         success = false;
         try {
-            mksResponse = mksCmdRunner.execute(mksCommand);
+            mksResponse = conn.execute(mksCommand);
             // logger.info((new StringBuilder("Exit Code:
             // ")).append(mksResponse.getExitCode()).toString());
             success = true;
@@ -251,7 +254,7 @@ public class MKSCommand {
 
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
@@ -291,7 +294,7 @@ public class MKSCommand {
 
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
@@ -325,7 +328,7 @@ public class MKSCommand {
 
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
@@ -361,7 +364,7 @@ public class MKSCommand {
 
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             String value = "";
             while (it.hasNext()) {
@@ -438,7 +441,7 @@ public class MKSCommand {
         Command command = new Command(Command.IM, Constants.ISSUES);
         command.addOption(new Option(Constants.FIELDS, fieldName));
         command.setSelectionList(ids);
-        Response res = mksCmdRunner.execute(command);
+        Response res = conn.execute(command);
         WorkItemIterator it = res.getWorkItems();
         SelectionList contents = new SelectionList();
         while (it.hasNext()) {
@@ -466,7 +469,7 @@ public class MKSCommand {
         Command command = new Command("im", "issues");
         command.addOption(new Option(FIELDS, CONTAINS));
         command.addSelection(documentID);
-        Response res = mksCmdRunner.execute(command);
+        Response res = conn.execute(command);
         WorkItemIterator it = res.getWorkItems();
         SelectionList sl = new SelectionList();
         List<String> fields = new ArrayList<String>();
@@ -509,7 +512,7 @@ public class MKSCommand {
         Command command = new Command("im", "issues");
         command.addOption(new Option(FIELDS, CONTAINS));
         command.addSelection(document);
-        Response res = mksCmdRunner.execute(command);
+        Response res = conn.execute(command);
         WorkItemIterator it = res.getWorkItems();
         SelectionList sl = new SelectionList();
         List<String> fields = new ArrayList<String>();
@@ -622,7 +625,7 @@ public class MKSCommand {
         cmd.setSelectionList(selectionList);
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
@@ -685,7 +688,7 @@ public class MKSCommand {
             for (String userId : userIds) {
                 cmd.addSelection(userId);
             }
-            Response res = mksCmdRunner.execute(cmd);
+            Response res = conn.execute(cmd);
             if (res != null) {
                 WorkItemIterator iterator = res.getWorkItems();
                 while (iterator.hasNext()) {
@@ -723,7 +726,7 @@ public class MKSCommand {
             cmd.addOption(new Option("showRelationships"));
         }
         cmd.addSelection(id);
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         WorkItemIterator it = res.getWorkItems();
         List<String> relations = new ArrayList<String>();
         while (it.hasNext()) {
@@ -791,7 +794,7 @@ public class MKSCommand {
         cmd.addOption(op);
         Response res = null;
         if (type.equals("Test Suite")) {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator wk = res.getWorkItems();
             while (wk.hasNext()) {
                 Map<String, Object> map = new HashMap<String, Object>();
@@ -804,7 +807,7 @@ public class MKSCommand {
             }
         } else if (type.equals("Test Case")) {
             try {
-                res = mksCmdRunner.execute(cmd);
+                res = conn.execute(cmd);
                 WorkItemIterator wk = res.getWorkItems();
                 while (wk.hasNext()) {
                     Map<String, Object> map = new HashMap<String, Object>();
@@ -849,7 +852,7 @@ public class MKSCommand {
         }
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
         } catch (APIException e) {
 
             e.printStackTrace();
@@ -899,7 +902,7 @@ public class MKSCommand {
         List<String> projects = new ArrayList<String>();
         Command cmd = new Command("im", "projects");
 
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         if (res != null) {
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
@@ -915,16 +918,16 @@ public class MKSCommand {
      * 初始化MKSCommand中的参数，并获得连接
      */
     public static void initMksCommand(String host,int port,String defaultUser,String pwd) {
-        try {
-            logger.info("host:" + host + "; defaultUser:" + defaultUser + "; pwd:" + pwd);
-            cmd = new MKSCommand(host, port, defaultUser, pwd, 4, 16);
-            logger.info("已连接：" + host);
-//			cmd.getSession();
-        } catch (Exception e) {
-            logger.info("无法连接!");
-            System.exit(0);
-
-        }
+//        try {
+//            logger.info("host:" + host + "; defaultUser:" + defaultUser + "; pwd:" + pwd);
+//            cmd = new MKSCommand(host, port, defaultUser, pwd, 4, 16);
+//            logger.info("已连接：" + host);
+////			cmd.getSession();
+//        } catch (Exception e) {
+//            logger.info("无法连接!");
+//            System.exit(0);
+//
+//        }
     }
 
     /**
@@ -954,7 +957,7 @@ public class MKSCommand {
         cmd.addOption(new Option("queryDefinition", query));
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
@@ -977,7 +980,7 @@ public class MKSCommand {
         cmd.addSelection(id);
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
@@ -1008,7 +1011,7 @@ public class MKSCommand {
         cmd.addOption(op);
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
@@ -1036,7 +1039,7 @@ public class MKSCommand {
         for (String group : Groups) {
             cmd.addSelection(group);
         }
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         if (res != null) {
             WorkItemIterator groupsItemItera = res.getWorkItems();
             if (groupsItemItera != null) {
@@ -1097,7 +1100,7 @@ public class MKSCommand {
         Command cmd = new Command("aa", "groups");
         cmd.addOption(new Option("members"));
         cmd.addSelection(groupName);
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         if (res != null) {
             WorkItemIterator workItemItera = res.getWorkItems();
             while (workItemItera.hasNext()) {
@@ -1122,7 +1125,7 @@ public class MKSCommand {
         for (String user : users) {
             cmd.addSelection(user);
         }
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         if (res != null) {
             WorkItemIterator workItemItera = res.getWorkItems();
             if (workItemItera != null) {
@@ -1146,7 +1149,7 @@ public class MKSCommand {
         for (String user : users) {
             cmd.addSelection(user);
         }
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         if (res != null) {
             WorkItemIterator workItemItera = res.getWorkItems();
             if (workItemItera != null) {
@@ -1169,7 +1172,7 @@ public class MKSCommand {
         List<String> list = new ArrayList<String>();
         Command cmd = new Command(Command.IM, "users");
         cmd.addOption(new Option("fields", "fullname,isActive"));
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         if (res != null) {
             WorkItemIterator workItemItera = res.getWorkItems();
             if (workItemItera != null) {
@@ -1203,12 +1206,12 @@ public class MKSCommand {
             }
             cmd.addOption(new Option("projectmembership", projectName + "=u=" + mv));
             cmd.addSelection(dynamicGroupName);
-            mksCmdRunner.execute(cmd);
+            conn.execute(cmd);
         } else {
             Command cmd = new Command("im", "editdynamicgroup");
             cmd.addOption(new Option("projectmembership", projectName + "=nomembers"));
             cmd.addSelection(dynamicGroupName);
-            mksCmdRunner.execute(cmd);
+            conn.execute(cmd);
         }
     }
 
@@ -1235,7 +1238,7 @@ public class MKSCommand {
         for (String group : Groups) {
             cmd.addSelection(group);
         }
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         if (res != null) {
             WorkItemIterator groupsItemItera = res.getWorkItems();
             if (groupsItemItera != null) {
@@ -1289,7 +1292,7 @@ public class MKSCommand {
         Command cmd = new Command("aa", "groups");
         cmd.addOption(new Option("members"));
         cmd.addSelection(groupName);
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         if (res != null) {
             WorkItemIterator workItemItera = res.getWorkItems();
             while (workItemItera.hasNext()) {
@@ -1325,7 +1328,7 @@ public class MKSCommand {
             }
         }
         cmd.addSelection(projectId);
-        mksCmdRunner.execute(cmd);
+        conn.execute(cmd);
     }
 
     //查询所有用户
@@ -1341,8 +1344,8 @@ public class MKSCommand {
         cmd.addOption(op);
 
         Response res = null;
-        res = mksCmdRunner.execute(cmd);
-//        res = mksCmdRunner.execute(cmd);
+        res = conn.execute(cmd);
+//        res = conn.execute(cmd);
         WorkItemIterator it = res.getWorkItems();
         while (it.hasNext()) {
 			User user = new User();
@@ -1377,7 +1380,7 @@ public class MKSCommand {
         cmd.addOption(op);
         cmd.addSelection(username);
         Response res = null;
-        res = mksCmdRunner.execute(cmd);
+        res = conn.execute(cmd);
         WorkItemIterator it = res.getWorkItems();
         User user = new User();
         while (it.hasNext()) {
@@ -1412,7 +1415,7 @@ public class MKSCommand {
         cmd.addOption(op);
 
         Response res = null;
-        res = mksCmdRunner.execute(cmd);
+        res = conn.execute(cmd);
         WorkItemIterator it = res.getWorkItems();
         while (it.hasNext()) {
             Project project = new Project();
@@ -1435,18 +1438,18 @@ public class MKSCommand {
 
     //关闭integrity链接
     public void close(String hostname,int port,String user){
-        List<User> list = new ArrayList<User>();
-        Command cmd = new Command("aa", "disconnect");
-        cmd.addOption(new Option("hostname", hostname));
-        cmd.addOption(new Option("port", port+""));
-        cmd.addOption(new Option("user", user));
-        try {
-            mksCmdRunner.execute(cmd);
-            logger.info("断开链接： "+hostname);
-        } catch (APIException e) {
-            logger.info("断开链接错误 "+ hostname);
-            e.printStackTrace();
-        }
+//        List<User> list = new ArrayList<User>();
+//        Command cmd = new Command("aa", "disconnect");
+//        cmd.addOption(new Option("hostname", hostname));
+//        cmd.addOption(new Option("port", port+""));
+//        cmd.addOption(new Option("user", user));
+//        try {
+//            conn.execute(cmd);
+//            logger.info("断开链接： "+hostname);
+//        } catch (APIException e) {
+//            logger.info("断开链接错误 "+ hostname);
+//            e.printStackTrace();
+//        }
     }
 
     //创建文档
@@ -1465,7 +1468,7 @@ public class MKSCommand {
             }
         }
         cmd.setOptionList(ol);
-        Response res =  mksCmdRunner.execute(cmd);
+        Response res =  conn.execute(cmd);
         Result result = res.getResult();
         if (result != null) {
             id = result.getField("resultant").getValueAsString();
@@ -1487,7 +1490,7 @@ public class MKSCommand {
         ol.add(option);
         Option op2 = new Option("parentID", parentId);
         ol.add(op2);
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
+        for (Entry<String, String> entry : fields.entrySet()) {
             if (entry.getKey().equals("Text")) {
                 Option op = new Option("richContentField", entry.getKey() + "=" + entry.getValue());
                 ol.add(op);
@@ -1501,7 +1504,7 @@ public class MKSCommand {
         cmd.setOptionList(ol);
         // 设置cmd
         currentCommand = Arrays.toString(cmd.toStringArray());
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         Result result = res.getResult();
         if (result != null) {
             id = result.getField("resultant").getValueAsString();
@@ -1514,18 +1517,53 @@ public class MKSCommand {
             throws APIException {
         Command cmd = new Command(Command.IM, "editissue");
         if (fieldValue != null) {
-            for (Map.Entry<String, String> entrty : fieldValue.entrySet()) {
+            for (Entry<String, String> entrty : fieldValue.entrySet()) {
                 cmd.addOption(new Option("field", entrty.getKey() + "=" + entrty.getValue()));
             }
         }
         if (richFieldValue != null) {
-            for (Map.Entry<String, String> entrty : richFieldValue.entrySet()) {
+            for (Entry<String, String> entrty : richFieldValue.entrySet()) {
                 cmd.addOption(new Option("richContentField", entrty.getKey() + "=" + entrty.getValue()));
             }
         }
 
         cmd.addSelection(id);
-        mksCmdRunner.execute(cmd);
+        conn.execute(cmd);
+    }
+    
+    /**
+     * 编辑关联关系
+     * @return
+     * @throws APIException 
+     */
+    public boolean editRelationship(String issueId, Map<String,String> deleteRelationMap, Map<String,String> addRelationMap) throws APIException{
+    	Command cmd = new Command(Command.IM, "editissue");
+		if(deleteRelationMap != null) {
+			for(Entry<String, String> entry : deleteRelationMap.entrySet()) {
+				MultiValue mv = new MultiValue("=");
+				mv.add(entry.getKey());
+				mv.add(entry.getValue());
+				Option option = new Option("removeFieldValues", mv);
+				cmd.addOption(option);
+			}
+		}
+		if(addRelationMap != null) {
+			for(Entry<String, String> entry : addRelationMap.entrySet()) {
+				Option relationshipOption = new Option("addFieldValues");
+				MultiValue mv = new MultiValue("=");
+				mv.add(entry.getKey());
+				mv.add(entry.getValue());
+				relationshipOption.add(mv);
+				cmd.addOption(relationshipOption);
+			}
+			
+		}
+		cmd.addSelection(issueId);
+		Response res = conn.execute(cmd);
+		if (res != null && res.getExitCode() == 0) {
+			return true;
+		} 
+		return false;
     }
 
     /**
@@ -1541,7 +1579,7 @@ public class MKSCommand {
         cmd.setOptionList(getAttachmentOptionList(attach, field));
         cmd.addSelection(id);
         try {
-            mksCmdRunner.execute(cmd);
+            conn.execute(cmd);
         } catch (APIException e) {
             Response res = e.getResponse();
             if (res.getWorkItemListSize() > 0) {
@@ -1577,7 +1615,7 @@ public class MKSCommand {
         Command cmd = new Command(Command.IM, "removecontent");
         cmd.addOption(new Option("forceConfirm", "yes"));
         cmd.addSelection(id);
-        mksCmdRunner.execute(cmd);
+        conn.execute(cmd);
     }
 
     //添加关联关系
@@ -1585,7 +1623,7 @@ public class MKSCommand {
         Command cmd = new Command(Command.IM, "editissue");
         cmd.addOption(new Option("addRelationships", RelationshipFile+":"+RelationshipId));
         cmd.addSelection(id);
-        mksCmdRunner.execute(cmd);
+        conn.execute(cmd);
     }
 
     //删除项
@@ -1595,7 +1633,7 @@ public class MKSCommand {
         cmd.addOption(new Option("noconfirmRQ"));
         cmd.addOption(new Option("yes"));
         cmd.addSelection(id);
-        mksCmdRunner.execute(cmd);
+        conn.execute(cmd);
     }
 
     //移动条目
@@ -1609,7 +1647,7 @@ public class MKSCommand {
             sl.add(id[i]);
         }
         cmd.setSelectionList(sl);
-        mksCmdRunner.execute(cmd);
+        conn.execute(cmd);
     }
 
     //创建项
@@ -1619,7 +1657,7 @@ public class MKSCommand {
         Command cmd = new Command(Command.IM, "createissue");
         cmd.addOption(new Option("type", type));
         if (map != null ) {
-            for (Map.Entry<String, String> entrty : map.entrySet()) {
+            for (Entry<String, String> entrty : map.entrySet()) {
                 String value = entrty.getValue();
                 if(value==null || value.equals("null")){
                     value = "";
@@ -1628,7 +1666,7 @@ public class MKSCommand {
             }
         }
         if (richContentMap != null && richContentMap.size() >0) {
-            for (Map.Entry<String, String> entrty : map.entrySet()) {
+            for (Entry<String, String> entrty : map.entrySet()) {
                 String value = entrty.getValue();
                 if(value==null || value.equals("null")){
                     value = "";
@@ -1636,13 +1674,149 @@ public class MKSCommand {
                 cmd.addOption(new Option("richContentField", entrty.getKey() + "=" + value));
             }
         }
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         Result result = res.getResult();
         if (result != null) {
             id = result.getField("resultant").getValueAsString();
         }
         return id;
     }
+    
+    /**
+     * 获取SW_SID
+     * @param SW_SID
+     * @return
+     */
+    public String getALMIDBySearchSWSID( String SW_SID){
+    	List<String> result = searchALMIDBySWQuery(Arrays.asList(SW_SID));
+    	return result == null || result.isEmpty() ? null : result.get(0);
+    }
+    
+    /**
+     * 通过Query - SW_ID查询出来ALM_ID
+     * @return
+     */
+    public List<String> searchALMIDBySWQuery( List<String> SW_IDList){
+    	if(SW_IDList == null || SW_IDList.isEmpty()){
+    		return null;
+    	}
+    	StringBuffer queryDefinition = new StringBuffer("((");
+    	for(int i=0; i<SW_IDList.size(); i++){
+    		String SW_ID = SW_IDList.get(i);
+    		queryDefinition.append("(field[SW_ID] contains " + SW_ID + ")");
+    		if(i<SW_IDList.size()-1){
+    			queryDefinition.append(" or ");
+    		}
+    	}
+    	queryDefinition.append("))");
+    	List<String> fields = Arrays.asList("ID");
+    	List<Map<String,String>> resultList = queryIssueByQuery(fields, queryDefinition.toString());
+    	List<String> result = new ArrayList<String>();
+    	if(resultList != null && !resultList.isEmpty()){
+    		if(resultList.size()>10){
+    			result = new ArrayList<String>(resultList.size());
+    		}
+    		for(Map<String, String> map : resultList){
+    			result.add(map.get("SW_ID"));
+    		}
+    	}
+    	return result;
+    }
+    
+    /**
+     * 通过Query - SW_ID查询出来ALM_ID和Type
+     * @return
+     */
+    public List<Map<String,String>> searchALMIDTypeBySWID( List<String> SW_IDList){
+    	if(SW_IDList == null || SW_IDList.isEmpty()){
+    		return null;
+    	}
+    	StringBuffer queryDefinition = new StringBuffer("((");
+    	for(int i=0; i<SW_IDList.size(); i++){
+    		String SW_ID = SW_IDList.get(i);
+    		queryDefinition.append("(field[SW_ID] contains " + SW_ID + ")");
+    		if(i<SW_IDList.size()-1){
+    			queryDefinition.append(" or ");
+    		}
+    	}
+    	queryDefinition.append("))");
+    	List<String> fields = Arrays.asList("ID,Type");
+    	List<Map<String,String>> resultList = queryIssueByQuery(fields, queryDefinition.toString());
+    	return resultList;
+    }
+    
+    /**
+     * 获取SW_ID与ALM_ID的对应Map
+     * @param fields
+     * @param SW_IDList
+     * @return
+     */
+    public Map<String,String> getSWALMMap(List<String> SW_IDList){
+    	Map<String,String> resultMap = new HashMap<String,String>();
+    	List<String> fields = Arrays.asList("ID","SW_ID");
+    	
+    	StringBuffer queryDefinition = new StringBuffer("((");
+    	for(int i=0; i<SW_IDList.size(); i++){
+    		String SW_ID = SW_IDList.get(i);
+    		queryDefinition.append("(field[SW_ID] contains " + SW_ID + ")");
+    		if(i<SW_IDList.size()-1){
+    			queryDefinition.append(" or ");
+    		}
+    	}
+    	queryDefinition.append("))");
+    	List<Map<String, String>> resultList = queryIssueByQuery(fields, queryDefinition.toString());
+    	if(resultList!=null && !resultList.isEmpty() ){
+    		if(resultList.size()>16){
+    			resultMap = new HashMap<String,String>(resultList.size()*4/3);
+    		}
+    		for(Map<String, String> map : resultList){
+    			resultMap.put(map.get("SW_ID"), map.get("ID"));
+    		}
+    	}
+    	return resultMap;
+    }
+    
+    /**
+     * 通过query查询数据
+     * @param fields
+     * @param query
+     * @return
+     */
+    public List<Map<String,String>> queryIssueByQuery(List<String> fields, String query){
+    	List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        Command cmd = new Command("im", "issues");
+        MultiValue mv = new MultiValue();
+        mv.setSeparator(",");
+        for (String field : fields) {
+            mv.add(field);
+        }
+        Option op = new Option("fields", mv);
+        cmd.addOption(op);
+        cmd.addOption(new Option("queryDefinition",query));
+
+        Response res = null;
+        try {
+            res = conn.execute(cmd);
+            WorkItemIterator it = res.getWorkItems();
+            while (it.hasNext()) {
+                WorkItem wi = it.next();
+                Map<String, String> map = new HashMap<String, String>();
+                for (String field : fields) {
+                    if (field.contains("::")) {
+                        field = field.split("::")[0];
+                    }
+                    String value = wi.getField(field).getValueAsString();
+                    map.put(field, value);
+                }
+                list.add(map);
+            }
+        } catch (APIException e) {
+            // success = false;
+            logger.error(e.getMessage());
+        }
+        return list;
+    }
+    
     //根据SWid获取ALMid
     public String getDocIdsByType(String SWID,String IDvalue,String file) {
         String commandName = "issues";
@@ -1662,7 +1836,7 @@ public class MKSCommand {
         List<String>  ids= new ArrayList<>();
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             logger.info("getAllFunctionListDoc cmd : " + cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
@@ -1697,7 +1871,7 @@ public class MKSCommand {
         String  ids = "";
         Response res = null;
         try {
-            res = mksCmdRunner.execute(cmd);
+            res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
@@ -1716,7 +1890,7 @@ public class MKSCommand {
         Command cmd = new Command("im", "projects");
         cmd.addOption(new Option("fields","permittedGroups"));
         cmd.addSelection(project);
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         String str = "";
         if (res != null) {
             WorkItemIterator it = res.getWorkItems();
@@ -1731,32 +1905,32 @@ public class MKSCommand {
         }
        return gorups;
     }
-//根据静态组查询用户
-public List<User>  getProjects(String projectName) throws APIException{
-    Command cmd = new Command("im", "issues");
-    cmd.addOption(new Option("fields","TeamMembers"));
-    String query = "((field[Type]=Project)and(field[Project]="+projectName+"))";
-    cmd.addOption(new Option("queryDefinition",query));
-    Response res = mksCmdRunner.execute(cmd);
-    String str = "";
-    if (res != null) {
-        WorkItemIterator it = res.getWorkItems();
-        while (it.hasNext()) {
-            WorkItem wi = it.next();
-            str = wi.getField("TeamMembers").getValueAsString();
-        }
-    }
-    List<User> us = new ArrayList<>();
-    if(str!=null){
-        String[] s = str.split(",");
-        for(int i=0;i<s.length;i++){
-            User u = getAllUsers1(Arrays.asList("fullname","name","Email"),s[i]);
-            us.add(u);
-        }
-    }
-
-    return us;
-}
+	//根据静态组查询用户
+	public List<User>  getProjects(String projectName) throws APIException{
+	    Command cmd = new Command("im", "issues");
+	    cmd.addOption(new Option("fields","TeamMembers"));
+	    String query = "((field[Type]=Project)and(field[Project]="+projectName+"))";
+	    cmd.addOption(new Option("queryDefinition",query));
+	    Response res = conn.execute(cmd);
+	    String str = "";
+	    if (res != null) {
+	        WorkItemIterator it = res.getWorkItems();
+	        while (it.hasNext()) {
+	            WorkItem wi = it.next();
+	            str = wi.getField("TeamMembers").getValueAsString();
+	        }
+	    }
+	    List<User> us = new ArrayList<>();
+	    if(str!=null){
+	        String[] s = str.split(",");
+	        for(int i=0;i<s.length;i++){
+	            User u = getAllUsers1(Arrays.asList("fullname","name","Email"),s[i]);
+	            us.add(u);
+	        }
+	    }
+	
+	    return us;
+	}
 
     /**
      *
@@ -1773,7 +1947,7 @@ public List<User>  getProjects(String projectName) throws APIException{
             cmd.addSelection(group);
         }
         List<String> userIdList = new ArrayList<String>();
-        Response res = mksCmdRunner.execute(cmd);
+        Response res = conn.execute(cmd);
         if (res != null) {
             WorkItemIterator groupsItemItera = res.getWorkItems();
             if (groupsItemItera != null) {
@@ -1832,7 +2006,7 @@ public List<User>  getProjects(String projectName) throws APIException{
             cmd.addSelection(userId);
         }
         Response res = null;
-        res = mksCmdRunner.execute(cmd);
+        res = conn.execute(cmd);
         WorkItemIterator it = res.getWorkItems();
         User user;
         while (it.hasNext()) {

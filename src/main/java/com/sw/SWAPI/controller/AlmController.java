@@ -36,7 +36,6 @@ import static com.sw.SWAPI.util.ResultJson.*;
  */
 @RestController
 @RequestMapping(value = "/alm")
-@PropertySource(value = {"classpath:sw.properties"})
 public class AlmController {
 
 //    @Autowired
@@ -55,17 +54,17 @@ public class AlmController {
     String filePath = "C:\\\\SWFile";
     Map<String, String> swid_id = new HashMap<>();
     Cache cache = null;
-    @Value("${host}")
-    private String host;
-
-    @Value("${port}")
-    private int port;
-
-    @Value("${loginName}")
-    private String loginName;
-
-    @Value("${passWord}")
-    private String passWord;
+//    @Value("${host}")
+//    private String host;
+//
+//    @Value("${port}")
+//    private int port;
+//
+//    @Value("${loginName}")
+//    private String loginName;
+//
+//    @Value("${passWord}")
+//    private String passWord;
     /**
      * @Description
      * @Author liuxiaoguang
@@ -81,11 +80,10 @@ public class AlmController {
         try {
             System.out.println("开始链接：");
             MKSCommand mks = new MKSCommand();
-            mks.initMksCommand(host, port, loginName, passWord);
+//            mks.initMksCommand(host, port, loginName, passWord);
 //            mks.initMksCommand("192.168.120.128", 7001, "admin", "admin");
             allUsers = mks.getAllUsers(Arrays.asList("fullname", "name", "Email"));
-            System.out.println("断开链接：");
-            mks.close(host, port, loginName);
+//            mks.close(host, port, loginName);
         } catch (APIException e) {
             log.info("error: " + "查询所有用户错误！" + e.getMessage());
             e.printStackTrace();
@@ -125,10 +123,10 @@ public class AlmController {
         try {
             MKSCommand mks = new MKSCommand();
             System.out.println("开始链接：");
-            mks.initMksCommand(host, port, loginName, passWord);
+//            mks.initMksCommand(host, port, loginName, passWord);
             allUsers = mks.getProjectDynaUsers(project, dynamicGroups);
             System.out.println("断开链接：");
-            mks.close(host, port, loginName);
+//            mks.close(host, port, loginName);
         } catch (APIException e) {
             log.info("error: " + "查询所有用户错误！" + e.getMessage());
             e.printStackTrace();
@@ -163,7 +161,7 @@ public class AlmController {
         List<Project> allUsers = new ArrayList<Project>();
         try {
             MKSCommand mks = new MKSCommand();
-            mks.initMksCommand(host, port, loginName, passWord);
+//            mks.initMksCommand(host, port, loginName, passWord);
 //            mks.initMksCommand("192.168.120.128", 7001, "admin", "admin");
             allUsers = mks.getAllprojects(Arrays.asList("backingIssueID", "name"));
         } catch (APIException e) {
@@ -244,17 +242,22 @@ public class AlmController {
                     thenComparing(Comparator.reverseOrder()));
 
             MKSCommand mks = new MKSCommand();
-            mks.initMksCommand(host, port, loginName, passWord);
+//            mks.initMksCommand(host, port, loginName, passWord);
             boolean xglt = false; //新增后修改文档状态评审中
             String xgyg = "";//新增后修改文档状态时用户
             System.out.println("总共---------------" + list.size() + "数据，开始下发！");
             for (int i = 0; i < list.size(); i++) {
                 JSONObject jsonObject1 = (JSONObject) cache.get(list.get(i)).getObjectValue();
                 String action_Type = IsNull(jsonObject1.get("action_Type"));
+                String Parent_ID = IsNull(jsonObject1.get("Parent_ID"));
                 xgyg = IsNull(jsonObject1.get("Assigned_User"));
                 if ("add".equals(action_Type)) {
-                    resultStr = AddDoc(jsonObject1, mks);
-                    xglt = true;
+                    if ("".equals(Parent_ID) || "null".equals(Parent_ID)) {  //首次创建条目 先创建文档
+                        resultStr = AddDoc(jsonObject1, mks);
+                    }else {
+                        resultStr = "没有创建文档";
+                    }
+                      AddEntry(jsonObject1, mks);
                 } else if ("update".equals(action_Type)) {
                     resultStr = UpDoc(jsonObject1, mks);
                 } else if ("delete".equals(action_Type)) {
@@ -264,7 +267,8 @@ public class AlmController {
                 }
             }
             //新增后修改状态为评审 in approve
-            if (xglt) {
+            System.out.println("文档id--"+docID);
+            if (docID!="") {
                 try {
                     log.info("评审人---" + xgyg);
                     String[] arr = mks.getStaticGroup("VCU");
@@ -294,7 +298,7 @@ public class AlmController {
                 }
                 log.info("into: " + "创建文档后修改状态");
                 System.out.println("断开链接：");
-                mks.close(host, port, loginName);
+//                mks.close(host, port, loginName);
                 System.out.println("清理缓存！");
                 cache.removeAll();
             }
@@ -317,7 +321,7 @@ public class AlmController {
     public JSONObject changeAction1(@RequestBody JSONObject jsonData) {
         log.info(jsonData);
         MKSCommand mks = new MKSCommand();
-        mks.initMksCommand(host, port, loginName, passWord);
+//        mks.initMksCommand(host, port, loginName, passWord);
         String action_Type = IsNull(jsonData.get("action_Type"));//创建、更新、删除或移动
         String SW_SID = IsNull(jsonData.get("SW_SID"));//创建、更新、删除或移动
         String issue_Type = IsNull(jsonData.get("issue_Type"));//创建、更新、删除或移动
@@ -326,8 +330,8 @@ public class AlmController {
         docID = "";
         //创建文档需要的参数
         if (action_Type.equals("add")) {
-            docID = mks.getDocIdsByType("SW_SID","entry_"+Parent_ID,"ID");
-            resultStr =AddDoc(jsonData, mks);
+//            docID = mks.getDocIdsByType("SW_SID","entry_"+Parent_ID,"ID");
+            resultStr =AddEntry(jsonData, mks);
             //添加变更单追溯关系
 //            String ALM_CO_ID = IsNull(jsonData.get("ALM_CO_ID"));
 //            try {
@@ -343,7 +347,7 @@ public class AlmController {
         } else if (action_Type.equals("move")) {
             resultStr =MoveDoc(jsonData, mks);
         }
-        mks.close(host,port,loginName);
+//        mks.close(host,port,loginName);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", ResultJson("DOC_ID", resultStr));
         System.out.println(jsonObject);
@@ -356,64 +360,67 @@ public class AlmController {
         verification(jsonData);
         String issue_Type = IsNull(jsonData.get("issue_Type"));//创建文档类型或创建条目类型(创建时必须)
         String SW_SID = IsNull(jsonData.get("SW_SID"));
-        String DOC_UUID = IsNull(jsonData.get("DOC_UUID"));
         System.out.println("创建SW_SID : " + SW_SID);
-        if (docID.equals("")) {  //首次创建条目 先创建文档
-            //先判断是否创建过
-            String id = mks.getDocIdsByType("SW_SID", "doc_" + SW_SID, "ID");
-            if (!id.equals("")) {
+
+        String id = mks.getDocIdsByType("SW_SID","doc_"+SW_SID,"ID");
+        //先判断是否创建过
+        if (id != null & !"".equals(id)) {
 //                String isNO = mks.getProjectNameById(id);
-                docID = id;
-                swid_id.put("doc_" + SW_SID, id);
-                log.info("已经存在的文档id： " + SW_SID);
-            } else {
-                String docType = new AnalysisXML().resultType(issue_Type);
-                Map<String, String> docdataMap = new HashMap<String, String>();//普通字段
-                Map<String, String> docmap = new AnalysisXML().resultFile(issue_Type);
-                for (String key : docmap.keySet()) {
-                    String strKey = IsNull(jsonData.get(key));
-                    if (!strKey.equals("")) {
-                        if (key.equals("SW_ID")) {
-                            docdataMap.put(docmap.get(key), "doc_" + strKey);
-                        } else if (key.equals("SW_SID")) {
-                            docdataMap.put(docmap.get(key), "doc_" + strKey);
-                        } else {
-                            docdataMap.put(docmap.get(key), strKey);
-                        }
+            docID = id;
+            swid_id.put("doc_" + SW_SID, id);
+            log.info("已经存在的文档id： " + SW_SID);
+        } else {
+            String docType = new AnalysisXML().resultType(issue_Type);
+            Map<String, String> docdataMap = new HashMap<String, String>();//普通字段
+            Map<String, String> docmap = new AnalysisXML().resultFile(issue_Type);
+            for (String key : docmap.keySet()) {
+                String strKey = IsNull(jsonData.get(key));
+                if (!strKey.equals("")) {
+                    if (key.equals("SW_ID")) {
+                        docdataMap.put(docmap.get(key), "doc_" + strKey);
+                    } else if (key.equals("SW_SID")) {
+                        docdataMap.put(docmap.get(key), "doc_" + strKey);
+                    } else {
+                        docdataMap.put(docmap.get(key), strKey);
                     }
                 }
-                //rtf
-                Map<String, String> richDataMap = new HashMap<String, String>();//富文本字段
+            }
+            //rtf
+            Map<String, String> richDataMap = new HashMap<String, String>();//富文本字段
 //                Object Text1 = jsonData.get("issue_text");
 //                if(Text1 != null){
 //                    String htmlStr = new AlmController().rtfString("doc_"+SW_SID,DOC_UUID);
 //                    richDataMap.put("Description",htmlStr);
 //                }
-                try {
+            try {
 //                    docdataMap.put("Project","/ALM项目组");
-                    System.out.println("issue_id ====== :" + IsNull(jsonData.get("issue_id")));
-                    String doc_Id = mks.createDocument(docType, docdataMap, richDataMap);
-                    docID = doc_Id;
-                    log.info("创建的文档id： " + doc_Id);
-                } catch (APIException e) {
-                    log.info("error: " + "创建文档出错！" + e.getMessage());
-                    System.out.println("清理缓存！");
-                    cache.removeAll();
-                    throw new MsgArgumentException("201", "创建文档出错 " + e.getMessage());
-                }
+                System.out.println("issue_id ====== :" + IsNull(jsonData.get("issue_id")));
+                String doc_Id = mks.createDocument(docType, docdataMap, richDataMap);
+                docID = doc_Id;
+//                swid_id.put("doc_" + SW_SID, doc_Id);
+                log.info("创建的文档id： " + doc_Id);
+            } catch (APIException e) {
+                log.info("error: " + "创建文档出错！" + e.getMessage());
+                System.out.println("清理缓存！");
+                cache.removeAll();
+                throw new MsgArgumentException("201", "创建文档出错 " + e.getMessage());
             }
-            swid_id.put("doc_" + SW_SID, docID);
         }
-
+        return docID;
+    }
+    public String AddEntry(JSONObject jsonData, MKSCommand mks) {
+        System.out.println("-------------新增条目-----------");
+        verification(jsonData);
+        String issue_Type = IsNull(jsonData.get("issue_Type"));//创建文档类型或创建条目类型(创建时必须)
+        String SW_SID = IsNull(jsonData.get("SW_SID"));
+        System.out.println("创建SW_SID : " + SW_SID);
         //创建文档条目
         //xml配置字段
         //先判断是否创建过
-
-        String e_id = mks.getDocIdsByType("SW_SID", "entry_" + SW_SID, "ID");
-        if (!e_id.equals("")) {
-//            String isNO = mks.getProjectNameById(e_id);
+        String e_id = mks.getDocIdsByType("SW_SID","entry_"+SW_SID,"ID");
+        if (e_id !=null && !"".equals(e_id)) {
             swid_id.put("entry_" + SW_SID, e_id);
-            log.info("已经存在的条目id： " + SW_SID);
+            log.info("已经存在的条目id： " + SW_SID+"---alm_ID:"+e_id);
         } else {
             Map<String, String> dataMap = new HashMap<String, String>();//普通字段
             Map<String, String> richDataMap = new HashMap<String, String>();//富文本字段
@@ -449,11 +456,16 @@ public class AlmController {
                 String Parent_ID = IsNull(jsonData.get("Parent_ID"));
                 System.out.println("Parent_ID>>>SW_SID-------" + IsNull(jsonData.get("Parent_ID")));
                 if ("".equals(Parent_ID) || "null".equals(Parent_ID)) {
+                    System.out.println("父级为文档id-------" + docID);
                     Parent_ID = docID;
                 } else {
-//                    Parent_ID = mks.getDocIdsByType("SW_SID","entry_"+Parent_ID,"ID");
-                    Parent_ID = swid_id.get("entry_" + Parent_ID);
-                    System.out.println("Parent_ID-------" + Parent_ID);
+                     Parent_ID = swid_id.get("entry_" + Parent_ID);
+                    System.out.println("同批次数据-------" + Parent_ID);
+                    if(Parent_ID == null || "".equals(Parent_ID)  || "null".equals(Parent_ID)){
+                        Parent_ID = mks.getDocIdsByType("SW_SID","entry_"+IsNull(jsonData.get("Parent_ID")),"ID");
+                        System.out.println("单词新增数据-------" + Parent_ID);
+                    }
+
                 }
                 tm_id = mks.createContent(Parent_ID, dataMap, entryType1);
                 log.info("创建的条目id： " + tm_id);
@@ -475,7 +487,7 @@ public class AlmController {
             }
         }
 
-        return docID;
+        return tm_id;
     }
 
     //文档条目修改
@@ -487,7 +499,10 @@ public class AlmController {
         String Old_SW_SID = IsNull(jsonData.get("Old_SW_SID"));//文档id
         System.out.println("修改的sw_sid----------" + Old_SW_SID);
         String id = mks.getDocIdsByType("SW_SID", "entry_" + Old_SW_SID, "ID");
-
+        Object Delete_Trace_ID = jsonData.get("Delete_Trace_ID");
+        // SWR Handle ID在ALM查找对应的需求，并与当前需求建立追溯 12223,12234
+        Object Trace_ID = jsonData.get("Trace_ID");//
+        
         //rtf
         Object Text1 = jsonData.get("issue_text");
         if (Text1 != null) {
@@ -522,6 +537,27 @@ public class AlmController {
                     new AlmController().test3(j, id, mks);
                 }
             }
+            /** Modify By Cai Hao, 添加关联关系*/
+            if((Trace_ID != null && !Trace_ID.toString().equals("[]")) || (Delete_Trace_ID != null && !Delete_Trace_ID.toString().equals("[]"))){
+                System.out.println("Trace_ID : "+Trace_ID);
+                System.out.println("Delete_Trace_ID : "+Delete_Trace_ID);
+                String[] Trace_ID1 = (String[]) Trace_ID;
+                String Trace_ID2 = "";
+                for(int i=0;i<Trace_ID1.length;i++){
+                    Trace_ID2 += Trace_ID1[i] +",";
+                }
+                Trace_ID2.substring(0,Trace_ID2.length()-1);
+
+                String[] Delete_Trace_ID1 = (String[]) Delete_Trace_ID;
+                String Delete_Trace_ID2 = "";
+                for(int i=0;i<Delete_Trace_ID1.length;i++){
+                    Delete_Trace_ID2 += Delete_Trace_ID1[i] +",";
+                }
+                Delete_Trace_ID2.substring(0,Delete_Trace_ID2.length()-1);
+                editIssueRelationship(id, entryType, Delete_Trace_ID2, Trace_ID2, mks);
+            }
+            /** Modify By Cai Hao, 添加关联关系*/
+            
         } catch (APIException e) {
             log.info("error: " + "修改文档出错！" + e.getMessage());
             System.out.println("清理缓存！");
@@ -611,7 +647,7 @@ public class AlmController {
         String Issue_Type = IsNull(jsonData.get("Issue_Type"));
 
         MKSCommand mks = new MKSCommand();
-        mks.initMksCommand(host, port, loginName, passWord);
+//        mks.initMksCommand(host, port, loginName, passWord);
 
         JSONArray jsonResult = new JSONArray();
         if ("Item_Review".equals(Issue_Type)) {
@@ -627,7 +663,7 @@ public class AlmController {
             JSONObject jsonAdd = docChange(jsonData, mks);
             jsonResult.add(jsonAdd);
         }
-        mks.close(host, port, loginName);
+//        mks.close(host, port, loginName);
         return ResultJsonAry(jsonResult);
     }
 
@@ -938,6 +974,64 @@ public class AlmController {
             }
         }
         return null;
+    }
+    
+    /**
+     * 添加/删除关联关系
+     * @param curIssueId
+     * @param deleteIssueStrs
+     * @param addIssueStrs
+     * @return
+     */
+    public boolean editIssueRelationship(String curIssueId, String curType, String deleteIssueStrs,
+    		String addIssueStrs, MKSCommand mks){
+    	List<Map<String,String>> deleteIssueList = null;
+    	Map<String,String> deleRelationMap = null;
+    	if(!Obj.isEmptyOrNull(deleteIssueStrs)){/* 拼接删除关系*/
+    		deleRelationMap = new HashMap<String,String>();
+    		deleteIssueList = mks.searchALMIDTypeBySWID(Arrays.asList(deleteIssueStrs.split(",")));
+    		for(Map<String,String> map :deleteIssueList ){
+    			String targetType = map.get(Constants.TYPE_FIELD);
+    			String targetID = map.get(Constants.ID_FIELD);
+    			String relationField = AnalysisXML.getRelationshipField(curType, targetType);
+    			String editVal = deleRelationMap.get(relationField);
+    			if(Obj.isEmptyOrNull(editVal)){
+    				editVal = targetID;
+    			}else{
+    				editVal = editVal + "," + targetID;
+    			}
+    			deleRelationMap.put(relationField, editVal);
+    		}
+    	}
+    	List<Map<String,String>> addIssueList = null;
+    	Map<String,String> addRelationMap = null;
+    	if(!Obj.isEmptyOrNull(addIssueStrs)){/* 拼接添加关系*/
+    		addRelationMap = new HashMap<String,String>();
+    		addIssueList = mks.searchALMIDTypeBySWID(Arrays.asList(addIssueStrs.split(",")));
+    		for(Map<String,String> map :deleteIssueList ){
+    			String targetType = map.get(Constants.TYPE_FIELD);
+    			String targetID = map.get(Constants.ID_FIELD);
+    			String relationField = AnalysisXML.getRelationshipField(curType, targetType);
+    			String editVal = addRelationMap.get(relationField);
+    			if(Obj.isEmptyOrNull(editVal)){
+    				editVal = targetID;
+    			}else{
+    				editVal = editVal + "," + targetID;
+    			}
+    			addRelationMap.put(relationField, editVal);
+    		}
+    	}
+    	if(deleRelationMap == null && addRelationMap == null){
+    		return true;
+    	}else{
+    		try {
+				mks.editIssue(curIssueId, deleRelationMap, addRelationMap);
+				return true;
+			} catch (APIException e) {
+				log.info("编辑关联关系失败，失败原因：" + APIExceptionUtil.getMsg(e));
+				return false;
+			}
+    	}
     }
 
     public static void main(String[] str) {

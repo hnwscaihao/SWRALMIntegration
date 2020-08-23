@@ -20,6 +20,10 @@ public class AnalysisXML {
 
     private static final Log log = LogFactory.getLog(AnalysisXML.class);
 
+    public static Map<String,String> relationshipMap = new HashMap<String,String>();
+    
+    private final static String SPLIT_FLAG = "|q|q|";
+    
     public List<String> resultCategory(String type){
         List<String> l = new ArrayList<String>();
        String jdsx = type;
@@ -31,7 +35,7 @@ public class AnalysisXML {
        try {
 
            //返回读取指定资源的输入流
-           InputStream in = com.sw.SWAPI.util.AnalysisXML.class.getClassLoader().getSystemResourceAsStream("Category.xml");
+           InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("Category.xml");
 //           writeToLocal(pathxml,in);
            document = reader.read(in);
 
@@ -55,6 +59,21 @@ public class AnalysisXML {
        return l;
    }
 
+    /** 
+     * 获取关系字段
+     * @param currType
+     * @param targetType
+     * @return
+     */
+    public static String getRelationshipField(String currType, String targetType){
+    	String relationshipField = relationshipMap.get(currType+ SPLIT_FLAG +targetType);
+    	if(relationshipField == null){
+    		relationshipField = resultRelationShipFile(currType, targetType);
+    		relationshipMap.put(currType+ SPLIT_FLAG +targetType, relationshipField);
+    	}
+    	return relationshipField;
+    }
+    
     public Map<String,String> resultFile(String type){
         Map<String,String> map = new HashMap<String, String>();
         String jdsx = type;
@@ -66,7 +85,7 @@ public class AnalysisXML {
         try {
 
             //返回读取指定资源的输入流
-            InputStream in = com.sw.SWAPI.util.AnalysisXML.class.getClassLoader().getSystemResourceAsStream("file.xml");
+            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("file.xml");
 //           writeToLocal(pathxml,in);
             document = reader.read(in);
 
@@ -105,7 +124,7 @@ public class AnalysisXML {
         try {
 
             //返回读取指定资源的输入流
-            InputStream in = com.sw.SWAPI.util.AnalysisXML.class.getClassLoader().getSystemResourceAsStream("file.xml");
+            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("file.xml");
 //           writeToLocal(pathxml,in);
             document = reader.read(in);
 
@@ -131,7 +150,7 @@ public class AnalysisXML {
         return s;
     }
 
-    public String resultRelationShipFile(String type1,String type2){
+    public static String resultRelationShipFile(String type1,String type2){
         String RelationShipFile = "";
         //1.创建Reader对象
         SAXReader reader = new SAXReader();
@@ -141,7 +160,7 @@ public class AnalysisXML {
         try {
 
             //返回读取指定资源的输入流
-            InputStream in = com.sw.SWAPI.util.AnalysisXML.class.getClassLoader().getSystemResourceAsStream("RelationshipFile.xml");
+            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("RelationshipFile.xml");
 //           writeToLocal(pathxml,in);
             document = reader.read(in);
 
