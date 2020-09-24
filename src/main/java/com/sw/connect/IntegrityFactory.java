@@ -1,34 +1,24 @@
-package connect;
+package com.sw.connect;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import com.sw.SWAPI.damain.ConfigureField;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.mks.api.response.APIException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
 
-@Component
 public class IntegrityFactory {
 
 	private static Log log = LogFactory.getLog(IntegrityFactory.class);
 
-	private static String host;
-	private static int port;
-	private static String loginName;
-	private static String passWord;
+	private String host;
 
-
-//	private String host;
-
-//	private int port = 7001;
+	private int port = 7001; 
 
 	private int majorVersion = 4;
 
@@ -58,22 +48,18 @@ public class IntegrityFactory {
 		SessionPool conn = pools.peek(); // balance
 
 		if (conn == null) {
-			System.out.println("IntegrityFactory.getConnection: Connection Factory is null. Please check you config.");
+			log.info("IntegrityFactory.getConnection: Connection Factory is null. Please check you config.");
 			throw new APIException(
 					"IntegrityFactory.getConnection: Connection Factory is null. Please check you config.");
 		}
 		return conn;
 	}
 
-	public IntegrityFactory(){
+	private IntegrityFactory(){
 		initPool();
 	}
-
-	public static IntegrityFactory getSingleFactory(ConfigureField configureField){
-		host = configureField.getHost();
-		port = configureField.getPort();
-		loginName = configureField.getLoginName();
-		passWord = configureField.getPassWord();
+	
+	public static IntegrityFactory getSingleFactory(){
 		if(integrityFactory == null){
 			integrityFactory = new IntegrityFactory();
 		}
@@ -110,27 +96,47 @@ public class IntegrityFactory {
 	}
 
 	private Set<MksInfo> loadProps() throws IOException {
+		try {
+			Properties prop = new Properties();
+			prop.load(IntegrityFactory.class.getClassLoader().getSystemResourceAsStream("integrity.properties"));
+			host = prop.getProperty("INTEGRITY_HOSTNAME");
+			System.out.println("======================================================");
+			System.out.println("INTEGRITY_HOSTNAME:" + host);
+			System.out.println("======================================================");
 			Set<MksInfo> mksinfos = new HashSet<MksInfo>();
+			for (Object key : prop.keySet()) {
 
-			MksInfo info = new MksInfo();
+				if (!((String) key).startsWith(userKeyPrefix)) {
+					continue;
+				}
 
-			info.setUser(loginName);
-			info.setPassword(passWord);
-			info.setHost(host);
-			info.setPort(port);
-			info.setMajorVersion(majorVersion);
-			info.setMinorVersion(minorVersion);
-			info.setSecure(secure);
-			info.setMaxCmdRunners(maxCmdRunners);
-			info.setInitSession(initSession);
-			info.setMaxSessionSize(maxSessionSize);
-			info.setWaitTimes(waitTimes);
-			info.setLazyCheck(lazyCheck);
-			info.setPeriodCheck(periodCheck);
+				String val = (String) prop.get(key);
 
-			mksinfos.add(info);
+				String[] userPwds = val.split("\\|q;q;q;\\|");
+
+				MksInfo info = new MksInfo();
+				info.setUser(userPwds[0]);
+				info.setPassword(userPwds[1]);
+
+				info.setHost(host);
+				info.setPort(port);
+				info.setMajorVersion(majorVersion);
+				info.setMinorVersion(minorVersion);
+				info.setSecure(secure);
+				info.setMaxCmdRunners(maxCmdRunners);
+				info.setInitSession(initSession);
+				info.setMaxSessionSize(maxSessionSize);
+				info.setWaitTimes(waitTimes);
+				info.setLazyCheck(lazyCheck);
+				info.setPeriodCheck(periodCheck);
+
+				mksinfos.add(info);
+			}
 
 			return mksinfos;
+		} catch (IOException e) {
+			throw e;
+		}
 	}
 
 	public void setHost(String host) {

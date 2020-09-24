@@ -86,12 +86,34 @@ public class Constants {
 	 */
 	public static final String MKSSI_FIELD_X_WIDTH = "MKSSI_FIELD%s_WIDTH";
 	
-	
+	public static final String DOC_UUID = "DOC_UUID";
+
 	public static final String TYPE_FIELD = "Type";
 	
 	public static final String ID_FIELD = "ID";
 	
 	public static final String SW_ID_FIELD = "SW_ID";
-	
 
+	public static final String SW_SID_FIELD = "SW_SID";
+
+	public static final String SW_SID_SPLIT = "-";
+	
+	public static final String CATEGORY = "Category";
+	
+	public static final String BEFORE_FIELD = "Before_ID";
+	
+	public static final String PARENT_FIELD = "Parent_ID";
+
+	public static final String DOC_CATEGORY = "Document";
+
+	public static final String DOC_INIT_STATE = "Open";
+
+	public static final String DOC_PUBLISHED_STATE = "Published";
+	
+	public static final String CHANGE_VERIFY = "Verify";
+	
+	/** 富文本Text保存图片附件字段*/
+	public static final String TEXT_ATTACHMENT = "Text Attachments";
+	
+	public static final String ATTACHMENT = "Attachments";
 }

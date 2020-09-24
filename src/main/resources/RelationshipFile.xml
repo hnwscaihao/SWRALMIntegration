@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fieldMapping>
-    <documentType alm="System Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
-        <field type="System Requirement Specification" relationShipFile="Spawns"></field>
+    <documentType alm="Vehicle System Requirement Specification"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="Vehicle System Requirement Specification" relationShipFile="Is Related To"></field>
+    </documentType>
+    <documentType alm="System Requirement Specification"> <!-- 在ALM中的类型需要定义补充 -->
+        <field type="System Requirement Specification" relationShipFile="Is Related To"></field>
     </documentType>
     <documentType alm="Stakeholder Requirement Document"> <!-- 在ALM中的类型需要定义补充 -->
         <field type="Stakeholder Requirement" relationShipFile="Spawns"></field>

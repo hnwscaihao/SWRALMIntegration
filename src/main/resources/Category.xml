@@ -4,7 +4,7 @@
 	<!-- -->
 	<documentType swr="Feature Function List" alm="Vehicle Requirement Specification Document"> <!-- 在ALM中的类型需要定义补充 -->
 		<!-- <field swr="ItemName" alm="ItemName" ></field>  --><!-- 已在接口方案中定义 -->
-		<field categorySWR="" categoryalm="Heading"></field>
+		<field categorySWR="cs" categoryalm="Heading"></field>
 		<field categorySWR="" categoryalm="Requirement"></field>
 	</documentType>
 	

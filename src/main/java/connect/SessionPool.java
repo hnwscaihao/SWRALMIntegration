@@ -34,7 +34,7 @@ public class SessionPool {
 	public SessionPool(MksInfo mksinfo) {
 		super();
 		this.mksinfo = mksinfo;
-		logger.info("********************************User: " + mksinfo.getUser());
+		System.out.println("********************************User: " + mksinfo.getUser());
 		init();
 		check();
 	}
@@ -71,11 +71,12 @@ public class SessionPool {
 		try {
 			Response res = cmdRunner.execute(imConnect);
 			logger.info("********************************Result: " + res.getExitCode());
-		} finally {
+		}catch (APIException e){
+			logger.info("获取session失败："+e.getMessage());
+		}finally {
 			if(cmdRunner != null) {
 				cmdRunner.release();
 			}
-			logger.info("********************************Session get Failure" );
 		}
 		return session;
 	}

@@ -1,8 +1,7 @@
-package connect;
+package com.sw.connect;
 
 import java.util.Iterator;
 
-import com.sw.SWAPI.damain.ConfigureField;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -17,10 +16,7 @@ public class Connection {
 
 	private static Log log = LogFactory.getLog(Connection.class);
 
-	private IntegrityFactory integrityFactory = null;
-	public Connection(ConfigureField configureField){
-		integrityFactory = IntegrityFactory.getSingleFactory(configureField);
-	}
+	private IntegrityFactory integrityFactory = IntegrityFactory.getSingleFactory();
 
 	private CmdRunner getCmdRunner(Session session) throws APIException {
 		Iterator<?> it = session.getCmdRunners();

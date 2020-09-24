@@ -6,7 +6,7 @@ public class MsgArgumentException extends RuntimeException {
     protected final String status;
     protected final String message;
 
-    public MsgArgumentException(String message,String status) {
+    public MsgArgumentException(String status, String message) {
         this.message = message;
         this.status = status;
     }

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jacob">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/jacob.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jsoup-1.8.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/mksapi.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -5,14 +5,6 @@ import com.sw.SWAPI.Error.MsgArgumentException;
 
 public class Obj {
 
-    public static String IsNull(Object obj){
-        if(obj == null){
-            return "";
-        }else {
-            return obj.toString();
-        }
-    }
-    
     public static boolean isEmptyOrNull(String str){
     	if(str == null){
             return true;
@@ -27,10 +19,6 @@ public class Obj {
         if(jsonObject.get("Project") == null){
             System.out.println("Project不能为null "+jsonObject.get("SW_SID"));
             throw new MsgArgumentException("201","Project不能为null "+jsonObject.get("SW_SID"));
-        }
-        if(jsonObject.get("Assigned_User") == null){
-            System.out.println("Assigned_User不能为null "+jsonObject.get("SW_SID"));
-            throw new MsgArgumentException("201","Assigned_User不能为null "+jsonObject.get("SW_SID"));
         }
         if(jsonObject.get("SW_SID") == null){
             System.out.println("SW_SID不能为null "+jsonObject.get("SW_SID"));
@@ -53,4 +41,5 @@ public class Obj {
             throw new MsgArgumentException("201","item_name不能为null "+jsonObject.get("SW_SID"));
         }
     }
+
 }
