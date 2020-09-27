@@ -59,8 +59,8 @@ public class IntegrityUtil {
 
     @SuppressWarnings("deprecation")
     public JSONObject dealData(List<JSONObject> listData) throws APIException {
-    	log.info("开始实际导入数据");
-        
+        log.info("开始实际导入数据");
+
         JSONObject jsonInfo = new JSONObject();
         List<JSONObject> contentsList = new ArrayList<>(listData.size());
         JSONObject docJSON = sortContainsAndGetDoc(listData, contentsList);
@@ -394,13 +394,14 @@ public class IntegrityUtil {
     }
 
     public void executionSychSW(JSONObject data) throws Exception {
-    	loadSWConfig();
-    	data.put("Access_Token", SW_TOKEN);
+        loadSWConfig();
+        data.put("Access_Token", SW_TOKEN);
         log.info("链接地址：" + SW_HOST + "//" + URL);
         HttpPost httpPost = new HttpPost(SW_HOST + "//" + URL);
         if (client == null) {
             getConnection();
         }
+        log.info("data:" + data.toJSONString());
         setDataToEntity(data.toString(), httpPost);
         client.execute(httpPost);
         log.info("数据发送成功");
