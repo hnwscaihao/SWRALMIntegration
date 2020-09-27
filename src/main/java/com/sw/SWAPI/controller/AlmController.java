@@ -1,6 +1,5 @@
 package com.sw.SWAPI.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mks.api.response.APIException;
@@ -8,19 +7,14 @@ import com.sw.SWAPI.Error.MsgArgumentException;
 import com.sw.SWAPI.damain.Project;
 import com.sw.SWAPI.damain.User;
 import com.sw.SWAPI.util.*;
-import lombok.SneakyThrows;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Decoder;
 
-import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
-import static com.sw.SWAPI.util.Obj.verification;
 import static com.sw.SWAPI.util.ResultJson.*;
 
 /**
@@ -193,19 +187,10 @@ public class AlmController {
             if (!"success".equals(info)) {
                 return ResultJson("data", info);
             }
+            IntegrityCallable call = new IntegrityCallable(listData);
+            Thread t = new Thread(call);
+            t.start();
             try {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            JSONObject data = util.dealData(listData);
-                            log.warn("处理数据：" + data);
-                            util.executionSychSW(data);
-                        } catch (Exception e) {
-                            log.error(e);
-                        }
-                    }
-                }.start();
             } catch (Exception e) {
                 log.error("多线程错误：" + e.getMessage());
                 throw new MsgArgumentException("210", e.getMessage());

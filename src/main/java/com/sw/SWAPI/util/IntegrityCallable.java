@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.mks.api.response.APIException;
 import com.sw.SWAPI.Error.MsgArgumentException;
 
-public class IntegrityCallable implements Callable<String>{
+public class IntegrityCallable implements Runnable{
 	
 	private List<JSONObject> listData ;
 	
@@ -17,10 +17,13 @@ public class IntegrityCallable implements Callable<String>{
 	
 	
 	@Override
-	public String call() throws APIException, MsgArgumentException, Exception {
+	public void run() {
 		IntegrityUtil util = new IntegrityUtil();
-		//return util.dealData(listData);
-		return null;
+		try {
+			util.dealData(listData);
+		} catch (APIException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public List<JSONObject> getListData() {
