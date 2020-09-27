@@ -81,6 +81,7 @@ public class IntegrityUtil {
         String project = docJSON.getString("Project");// 创建到的目标项目，通过分别查询
         String docId = null;
         String doc_SW_SID = docJSON.getString("SW_SID");
+        String docIssueId = docJSON.getString("issue_id");
         String doc_SW_ID = docJSON.getString("SW_ID");
         String issue_Type = docJSON.getString("issue_Type");
         String curState = null;//原始文档状态，判断Component Requirement Specification Document在Published时 也要能修改数据，同时触发钉钉通知
@@ -89,8 +90,8 @@ public class IntegrityUtil {
         long startDoc = System.currentTimeMillis();
         jsonInfo.put("Project", project);
         jsonInfo.put("Action", "CreationFail");
-        jsonInfo.put("D_Issue_ID", "doc_SW_SID");//SW_SID
-        jsonInfo.put("D_Item_ID", "doc_SW_ID");//SW_ID
+        jsonInfo.put("D_Issue_ID", docIssueId);//SW_SID
+        jsonInfo.put("D_Item_ID", doc_SW_ID);//SW_ID
         if ("add".equals(action_Type)) {//
             List<Map<String, String>> docList = null;
             docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, null);
