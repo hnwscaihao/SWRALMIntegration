@@ -198,7 +198,7 @@ public class AlmController {
                     @Override
                     public void run() {
                         try {
-                            JSONObject data = ResultJson("data", util.dealData(listData));
+                            JSONObject data = util.dealData(listData);
                             log.warn("处理数据：" + data);
                             util.executionSychSW(data);
                         } catch (Exception e) {
