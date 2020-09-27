@@ -283,7 +283,7 @@ public class IntegrityUtil {
         String project = docJSON.getString("Project");
         String doc_SW_SID = docJSON.getString("SW_SID");
         String issue_Type = docJSON.getString("issue_Type");
-
+        String targetState = AnalysisXML.getTypeTargetState(issue_Type);
         List<Map<String, String>> docList = null;
         String verificationDoc = verification(docJSON);
         if (!"success".equals(verificationDoc)) {
@@ -310,8 +310,10 @@ public class IntegrityUtil {
                     return "204 - Document hadn't create。Please check you action type!";
                 } else {
                     String curState = docList.get(0).get("State");
-                    if (!Constants.DOC_INIT_STATE.equals(curState)) {
-                        return "205 - Document now is in reivew or published, can not update!";
+                    if (!(curState.equals(targetState) && Constants.DOC_PUBLISHED_STATE.equals(curState))) {
+                        if (!Constants.DOC_INIT_STATE.equals(curState)) {
+                            return "205 - Document now is in reivew or published, can not update!";
+                        }
                     }
                 }
             } catch (APIException e) {
