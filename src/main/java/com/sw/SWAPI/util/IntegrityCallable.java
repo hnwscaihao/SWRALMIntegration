@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import com.alibaba.fastjson.JSONObject;
 import com.mks.api.response.APIException;
 import com.sw.SWAPI.Error.MsgArgumentException;
+import com.sw.SWAPI.controller.AlmController;
 
 public class IntegrityCallable implements Runnable{
 	
@@ -20,6 +21,7 @@ public class IntegrityCallable implements Runnable{
 	public void run() {
 		IntegrityUtil util = new IntegrityUtil();
 		try {
+			AlmController.log.info("启动线程处理数据");
 			util.dealData(listData);
 		} catch (APIException e) {
 			e.printStackTrace();

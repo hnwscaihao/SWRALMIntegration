@@ -35,6 +35,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mks.api.response.APIException;
 import com.sw.SWAPI.Error.MsgArgumentException;
+import com.sw.SWAPI.controller.AlmController;
 
 
 public class IntegrityUtil {
@@ -58,6 +59,7 @@ public class IntegrityUtil {
 
     @SuppressWarnings("deprecation")
     public JSONObject dealData(List<JSONObject> listData) throws APIException {
+    	log.info("开始实际导入数据");
         loadSWConfig();
         JSONObject jsonInfo = new JSONObject();
         List<JSONObject> contentsList = new ArrayList<>(listData.size());

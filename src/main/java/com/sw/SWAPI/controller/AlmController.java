@@ -187,14 +187,15 @@ public class AlmController {
             if (!"success".equals(info)) {
                 return ResultJson("data", info);
             }
-            IntegrityCallable call = new IntegrityCallable(listData);
-            Thread t = new Thread(call);
-            t.start();
             try {
+            	IntegrityCallable call = new IntegrityCallable(listData);
+                Thread t = new Thread(call);
+                t.start();
             } catch (Exception e) {
                 log.error("多线程错误：" + e.getMessage());
                 throw new MsgArgumentException("210", e.getMessage());
             }
+            log.info("返");
         } else {
             log.info("-------------数据下发 缓存中 UUID " + docUUID + "-------------");
             MapCache.cacheVal(docUUID, jsonData);
