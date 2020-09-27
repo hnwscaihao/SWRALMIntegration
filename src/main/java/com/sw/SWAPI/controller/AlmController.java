@@ -198,7 +198,9 @@ public class AlmController {
                     @SneakyThrows
                     @Override
                     public void run() {
-                        util.dealData(listData);
+                        JSONObject data = ResultJson("data", util.dealData(listData));
+                        log.warn("处理数据：" + data);
+                        util.executionSychSW(data);
                     }
                 }.start();
             } catch (Exception e) {

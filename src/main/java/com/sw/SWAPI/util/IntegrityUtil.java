@@ -7,18 +7,29 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -40,13 +51,19 @@ public class IntegrityUtil {
 
     private ConvertRTFToHtml rthToHTML = new ConvertRTFToHtml();
 
+    public static final Properties SWBASICHolder = new Properties();
+    private static InputStream is = null;
+    public static String SW_TOKEN = null;
+    public static String SW_HOST = null;
+    public static String URL = null;
+    private static CloseableHttpClient client = null;
     /**
      * 文件临时路径
      */
     private String filePath = "C:\\\\Program Files\\\\Integrity\\\\ILMServer12\\\\data\\\\tmp";
 
     @SuppressWarnings("deprecation")
-    public void dealData(List<JSONObject> listData) throws APIException {
+    public String dealData(List<JSONObject> listData) throws APIException {
         List<JSONObject> contentsList = new ArrayList<>(listData.size());
         JSONObject docJSON = sortContainsAndGetDoc(listData, contentsList);
         Map<String, JSONObject> SWJSONMap = new HashMap<String, JSONObject>(contentsList.size() * 4 / 3);
@@ -109,7 +126,7 @@ public class IntegrityUtil {
                     docId = null;
                     action_Type = null;
                     log.error("208 - 创建分支错误! " + APIExceptionUtil.getMsg(e));
-                    throw new MsgArgumentException("208", "创建分支错误! " + APIExceptionUtil.getMsg(e));
+                    return "208 - 创建分支错误! " + APIExceptionUtil.getMsg(e);
                 }
             }
             newDoc = true;
@@ -150,7 +167,7 @@ public class IntegrityUtil {
                 SWMap = null;
                 docId = null;
                 log.error("209 - 查询分支文档数据失败! " + APIExceptionUtil.getMsg(e1));
-                throw new MsgArgumentException("209", "查询分支文档数据失败! " + APIExceptionUtil.getMsg(e1));
+                return "209 - 查询分支文档数据失败! " + APIExceptionUtil.getMsg(e1);
             }
         }
         /** 如果是分支创建，文档分支创建成功后，需要将SW_SID-ALMID查询出来，进行处理 */
@@ -165,7 +182,7 @@ public class IntegrityUtil {
                 throw e;
             } catch (APIException e) {
                 log.error("处理数据失败 201 - 处理数据失败! " + APIExceptionUtil.getMsg(e));
-                throw new MsgArgumentException("201", "处理数据失败! " + APIExceptionUtil.getMsg(e));
+                return "201 - 处理数据失败! " + APIExceptionUtil.getMsg(e);
             }
         }
         long contentEnd = System.currentTimeMillis();
@@ -178,8 +195,7 @@ public class IntegrityUtil {
                 contentObj = null;// 处理完成，将此数据设置null
             } catch (APIException e) {
                 contentObj = null;// 处理完成，将此数据设置null
-
-                throw new MsgArgumentException("201", "处理数据失败! " + APIExceptionUtil.getMsg(e));
+                return "201 - 处理数据失败! " + APIExceptionUtil.getMsg(e);
             }
         }
         long tranceEnd = System.currentTimeMillis();
@@ -199,7 +215,7 @@ public class IntegrityUtil {
                     SWMap = null;
                     docId = null;
                     log.error("210 - 删除条目失败! " + APIExceptionUtil.getMsg(e));
-                    throw new MsgArgumentException("210", "删除条目失败! " + APIExceptionUtil.getMsg(e));
+                    return "210 - 删除条目失败! " + APIExceptionUtil.getMsg(e);
                 }
             }
         }
@@ -228,7 +244,7 @@ public class IntegrityUtil {
             mks.editIssue(docId, dataMap, new HashMap<String, String>());
         } catch (APIException e) {
             log.error("211 - 修改文档状态失败! " + APIExceptionUtil.getMsg(e));
-            throw new MsgArgumentException("211", "修改文档状态失败! " + APIExceptionUtil.getMsg(e));
+            return "211 - 修改文档状态失败! " + APIExceptionUtil.getMsg(e);
         }
         long editEnd = System.currentTimeMillis();
         log.info(" 变更文档状态  花费时间：" + (editEnd - deleteEnd));
@@ -248,8 +264,9 @@ public class IntegrityUtil {
             SWMap = null;
             docId = null;
             log.error("210 - 文档基线创建失败! " + APIExceptionUtil.getMsg(e));
-            throw new MsgArgumentException("210", "文档基线创建失败! " + APIExceptionUtil.getMsg(e));
+            return "210 - 文档基线创建失败! " + APIExceptionUtil.getMsg(e);
         }
+        return "success";
     }
 
     public String checkData(List<JSONObject> listData) {
@@ -262,6 +279,10 @@ public class IntegrityUtil {
         String issue_Type = docJSON.getString("issue_Type");
 
         List<Map<String, String>> docList = null;
+        String verificationDoc = verification(docJSON);
+        if (!"success".equals(verificationDoc)) {
+            return verificationDoc;
+        }
         if ("add".equals(action_Type)) {
             try {
                 docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, null);
@@ -291,13 +312,155 @@ public class IntegrityUtil {
                 return "207 - 根据SW_SID查询错误，请联系管理员!";
             }
         }
+
+        //验证条目
+        for (JSONObject issueJSON : contentsList) {
+            String verificationIssue = verification(issueJSON);
+            if (!"success".equals(verificationIssue)) {
+                return verificationIssue;
+            }
+            String issue_action_Type = issueJSON.getString("action_Type");
+            String docType = issueJSON.getString("issue_Type");
+            String SW_SID = issueJSON.getString("SW_SID");
+            String Old_SW_SID = issueJSON.getString("Old_SW_SID");
+            String issueProject = issueJSON.getString("Project");
+            String issueType = docType.substring(0, docType.lastIndexOf(" "));
+            if ("add".equals(issue_action_Type)) {
+                Map<String, String> issueMap =
+                        mks.searchOrigIssue(Arrays.asList("ID", "Document ID", "SW_SID", "Project"),
+                                SW_SID, issueType, issueProject);
+                if (issueMap != null) {
+                    return "已经存在的条目id： " + SW_SID + "---alm_ID:" + issueMap.get("ID");
+                }
+            }
+            if ("update".equals(issue_action_Type)) {
+                String id = mks.getIssueBySWID("SW_SID", Old_SW_SID, issueProject, issue_Type, "ID");
+                if (id == null || "".equals(id)) {
+                    return "通过SW_SID查询不到需要update的ALM数据: " + Old_SW_SID;
+                }
+            }
+            if ("delete".equals(issue_action_Type)) {
+                String id = mks.getIssueBySWID("SW_SID", SW_SID, issueProject, null, "ID");
+                if (id == null || "".equals(id)) {
+                    return "通过SW_SID查询不到需要delete的ALM数据: " + SW_SID;
+                }
+            }
+            if ("move".equals(issue_action_Type)) {
+                if (Old_SW_SID != null && !"".equals(Old_SW_SID)) {
+                    String id = mks.getIssueBySWID("SW_SID", SW_SID, issueProject, null, "ID");
+                    if (id == null || "".equals(id)) {
+                        return "通过SW_SID查询不到需要move的ALM数据: " + SW_SID;
+                    }
+                } else {
+                    return "OLD SW_SID为空" + Old_SW_SID;
+                }
+            }
+        }
         return "success";
     }
 
+    public String verification(JSONObject jsonObject) {
+        if (jsonObject.get("Project") == null) {
+            System.out.println("Project不能为null " + jsonObject.get("SW_SID"));
+            return "Project不能为null" + jsonObject.get("SW_SID");
+        }
+        if (jsonObject.get("SW_SID") == null) {
+            System.out.println("SW_SID不能为null " + jsonObject.get("SW_SID"));
+            return "SW_SID不能为null" + jsonObject.get("SW_SID");
+        }
+        if (jsonObject.get("issue_Type") == null) {
+            System.out.println("issue_Type不能为null " + jsonObject.get("SW_SID"));
+            return "issue_Type不能为null" + jsonObject.get("SW_SID");
+        }
+        if (jsonObject.get("SW_ID") == null) {
+            System.out.println("SW_ID不能为null " + jsonObject.get("SW_SID"));
+            return "SW_ID不能为null" + jsonObject.get("SW_SID");
+        }
+        if (jsonObject.get("issue_id") == null) {
+            System.out.println("issue_id不能为null " + jsonObject.get("SW_SID"));
+            return "issue_id不能为null" + jsonObject.get("SW_SID");
+        }
+        if (jsonObject.get("item_name") == null) {
+            System.out.println("item_name不能为null " + jsonObject.get("SW_SID"));
+            return "item_name不能为null" + jsonObject.get("SW_SID");
+        }
+        return "success";
+    }
 
-    public boolean checkData(Map<String, String> SWIDMap, Map<String, List<String>> SWMap) {
+    public void executionSychSW(JSONObject data) throws Exception {
+        log.info("链接地址：" + SW_HOST + "//" + URL);
+        HttpPost httpPost = new HttpPost(SW_HOST + "//" + URL);
+        if (client == null) {
+            getConnection();
+        }
+        setDataToEntity(data.toString(), httpPost);
+        client.execute(httpPost);
+        log.info("数据发送成功");
+    }
 
-        return false;
+    /**
+     * 设置表头和数据
+     *
+     * @param data
+     * @param http
+     */
+    public void setDataToEntity(String data, HttpEntityEnclosingRequestBase http) {
+        http.setHeader("Authorization", "Access_Token=" + SW_TOKEN);
+        http.setHeader("Access_Token", SW_TOKEN);
+        http.setHeader("Content-type", "application/json");
+        StringEntity entity = new StringEntity(data, "UTF-8");
+        entity.setContentType("application/json");
+        http.setEntity(entity);
+    }
+
+    public static CloseableHttpClient getConnection() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        SSLContextBuilder builder = new SSLContextBuilder();
+        builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
+        // 配置同时支持 HTTP 和 HTPPS
+        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create().register("http", PlainConnectionSocketFactory.getSocketFactory()).register("https", sslsf).build();
+        // 初始化连接管理器
+        PoolingHttpClientConnectionManager poolConnManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        // 将最大连接数增加到200，实际项目最好从配置文件中读取这个值
+        poolConnManager.setMaxTotal(200);
+        // 设置最大路由
+        poolConnManager.setDefaultMaxPerRoute(2);
+        // 根据默认超时限制初始化requestConfig
+        int socketTimeout = 90000;
+        int connectTimeout = 90000;
+        int connectionRequestTimeout = 90000;
+        RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(connectionRequestTimeout).setSocketTimeout(socketTimeout).setConnectTimeout(connectTimeout).build();
+        // 初始化httpClient
+//		this.url = LoadPropertyPlaceholderConfigurer.getContextProperty("atlas.url") ;
+        client = HttpClients.custom()
+                // 设置连接池管理
+                .setConnectionManager(poolConnManager)
+                // 设置请求配置
+                .setDefaultRequestConfig(requestConfig)
+                // 设置重试次数
+                .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false)).build();
+        if (poolConnManager != null && poolConnManager.getTotalStats() != null) {
+            log.info("Get jira client pool " + poolConnManager.getTotalStats().toString());
+        }
+        return client;
+    }
+
+    /**
+     * SW配置文件
+     */
+    private void loadSWConfig() {
+        try {
+            if (is == null) {
+                InputStream is = IntegrityUtil.class.getResourceAsStream("/resources/sw.properties");
+                SWBASICHolder.load(is);
+                SW_TOKEN = SWBASICHolder.getProperty("token");
+                SW_HOST = SWBASICHolder.getProperty("SW_HOST");
+                URL = SWBASICHolder.getProperty("SW_URL");
+            }
+        } catch (IOException e) {
+            log.warn(e);
+            e.printStackTrace();
+        }
     }
 
     /**
