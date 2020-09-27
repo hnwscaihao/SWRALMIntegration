@@ -60,10 +60,11 @@ public class IntegrityUtil {
     @SuppressWarnings("deprecation")
     public JSONObject dealData(List<JSONObject> listData) throws APIException {
     	log.info("开始实际导入数据");
-        loadSWConfig();
+        
         JSONObject jsonInfo = new JSONObject();
         List<JSONObject> contentsList = new ArrayList<>(listData.size());
         JSONObject docJSON = sortContainsAndGetDoc(listData, contentsList);
+        log.info("条目数据排序完成");
         Map<String, JSONObject> SWJSONMap = new HashMap<String, JSONObject>(contentsList.size() * 4 / 3);
         Map<String, Boolean> SWDealMap = new HashMap<String, Boolean>(contentsList.size() * 4 / 3);
         Map<String, List<String>> SWMap = new HashMap<String, List<String>>(contentsList.size() * 4 / 3);// 记录SW_ID对应的ALMID
@@ -86,7 +87,6 @@ public class IntegrityUtil {
         String targetState = AnalysisXML.getTypeTargetState(issue_Type);
         String synCount = null;
         long startDoc = System.currentTimeMillis();
-        jsonInfo.put("Access_Token", SW_TOKEN);
         jsonInfo.put("Project", project);
         jsonInfo.put("Action", "CreationFail");
         jsonInfo.put("D_Issue_ID", "doc_SW_SID");//SW_SID
@@ -393,6 +393,8 @@ public class IntegrityUtil {
     }
 
     public void executionSychSW(JSONObject data) throws Exception {
+    	loadSWConfig();
+    	data.put("Access_Token", SW_TOKEN);
         log.info("链接地址：" + SW_HOST + "//" + URL);
         HttpPost httpPost = new HttpPost(SW_HOST + "//" + URL);
         if (client == null) {
@@ -456,14 +458,15 @@ public class IntegrityUtil {
     private void loadSWConfig() {
         try {
             if (is == null) {
-                InputStream is = IntegrityUtil.class.getResourceAsStream("/resources/sw.properties");
+                InputStream is = IntegrityUtil.class.getClassLoader().getSystemResourceAsStream("sw.properties");
                 SWBASICHolder.load(is);
                 SW_TOKEN = SWBASICHolder.getProperty("SW_TOKEN");
                 SW_HOST = SWBASICHolder.getProperty("SW_HOST");
                 URL = SWBASICHolder.getProperty("SW_URL");
+                log.info("加载配置SWR文件");
             }
         } catch (IOException e) {
-            log.warn(e);
+            log.error(e.getMessage());
             e.printStackTrace();
         }
     }

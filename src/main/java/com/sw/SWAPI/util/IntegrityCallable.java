@@ -20,10 +20,21 @@ public class IntegrityCallable implements Runnable{
 	@Override
 	public void run() {
 		IntegrityUtil util = new IntegrityUtil();
+		JSONObject json = new JSONObject();
 		try {
 			AlmController.log.info("启动线程处理数据");
-			util.dealData(listData);
+			json = util.dealData(listData);
 		} catch (APIException e) {
+			AlmController.log.info("线程处理出现问题：" + APIExceptionUtil.getMsg(e));
+			e.printStackTrace();
+		} catch(Exception e) {
+			AlmController.log.info("线程处理出现问题：" + e.getMessage());
+			e.printStackTrace();
+		}
+		try {
+			util.executionSychSW(json);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
