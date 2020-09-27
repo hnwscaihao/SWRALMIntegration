@@ -63,7 +63,9 @@ public class IntegrityUtil {
     private String filePath = "C:\\\\Program Files\\\\Integrity\\\\ILMServer12\\\\data\\\\tmp";
 
     @SuppressWarnings("deprecation")
-    public String dealData(List<JSONObject> listData) throws APIException {
+    public JSONObject dealData(List<JSONObject> listData) throws APIException {
+        loadSWConfig();
+        JSONObject jsonInfo = new JSONObject();
         List<JSONObject> contentsList = new ArrayList<>(listData.size());
         JSONObject docJSON = sortContainsAndGetDoc(listData, contentsList);
         Map<String, JSONObject> SWJSONMap = new HashMap<String, JSONObject>(contentsList.size() * 4 / 3);
@@ -88,6 +90,11 @@ public class IntegrityUtil {
         String targetState = AnalysisXML.getTypeTargetState(issue_Type);
         String synCount = null;
         long startDoc = System.currentTimeMillis();
+        jsonInfo.put("Access_Token", SW_TOKEN);
+        jsonInfo.put("Project", project);
+        jsonInfo.put("Action", "CreationFail");
+        jsonInfo.put("D_Issue_ID", "doc_SW_SID");//SW_SID
+        jsonInfo.put("D_Item_ID", "doc_SW_ID");//SW_ID
         if ("add".equals(action_Type)) {//
             List<Map<String, String>> docList = null;
             docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, null);
@@ -126,7 +133,7 @@ public class IntegrityUtil {
                     docId = null;
                     action_Type = null;
                     log.error("208 - 创建分支错误! " + APIExceptionUtil.getMsg(e));
-                    return "208 - 创建分支错误! " + APIExceptionUtil.getMsg(e);
+                    return jsonInfo;
                 }
             }
             newDoc = true;
@@ -167,7 +174,7 @@ public class IntegrityUtil {
                 SWMap = null;
                 docId = null;
                 log.error("209 - 查询分支文档数据失败! " + APIExceptionUtil.getMsg(e1));
-                return "209 - 查询分支文档数据失败! " + APIExceptionUtil.getMsg(e1);
+                return jsonInfo;
             }
         }
         /** 如果是分支创建，文档分支创建成功后，需要将SW_SID-ALMID查询出来，进行处理 */
@@ -182,7 +189,7 @@ public class IntegrityUtil {
                 throw e;
             } catch (APIException e) {
                 log.error("处理数据失败 201 - 处理数据失败! " + APIExceptionUtil.getMsg(e));
-                return "201 - 处理数据失败! " + APIExceptionUtil.getMsg(e);
+                return jsonInfo;
             }
         }
         long contentEnd = System.currentTimeMillis();
@@ -195,7 +202,7 @@ public class IntegrityUtil {
                 contentObj = null;// 处理完成，将此数据设置null
             } catch (APIException e) {
                 contentObj = null;// 处理完成，将此数据设置null
-                return "201 - 处理数据失败! " + APIExceptionUtil.getMsg(e);
+                return jsonInfo;
             }
         }
         long tranceEnd = System.currentTimeMillis();
@@ -215,7 +222,7 @@ public class IntegrityUtil {
                     SWMap = null;
                     docId = null;
                     log.error("210 - 删除条目失败! " + APIExceptionUtil.getMsg(e));
-                    return "210 - 删除条目失败! " + APIExceptionUtil.getMsg(e);
+                    return jsonInfo;
                 }
             }
         }
@@ -244,7 +251,7 @@ public class IntegrityUtil {
             mks.editIssue(docId, dataMap, new HashMap<String, String>());
         } catch (APIException e) {
             log.error("211 - 修改文档状态失败! " + APIExceptionUtil.getMsg(e));
-            return "211 - 修改文档状态失败! " + APIExceptionUtil.getMsg(e);
+            return jsonInfo;
         }
         long editEnd = System.currentTimeMillis();
         log.info(" 变更文档状态  花费时间：" + (editEnd - deleteEnd));
@@ -264,9 +271,11 @@ public class IntegrityUtil {
             SWMap = null;
             docId = null;
             log.error("210 - 文档基线创建失败! " + APIExceptionUtil.getMsg(e));
-            return "210 - 文档基线创建失败! " + APIExceptionUtil.getMsg(e);
+            return jsonInfo;
         }
-        return "success";
+        jsonInfo.put("Action", "CreationPass");
+        jsonInfo.put("Doc_ID", docId);
+        return jsonInfo;
     }
 
     public String checkData(List<JSONObject> listData) {
@@ -453,7 +462,7 @@ public class IntegrityUtil {
             if (is == null) {
                 InputStream is = IntegrityUtil.class.getResourceAsStream("/resources/sw.properties");
                 SWBASICHolder.load(is);
-                SW_TOKEN = SWBASICHolder.getProperty("token");
+                SW_TOKEN = SWBASICHolder.getProperty("SW_TOKEN");
                 SW_HOST = SWBASICHolder.getProperty("SW_HOST");
                 URL = SWBASICHolder.getProperty("SW_URL");
             }

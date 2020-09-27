@@ -195,12 +195,15 @@ public class AlmController {
             }
             try {
                 new Thread() {
-                    @SneakyThrows
                     @Override
                     public void run() {
-                        JSONObject data = ResultJson("data", util.dealData(listData));
-                        log.warn("处理数据：" + data);
-                        util.executionSychSW(data);
+                        try {
+                            JSONObject data = ResultJson("data", util.dealData(listData));
+                            log.warn("处理数据：" + data);
+                            util.executionSychSW(data);
+                        } catch (Exception e) {
+                            log.error(e);
+                        }
                     }
                 }.start();
             } catch (Exception e) {
