@@ -19,7 +19,8 @@ public class IntegrityCallable implements Callable<String>{
 	@Override
 	public String call() throws APIException, MsgArgumentException, Exception {
 		IntegrityUtil util = new IntegrityUtil();
-		return util.dealData(listData);
+		//return util.dealData(listData);
+		return null;
 	}
 
 	public List<JSONObject> getListData() {
