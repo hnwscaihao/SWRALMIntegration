@@ -311,9 +311,10 @@ public class IntegrityUtil {
                 } else {
                     String curState = docList.get(0).get("State");
                     if (!(curState.equals(targetState) && Constants.DOC_PUBLISHED_STATE.equals(curState))) {
-                        if (!Constants.DOC_INIT_STATE.equals(curState)) {
-                            return "205 - Document now is in reivew or published, can not update!";
-                        }
+                    	//如果目标状态为Published，那么 当前状态与目标状态都一致时，允许更新
+                    	return "205 - Document now is in reivew, can not update!";
+                    }else if (!Constants.DOC_INIT_STATE.equals(curState)) {
+                        return "205 - Document now is in reivew or published, can not update!";
                     }
                 }
             } catch (APIException e) {
