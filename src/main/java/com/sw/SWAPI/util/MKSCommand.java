@@ -1950,8 +1950,11 @@ public class MKSCommand {
         List<String> list = new ArrayList<>();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             if (!String.valueOf(entry.getValue()).isEmpty()) {
-                if (entry.getKey().equals(""))
+                if (entry.getKey().equals("Document Short Title")) {
+                    list.add(String.format("(field[%s] contains %s)", entry.getKey(), entry.getValue()));
+                } else {
                     list.add(String.format("(field[%s]=%s)", entry.getKey(), entry.getValue()));
+                }
             }
         }
         if (list.size() > 0) {

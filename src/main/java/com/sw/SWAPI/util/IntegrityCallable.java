@@ -31,12 +31,7 @@ public class IntegrityCallable implements Runnable{
 			AlmController.log.info("线程处理出现问题：" + e.getMessage());
 			e.printStackTrace();
 		}
-		try {
-			util.executionSychSW(json);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		util.executionSychSW(json);
 	}
 
 	public List<JSONObject> getListData() {
