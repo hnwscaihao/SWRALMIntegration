@@ -1,6 +1,7 @@
 package com.sw.SWAPI.util;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.mks.api.*;
 import com.mks.api.response.*;
 import com.sw.SWAPI.controller.AlmController;
@@ -51,10 +52,10 @@ public class MKSCommand {
     public static MKSCommand cmd;
     public static List<String> tsIds = new ArrayList<String>();
     private static String longinUser;
-//    private static Connection Connection;
+    //    private static Connection Connection;
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-     public static Connection conn ;
+    public static Connection conn;
 //    private static Connection conn = new Connection();
 
     public MKSCommand() {
@@ -279,52 +280,52 @@ public class MKSCommand {
         }
         return list;
     }
+
     /**
-     * 
      * @param ids
      * @param fields
      * @return
      * @throws Exception
      */
     public List<Map<String, String>> searchById(List<String> ids, List<String> fields) throws APIException {
-		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-		Command cmd = new Command("im", "issues");
-		MultiValue mv = new MultiValue();
-		mv.setSeparator(",");
-		for (String field : fields) {
-			mv.add(field);
-		}
-		Option op = new Option("fields", mv);
-		cmd.addOption(op);
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        Command cmd = new Command("im", "issues");
+        MultiValue mv = new MultiValue();
+        mv.setSeparator(",");
+        for (String field : fields) {
+            mv.add(field);
+        }
+        Option op = new Option("fields", mv);
+        cmd.addOption(op);
 
-		SelectionList sl = new SelectionList();
-		for (String id : ids) {
-			sl.add(id);
-		}
-		cmd.setSelectionList(sl);
+        SelectionList sl = new SelectionList();
+        for (String id : ids) {
+            sl.add(id);
+        }
+        cmd.setSelectionList(sl);
 
-		Response res = null;
-		try {
-			res = conn.execute(cmd);
-			WorkItemIterator it = res.getWorkItems();
-			while (it.hasNext()) {
-				WorkItem wi = it.next();
-				Map<String, String> map = new HashMap<String, String>();
-				for (String field : fields) {
-					if (field.contains("::")) {
-						field = field.split("::")[0];
-					}
-					String value = wi.getField(field).getValueAsString();
-					map.put(field, value);
-				}
-				list.add(map);
-			}
-		} catch (APIException e) {
-			AlmController.log.info(APIExceptionUtil.getMsg(e));
-			throw e;
-		}
-		return list;
-	}
+        Response res = null;
+        try {
+            res = conn.execute(cmd);
+            WorkItemIterator it = res.getWorkItems();
+            while (it.hasNext()) {
+                WorkItem wi = it.next();
+                Map<String, String> map = new HashMap<String, String>();
+                for (String field : fields) {
+                    if (field.contains("::")) {
+                        field = field.split("::")[0];
+                    }
+                    String value = wi.getField(field).getValueAsString();
+                    map.put(field, value);
+                }
+                list.add(map);
+            }
+        } catch (APIException e) {
+            AlmController.log.info(APIExceptionUtil.getMsg(e));
+            throw e;
+        }
+        return list;
+    }
 
     //查询caseid和name
     public Map<String, String> getCaseInfoById(String id, List<String> fields) throws APIException {
@@ -965,7 +966,7 @@ public class MKSCommand {
     /**
      * 初始化MKSCommand中的参数，并获得连接
      */
-    public static void initMksCommand(String host,int port,String defaultUser,String pwd) {
+    public static void initMksCommand(String host, int port, String defaultUser, String pwd) {
 //        try {
 //            logger.info("host:" + host + "; defaultUser:" + defaultUser + "; pwd:" + pwd);
 //            cmd = new MKSCommand(host, port, defaultUser, pwd, 4, 16);
@@ -1381,7 +1382,7 @@ public class MKSCommand {
 
     //查询所有用户
     public List<User> getAllUsers(List<String> fields) throws APIException {
-		List<User> list = new ArrayList<User>();
+        List<User> list = new ArrayList<User>();
         Command cmd = new Command("im", "users");
         MultiValue mv = new MultiValue();
         mv.setSeparator(",");
@@ -1396,28 +1397,29 @@ public class MKSCommand {
 //        res = conn.execute(cmd);
         WorkItemIterator it = res.getWorkItems();
         while (it.hasNext()) {
-			User user = new User();
+            User user = new User();
             WorkItem wi = it.next();
             for (String field : fields) {
                 if (field.contains("::")) {
                     field = field.split("::")[0];
                 }
                 String value = wi.getField(field).getValueAsString();
-                if(field.equals("fullname")){
+                if (field.equals("fullname")) {
                     user.setUserName(value);
-                }else if(field.equals("name")){
+                } else if (field.equals("name")) {
                     user.setLogin_ID(value);
-                }else if(field.equals("Email")){
+                } else if (field.equals("Email")) {
                     user.setEmail(value);
                 }
             }
-			list.add(user);
+            list.add(user);
         }
         return list;
     }
+
     //根据用户查询用户信息
-    public User getAllUsers1(List<String> fields,String username) throws APIException {
-		List<User> list = new ArrayList<User>();
+    public User getAllUsers1(List<String> fields, String username) throws APIException {
+        List<User> list = new ArrayList<User>();
         Command cmd = new Command("im", "users");
         MultiValue mv = new MultiValue();
         mv.setSeparator(",");
@@ -1438,11 +1440,11 @@ public class MKSCommand {
                     field = field.split("::")[0];
                 }
                 String value = wi.getField(field).getValueAsString();
-                if(field.equals("fullname")){
+                if (field.equals("fullname")) {
                     user.setUserName(value);
-                }else if(field.equals("name")){
+                } else if (field.equals("name")) {
                     user.setLogin_ID(value);
-                }else if(field.equals("Email")){
+                } else if (field.equals("Email")) {
                     user.setEmail(value);
                 }
             }
@@ -1452,7 +1454,7 @@ public class MKSCommand {
 
     //查询所有project
     public List<Project> getAllprojects(List<String> fields) throws APIException {
-		List<Project> list = new ArrayList<Project>();
+        List<Project> list = new ArrayList<Project>();
         Command cmd = new Command("im", "projects");
         MultiValue mv = new MultiValue();
         mv.setSeparator(",");
@@ -1473,19 +1475,19 @@ public class MKSCommand {
                     field = field.split("::")[0];
                 }
                 String value = wi.getField(field).getValueAsString();
-                if(field.equals("name")){
+                if (field.equals("name")) {
                     project.setProject(value);
-                }else if(field.equals("backingIssueID")){
+                } else if (field.equals("backingIssueID")) {
                     project.setPID(value);
                 }
             }
-			list.add(project);
+            list.add(project);
         }
         return list;
     }
 
     //关闭integrity链接
-    public void close(String hostname,int port,String user){
+    public void close(String hostname, int port, String user) {
 //        List<User> list = new ArrayList<User>();
 //        Command cmd = new Command("aa", "disconnect");
 //        cmd.addOption(new Option("hostname", hostname));
@@ -1501,111 +1503,116 @@ public class MKSCommand {
     }
 
     //创建文档
-    public String createDocument(String type,Map<String,String> fieldsValue,Map<String,String> richFieldValue) throws APIException{
+    public String createDocument(String type, Map<String, String> fieldsValue, Map<String, String> richFieldValue) throws APIException {
         Command cmd = new Command("im", "createsegment");
         String id = null;
         OptionList ol = new OptionList();
         Option option = new Option("Type", type);
         ol.add(option);
         Set<String> set = fieldsValue.keySet();
-        for(String field : set){
+        for (String field : set) {
             String value = fieldsValue.get(field);
-            if(value!=null && !value.isEmpty()){
-                Option option2 = new Option("field", field+"="+value);
+            if (value != null && !value.isEmpty()) {
+                Option option2 = new Option("field", field + "=" + value);
                 ol.add(option2);
             }
         }
         cmd.setOptionList(ol);
-        Response res =  conn.execute(cmd);
+        Response res = conn.execute(cmd);
         Result result = res.getResult();
         if (result != null) {
             id = result.getField("resultant").getValueAsString();
         }
         return id;
     }
-    
+
     /**
      * 创建分支文档
+     *
      * @param docId
      * @param project
      * @return
      * @throws APIException
      */
-	public String branchDocument(String docId, String project) throws APIException {
-		Command cmd = new Command("im", "branchsegment");
-		String id = null;
-		Option option = new Option("project", project);
-		cmd.addOption(option);
-		cmd.addOption(new Option("--yes"));
-		cmd.addSelection(docId);
-		Response res = conn.execute(cmd);
-		WorkItemIterator it = res.getWorkItems();
-		while (it.hasNext()) {
-			WorkItem wi = it.next();
-			id = wi.getResult().getField("resultant").getValueAsString();
-		}
-		return id;
-	}
-	
-	/**
-     * 创建复用条目
-     * @param docId
-     * @param project
-     * @return
-     * @throws APIException
-     */
-	public String copyContent(String parentId, String location, String itemId) throws APIException {
-		Command cmd = new Command("im", "copycontent");
-		String id = null;
-		Option option = new Option("parentID", parentId);
-		cmd.addOption(option);
-		option = new Option("insertLocation", location);
-		cmd.addOption(option);
-		option = new Option("refmode", "reuse");//默认是reuse
-		cmd.addOption(option);
-		cmd.addSelection(itemId);
-		Response res = conn.execute(cmd);
-		WorkItemIterator it = res.getWorkItems();
-		while (it.hasNext()) {
-			WorkItem wi = it.next();
-			id = wi.getResult().getField("resultant").getValueAsString();
-		}
-		return id;
-	}
-    
+    public String branchDocument(String docId, String project) throws APIException {
+        Command cmd = new Command("im", "branchsegment");
+        String id = null;
+        Option option = new Option("project", project);
+        cmd.addOption(option);
+        cmd.addOption(new Option("--yes"));
+        cmd.addSelection(docId);
+        Response res = conn.execute(cmd);
+        WorkItemIterator it = res.getWorkItems();
+        while (it.hasNext()) {
+            WorkItem wi = it.next();
+            id = wi.getResult().getField("resultant").getValueAsString();
+        }
+        return id;
+    }
+
     /**
-	 * 创建Baseline
-	 * @param label
-	 * @param docID
-	 * @throws APIException
-	 */
-	public void createBaseLine(String label,String docID ) throws APIException{
-		Command cmd = new Command("im", "baseline");
-		cmd.addOption(new Option("label",label));
-		cmd.addSelection(docID);
-		try {
-			conn.execute(cmd);
-		} catch (APIException e) {
-			logger.error(e.getMessage());
-			throw e;
-		}
-	}
-    
+     * 创建复用条目
+     *
+     * @param
+     * @param
+     * @return
+     * @throws APIException
+     */
+    public String copyContent(String parentId, String location, String itemId) throws APIException {
+        Command cmd = new Command("im", "copycontent");
+        String id = null;
+        Option option = new Option("parentID", parentId);
+        cmd.addOption(option);
+        option = new Option("insertLocation", location);
+        cmd.addOption(option);
+        option = new Option("refmode", "reuse");//默认是reuse
+        cmd.addOption(option);
+        cmd.addSelection(itemId);
+        Response res = conn.execute(cmd);
+        WorkItemIterator it = res.getWorkItems();
+        while (it.hasNext()) {
+            WorkItem wi = it.next();
+            id = wi.getResult().getField("resultant").getValueAsString();
+        }
+        return id;
+    }
+
+    /**
+     * 创建Baseline
+     *
+     * @param label
+     * @param docID
+     * @throws APIException
+     */
+    public void createBaseLine(String label, String docID) throws APIException {
+        Command cmd = new Command("im", "baseline");
+        cmd.addOption(new Option("label", label));
+        cmd.addSelection(docID);
+        try {
+            conn.execute(cmd);
+        } catch (APIException e) {
+            logger.error(e.getMessage());
+            throw e;
+        }
+    }
+
     /**
      * 创建条目，
+     *
      * @param parentId
-     * @param insertLocation
+     * @param
      * @param fields
      * @param type
      * @return
      * @throws APIException
      */
     public String createContent(String parentId, Map<String, String> fields, String type) throws APIException {
-    	return createContent(parentId, null, fields, type);
+        return createContent(parentId, null, fields, type);
     }
 
     /**
      * 创建Content
+     *
      * @param parentId
      * @param fields
      * @param type
@@ -1618,9 +1625,9 @@ public class MKSCommand {
         ol.add(option);
         Option op2 = new Option("parentID", parentId);
         ol.add(op2);
-        if(insertLocation != null){//插入位置
-        	op2 = new Option("insertLocation", insertLocation);
-        	ol.add(op2);
+        if (insertLocation != null) {//插入位置
+            op2 = new Option("insertLocation", insertLocation);
+            ol.add(op2);
         }
         for (Entry<String, String> entry : fields.entrySet()) {
             if (entry.getKey().equals("Text")) {
@@ -1662,44 +1669,46 @@ public class MKSCommand {
         cmd.addSelection(id);
         conn.execute(cmd);
     }
-    
+
     /**
      * 编辑关联关系
+     *
      * @return
-     * @throws APIException 
+     * @throws APIException
      */
-    public boolean editRelationship(String issueId, Map<String,String> deleteRelationMap, Map<String,String> addRelationMap) throws APIException{
-    	Command cmd = new Command(Command.IM, "editissue");
-		if(deleteRelationMap != null) {
-			for(Entry<String, String> entry : deleteRelationMap.entrySet()) {
-				MultiValue mv = new MultiValue("=");
-				mv.add(entry.getKey());
-				mv.add(entry.getValue());
-				Option option = new Option("removeFieldValues", mv);
-				cmd.addOption(option);
-			}
-		}
-		if(addRelationMap != null) {
-			for(Entry<String, String> entry : addRelationMap.entrySet()) {
-				Option relationshipOption = new Option("addFieldValues");
-				MultiValue mv = new MultiValue("=");
-				mv.add(entry.getKey());
-				mv.add(entry.getValue());
-				relationshipOption.add(mv);
-				cmd.addOption(relationshipOption);
-			}
-			
-		}
-		cmd.addSelection(issueId);
-		Response res = conn.execute(cmd);
-		if (res != null && res.getExitCode() == 0) {
-			return true;
-		} 
-		return false;
+    public boolean editRelationship(String issueId, Map<String, String> deleteRelationMap, Map<String, String> addRelationMap) throws APIException {
+        Command cmd = new Command(Command.IM, "editissue");
+        if (deleteRelationMap != null) {
+            for (Entry<String, String> entry : deleteRelationMap.entrySet()) {
+                MultiValue mv = new MultiValue("=");
+                mv.add(entry.getKey());
+                mv.add(entry.getValue());
+                Option option = new Option("removeFieldValues", mv);
+                cmd.addOption(option);
+            }
+        }
+        if (addRelationMap != null) {
+            for (Entry<String, String> entry : addRelationMap.entrySet()) {
+                Option relationshipOption = new Option("addFieldValues");
+                MultiValue mv = new MultiValue("=");
+                mv.add(entry.getKey());
+                mv.add(entry.getValue());
+                relationshipOption.add(mv);
+                cmd.addOption(relationshipOption);
+            }
+
+        }
+        cmd.addSelection(issueId);
+        Response res = conn.execute(cmd);
+        if (res != null && res.getExitCode() == 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
      * 添加附件
+     *
      * @param id
      * @param attach
      * @param field
@@ -1726,6 +1735,7 @@ public class MKSCommand {
 
     /**
      * 得到附件相关信息
+     *
      * @param attach
      * @param field
      * @return
@@ -1751,15 +1761,15 @@ public class MKSCommand {
     }
 
     //添加关联关系
-    public void addRelationships(String id,String RelationshipFile,String RelationshipId) throws APIException {
+    public void addRelationships(String id, String RelationshipFile, String RelationshipId) throws APIException {
         Command cmd = new Command(Command.IM, "editissue");
-        cmd.addOption(new Option("addRelationships", RelationshipFile+":"+RelationshipId));
+        cmd.addOption(new Option("addRelationships", RelationshipFile + ":" + RelationshipId));
         cmd.addSelection(id);
         conn.execute(cmd);
     }
 
     //删除项
-    public void deleteissue(String id)  throws APIException {
+    public void deleteissue(String id) throws APIException {
         Command cmd = new Command(Command.IM, "deleteissue");
         cmd.addOption(new Option("noconfirm"));
         cmd.addOption(new Option("noconfirmRQ"));
@@ -1769,13 +1779,13 @@ public class MKSCommand {
     }
 
     //移动条目
-    public void movecontent(String parentID,String insertLocation,String ids)  throws APIException {
+    public void movecontent(String parentID, String insertLocation, String ids) throws APIException {
         Command cmd = new Command(Command.IM, "movecontent");
-        cmd.addOption(new Option("parentID",parentID));
-        cmd.addOption(new Option("insertLocation",insertLocation));
+        cmd.addOption(new Option("parentID", parentID));
+        cmd.addOption(new Option("insertLocation", insertLocation));
         String[] id = ids.split(",");
         SelectionList sl = new SelectionList();
-        for (int i = 0;i<id.length;i++) {
+        for (int i = 0; i < id.length; i++) {
             sl.add(id[i]);
         }
         cmd.setSelectionList(sl);
@@ -1788,19 +1798,19 @@ public class MKSCommand {
         String id = null;
         Command cmd = new Command(Command.IM, "createissue");
         cmd.addOption(new Option("type", type));
-        if (map != null ) {
+        if (map != null) {
             for (Entry<String, String> entrty : map.entrySet()) {
                 String value = entrty.getValue();
-                if(value==null || value.equals("null")){
+                if (value == null || value.equals("null")) {
                     value = "";
                 }
                 cmd.addOption(new Option("field", entrty.getKey() + "=" + value));
             }
         }
-        if (richContentMap != null && richContentMap.size() >0) {
+        if (richContentMap != null && richContentMap.size() > 0) {
             for (Entry<String, String> entrty : map.entrySet()) {
                 String value = entrty.getValue();
-                if(value==null || value.equals("null")){
+                if (value == null || value.equals("null")) {
                     value = "";
                 }
                 cmd.addOption(new Option("richContentField", entrty.getKey() + "=" + value));
@@ -1813,203 +1823,236 @@ public class MKSCommand {
         }
         return id;
     }
-    
+
     /**
      * 获取SW_SID
+     *
      * @param SW_SID
      * @return
-     * @throws APIException 
+     * @throws APIException
      */
-    public String getALMIDBySearchSWSID( String SW_SID) throws APIException{
-    	List<String> result = searchALMIDBySWQuery(Arrays.asList(SW_SID));
-    	return result == null || result.isEmpty() ? null : result.get(0);
+    public String getALMIDBySearchSWSID(String SW_SID) throws APIException {
+        List<String> result = searchALMIDBySWQuery(Arrays.asList(SW_SID));
+        return result == null || result.isEmpty() ? null : result.get(0);
     }
-    
+
     /**
      * 通过Query - SW_ID查询出来ALM_ID
+     *
      * @return
-     * @throws APIException 
+     * @throws APIException
      */
-    public List<String> searchALMIDBySWQuery( List<String> SW_IDList) throws APIException{
-    	if(SW_IDList == null || SW_IDList.isEmpty()){
-    		return null;
-    	}
-    	StringBuffer queryDefinition = new StringBuffer("((");
-    	for(int i=0; i<SW_IDList.size(); i++){
-    		String SW_ID = SW_IDList.get(i);
-    		queryDefinition.append("(field[SW_ID] contains " + SW_ID + ")");
-    		if(i<SW_IDList.size()-1){
-    			queryDefinition.append(" or ");
-    		}
-    	}
-    	queryDefinition.append("))");
-    	List<String> fields = Arrays.asList("ID","SW_ID");
-    	List<Map<String,String>> resultList = queryIssueByQuery(fields, queryDefinition.toString());
-    	List<String> result = new ArrayList<String>();
-    	if(resultList != null && !resultList.isEmpty()){
-    		if(resultList.size()>10){
-    			result = new ArrayList<String>(resultList.size());
-    		}
-    		for(Map<String, String> map : resultList){
-    			String swID = map.get("SW_ID");
-    			if(SW_IDList.contains(swID)){
-    				result.add(swID);
-    			}
-    		}
-    	}
-    	return result;
+    public List<String> searchALMIDBySWQuery(List<String> SW_IDList) throws APIException {
+        if (SW_IDList == null || SW_IDList.isEmpty()) {
+            return null;
+        }
+        StringBuffer queryDefinition = new StringBuffer("((");
+        for (int i = 0; i < SW_IDList.size(); i++) {
+            String SW_ID = SW_IDList.get(i);
+            queryDefinition.append("(field[SW_ID] contains " + SW_ID + ")");
+            if (i < SW_IDList.size() - 1) {
+                queryDefinition.append(" or ");
+            }
+        }
+        queryDefinition.append("))");
+        List<String> fields = Arrays.asList("ID", "SW_ID");
+        List<Map<String, String>> resultList = queryIssueByQuery(fields, queryDefinition.toString());
+        List<String> result = new ArrayList<String>();
+        if (resultList != null && !resultList.isEmpty()) {
+            if (resultList.size() > 10) {
+                result = new ArrayList<String>(resultList.size());
+            }
+            for (Map<String, String> map : resultList) {
+                String swID = map.get("SW_ID");
+                if (SW_IDList.contains(swID)) {
+                    result.add(swID);
+                }
+            }
+        }
+        return result;
     }
-    
+
     /**
      * 通过Query - SW_ID查询出来ALM_ID和Type
+     *
      * @return
-     * @throws APIException 
+     * @throws APIException
      */
-    public List<Map<String,String>> searchALMIDTypeBySWID( List<String> SW_IDList, String project) throws APIException{
-    	if(SW_IDList == null || SW_IDList.isEmpty()){
-    		return null;
-    	}
-    	StringBuffer queryDefinition = new StringBuffer("( (");
-    	for(int i=0; i<SW_IDList.size(); i++){
-    		String SW_ID = SW_IDList.get(i);
-    		queryDefinition.append("(field[SW_ID] contains " + SW_ID + ") ");
-    		if(i<SW_IDList.size()-1){
-    			queryDefinition.append(" or ");
-    		}
-    	}
-    	queryDefinition.append(") " );
-    	if(project!=null && !"".equals(project)){
-    		queryDefinition.append(" and (field[Project] = " + project + ") ");
-    	}
-    	queryDefinition.append(") " );
-    	
-    	List<String> fields = Arrays.asList("ID","Type","SW_ID");
-    	List<Map<String,String>> resultList = queryIssueByQuery(fields, queryDefinition.toString());
-    	AlmController.log.info("查询条目 ：" + Arrays.asList(SW_IDList));
-    	List<Map<String,String>> ALMSWList = new ArrayList<>();
-    	for(Map<String,String> map : resultList){
-    		String swID = map.get("SW_ID");
-    		AlmController.log.info("查询到SW_ID ：" + swID);
-    		if(SW_IDList.contains(swID)){
-    			ALMSWList.add(map);
-    		}
-    	}
-    	return resultList;
+    public List<Map<String, String>> searchALMIDTypeBySWID(List<String> SW_IDList, String project) throws APIException {
+        if (SW_IDList == null || SW_IDList.isEmpty()) {
+            return null;
+        }
+        StringBuffer queryDefinition = new StringBuffer("( (");
+        for (int i = 0; i < SW_IDList.size(); i++) {
+            String SW_ID = SW_IDList.get(i);
+            queryDefinition.append("(field[SW_ID] contains " + SW_ID + ") ");
+            if (i < SW_IDList.size() - 1) {
+                queryDefinition.append(" or ");
+            }
+        }
+        queryDefinition.append(") ");
+        if (project != null && !"".equals(project)) {
+            queryDefinition.append(" and (field[Project] = " + project + ") ");
+        }
+        queryDefinition.append(") ");
+
+        List<String> fields = Arrays.asList("ID", "Type", "SW_ID");
+        List<Map<String, String>> resultList = queryIssueByQuery(fields, queryDefinition.toString());
+        AlmController.log.info("查询条目 ：" + Arrays.asList(SW_IDList));
+        List<Map<String, String>> ALMSWList = new ArrayList<>();
+        for (Map<String, String> map : resultList) {
+            String swID = map.get("SW_ID");
+            AlmController.log.info("查询到SW_ID ：" + swID);
+            if (SW_IDList.contains(swID)) {
+                ALMSWList.add(map);
+            }
+        }
+        return resultList;
     }
-    
+
     /**
      * 获取SW_ID与ALM_ID的对应Map
-     * @param fields
+     *
+     * @param
      * @param SW_IDList
      * @return
-     * @throws APIException 
+     * @throws APIException
      */
-    public Map<String,String> getSWALMMap(List<String> SW_IDList, String project) throws APIException{
-    	Map<String,String> resultMap = new HashMap<String,String>();
-    	List<String> fields = Arrays.asList("ID","SW_ID");
-    	
-    	StringBuffer queryDefinition = new StringBuffer("((");
-    	for(int i=0; i<SW_IDList.size(); i++){
-    		String SW_ID = SW_IDList.get(i);
-    		queryDefinition.append("(field[SW_ID] contains " + SW_ID + ")");
-    		if(i<SW_IDList.size()-1){
-    			queryDefinition.append(" or ");
-    		}
-    	}
-    	queryDefinition.append(") and field[Project] = " +project+ ")");
-    	List<Map<String, String>> resultList = queryIssueByQuery(fields, queryDefinition.toString());
-    	if(resultList!=null && !resultList.isEmpty() ){
-    		if(resultList.size()>16){
-    			resultMap = new HashMap<String,String>(resultList.size()*4/3);
-    		}
-    		for(Map<String, String> map : resultList){
-    			String swID = map.get("SW_ID");
-    			if(SW_IDList.contains(swID)){
-    				resultMap.put(swID, map.get("ID"));
-    			}
-    		}
-    	}
-    	return resultMap;
+    public Map<String, String> getSWALMMap(List<String> SW_IDList, String project) throws APIException {
+        Map<String, String> resultMap = new HashMap<String, String>();
+        List<String> fields = Arrays.asList("ID", "SW_ID");
+
+        StringBuffer queryDefinition = new StringBuffer("((");
+        for (int i = 0; i < SW_IDList.size(); i++) {
+            String SW_ID = SW_IDList.get(i);
+            queryDefinition.append("(field[SW_ID] contains " + SW_ID + ")");
+            if (i < SW_IDList.size() - 1) {
+                queryDefinition.append(" or ");
+            }
+        }
+        queryDefinition.append(") and field[Project] = " + project + ")");
+        List<Map<String, String>> resultList = queryIssueByQuery(fields, queryDefinition.toString());
+        if (resultList != null && !resultList.isEmpty()) {
+            if (resultList.size() > 16) {
+                resultMap = new HashMap<String, String>(resultList.size() * 4 / 3);
+            }
+            for (Map<String, String> map : resultList) {
+                String swID = map.get("SW_ID");
+                if (SW_IDList.contains(swID)) {
+                    resultMap.put(swID, map.get("ID"));
+                }
+            }
+        }
+        return resultMap;
     }
-    
-    public List<Map<String,String>> queryDocByQuery(String doc_SW_SID, String issue_Type, String project) throws APIException{
-    	StringBuffer queryDifinition = new StringBuffer("( (field[SW_SID] contains " + doc_SW_SID + ") ") ;
-    	if(project!=null && !"".equals(project)){
-    		queryDifinition.append("and (field[Project] = " + project + ") ");
-    	}
-    	if(issue_Type!=null && !"".equals(issue_Type)){
-    		queryDifinition.append("and (field[Type] = " + issue_Type + ") ");
-    	}
-    	queryDifinition.append(") ");
-    	AlmController.log.info("Doc queryDifinition = " + queryDifinition);
-    	List<String> fieldList = new ArrayList<>();
-    	fieldList.add("ID");
-    	fieldList.add("Project");
-    	fieldList.add("State");
-    	fieldList.add("Created Date");
-    	fieldList.add("SW_SID");
-    	if(Constants.DOC_PUBLISHED_STATE.equals(AnalysisXML.getTypeTargetState(issue_Type))) {
-    		// 最后状态 等于目标状态时，查询此字段
-    		fieldList.add("SWR Synchronize Count");
-    	}
-    	List<Map<String,String>> resultList = queryIssueByQuery(fieldList,queryDifinition.toString());
-    	AlmController.log.info("Query DocList = " + resultList.size());
-    	List<Map<String,String>> docList = new ArrayList<>();
-		for(Map<String,String> map : resultList){
-			String swSID = map.get("SW_SID");
-			AlmController.log.info("Query swSID = " + swSID + "|| Doc SWSID = " + doc_SW_SID);
-			if(swSID.equals(doc_SW_SID)){
-				docList.add(map);
-			}
-		}
-		return docList;
+
+    private String query(JSONObject params) {
+        List<String> list = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            if (!String.valueOf(entry.getValue()).isEmpty()) {
+                list.add(String.format("(field[%s]=%s)", entry.getKey(), entry.getValue()));
+            }
+        }
+        if (list.size() > 0) {
+            return String.format("(%s)", String.join(" and ", list));
+        }
+        return null;
     }
-    
+
+    public String checkIdAndName(JSONObject params) {
+        Command cmd = new Command("im", "issues");
+        cmd.addOption(new Option("queryDeffinition", query(params)));
+        try {
+            Response execute = conn.execute(cmd);
+            WorkItemIterator it = execute.getWorkItems();
+            if (it.next() != null) {
+                return "206 - Short Title is exist , Please input again ";
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return "success";
+    }
+
+    public List<Map<String, String>> queryDocByQuery(String doc_SW_SID, String issue_Type, String project) throws APIException {
+        StringBuffer queryDifinition = new StringBuffer("( (field[SW_SID] contains " + doc_SW_SID + ") ");
+        if (project != null && !"".equals(project)) {
+            queryDifinition.append("and (field[Project] = " + project + ") ");
+        }
+        if (issue_Type != null && !"".equals(issue_Type)) {
+            queryDifinition.append("and (field[Type] = " + issue_Type + ") ");
+        }
+        queryDifinition.append(") ");
+        AlmController.log.info("Doc queryDifinition = " + queryDifinition);
+        List<String> fieldList = new ArrayList<>();
+        fieldList.add("ID");
+        fieldList.add("Project");
+        fieldList.add("State");
+        fieldList.add("Created Date");
+        fieldList.add("SW_SID");
+        if (Constants.DOC_PUBLISHED_STATE.equals(AnalysisXML.getTypeTargetState(issue_Type))) {
+            // 最后状态 等于目标状态时，查询此字段
+            fieldList.add("SWR Synchronize Count");
+        }
+        List<Map<String, String>> resultList = queryIssueByQuery(fieldList, queryDifinition.toString());
+        AlmController.log.info("Query DocList = " + resultList.size());
+        List<Map<String, String>> docList = new ArrayList<>();
+        for (Map<String, String> map : resultList) {
+            String swSID = map.get("SW_SID");
+            AlmController.log.info("Query swSID = " + swSID + "|| Doc SWSID = " + doc_SW_SID);
+            if (swSID.equals(doc_SW_SID)) {
+                docList.add(map);
+            }
+        }
+        return docList;
+    }
+
     /**
      * 通过query查询数据
+     *
      * @param fields
      * @param query
      * @return
-     * @throws APIException 
+     * @throws APIException
      */
-	public List<Map<String, String>> queryIssueByQuery(List<String> fields, String query) throws APIException {
-		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-		Command cmd = new Command("im", "issues");
-		MultiValue mv = new MultiValue();
-		mv.setSeparator(",");
-		for (String field : fields) {
-			mv.add(field);
-		}
-		Option op = new Option("fields", mv);
-		cmd.addOption(op);
-		cmd.addOption(new Option("queryDefinition", query));
+    public List<Map<String, String>> queryIssueByQuery(List<String> fields, String query) throws APIException {
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        Command cmd = new Command("im", "issues");
+        MultiValue mv = new MultiValue();
+        mv.setSeparator(",");
+        for (String field : fields) {
+            mv.add(field);
+        }
+        Option op = new Option("fields", mv);
+        cmd.addOption(op);
+        cmd.addOption(new Option("queryDefinition", query));
 
-		Response res = null;
-		try {
-			res = conn.execute(cmd);
-			WorkItemIterator it = res.getWorkItems();
-			while (it.hasNext()) {
-				WorkItem wi = it.next();
-				Map<String, String> map = new HashMap<String, String>();
-				for (String field : fields) {
-					if (field.contains("::")) {
-						field = field.split("::")[0];
-					}
-					String value = wi.getField(field).getValueAsString();
-					map.put(field, value);
-				}
-				list.add(map);
-			}
-		} catch (APIException e) {
-			// success = false;
-			logger.error(e.getMessage());
-			throw e;
-		}
-		return list;
-	}
-    
+        Response res = null;
+        try {
+            res = conn.execute(cmd);
+            WorkItemIterator it = res.getWorkItems();
+            while (it.hasNext()) {
+                WorkItem wi = it.next();
+                Map<String, String> map = new HashMap<String, String>();
+                for (String field : fields) {
+                    if (field.contains("::")) {
+                        field = field.split("::")[0];
+                    }
+                    String value = wi.getField(field).getValueAsString();
+                    map.put(field, value);
+                }
+                list.add(map);
+            }
+        } catch (APIException e) {
+            // success = false;
+            logger.error(e.getMessage());
+            throw e;
+        }
+        return list;
+    }
+
     //根据SWid获取ALMid
-    public String getIssueBySWID(String SWID,String IDvalue, String project, String type, String field) {
+    public String getIssueBySWID(String SWID, String IDvalue, String project, String type, String field) {
         String commandName = "issues";
         Command cmd = new Command("im", commandName);
         MultiValue mv = new MultiValue();
@@ -2020,27 +2063,27 @@ public class MKSCommand {
 
         Option op = new Option("fields", mv);
         ol.add(op);
-        StringBuffer queryDefinition = new StringBuffer("( (field["+SWID+"] contains " + IDvalue + ") ");
-        if(project != null && !"".equals(project)){
-        	queryDefinition.append("and (field[Project]=" +project+ ") ");
+        StringBuffer queryDefinition = new StringBuffer("( (field[" + SWID + "] contains " + IDvalue + ") ");
+        if (project != null && !"".equals(project)) {
+            queryDefinition.append("and (field[Project]=" + project + ") ");
         }
-        if(type != null && !"".equals(type)){
-        	queryDefinition.append("and (field[Type]=" +type+ ") ");
+        if (type != null && !"".equals(type)) {
+            queryDefinition.append("and (field[Type]=" + type + ") ");
         }
         queryDefinition.append(")");
         Option op2 = new Option("queryDefinition", queryDefinition.toString());
         ol.add(op2);
 
         cmd.setOptionList(ol);
-        List<Map<String,String>> resultList = new ArrayList<>();
+        List<Map<String, String>> resultList = new ArrayList<>();
         Response res = null;
         try {
             res = conn.execute(cmd);
             logger.info("getAllFunctionListDoc cmd : " + cmd);
             WorkItemIterator it = res.getWorkItems();
-            Map<String,String> issueMap = null;
+            Map<String, String> issueMap = null;
             while (it.hasNext()) {
-            	issueMap = new HashMap<String,String>();
+                issueMap = new HashMap<String, String>();
                 WorkItem wi = it.next();
                 issueMap.put(field, wi.getField(field).getValueAsString());
                 issueMap.put(SWID, wi.getField(SWID).getValueAsString());
@@ -2049,104 +2092,105 @@ public class MKSCommand {
         } catch (APIException e) {
             logger.error("getAllFunctionListDoc Exception", e);
         }
-       
-        for(int i=0;i<resultList.size();i++){
-            Map<String,String> issueMap = resultList.get(i);
+
+        for (int i = 0; i < resultList.size(); i++) {
+            Map<String, String> issueMap = resultList.get(i);
             String sw_sid = issueMap.get(SWID);
-            if(IDvalue.equals(sw_sid)){
+            if (IDvalue.equals(sw_sid)) {
                 return issueMap.get(field);
             }
         }
-		return "";
+        return "";
     }
-    
+
     /**
      * 根据SW_SID查询条目，如果存在多个：判断是否与当前项目相同，相同，则返回当前项目SID；不同，找到最原始的数据，
+     *
      * @param fields
      * @param SW_SIDVal
      * @param project
      * @return
      */
-	public Map<String, String> searchOrigIssue(List<String> fields, String SW_SIDVal, String type, String project) {
-		String commandName = "issues";
-		Command cmd = new Command("im", commandName);
-		MultiValue mv = new MultiValue();
-		mv.setSeparator(",");
-		for (String field : fields) {
-			mv.add(field);
-		}
-		OptionList ol = new OptionList();
-		Option op = new Option("fields", mv);
-		ol.add(op);
-		StringBuffer queryDefinition = new StringBuffer("( (field[SW_SID] contains " + SW_SIDVal + ") ");
-		if (project != null && !"".equals(project)) {
-			queryDefinition.append("and (field[Project]=" + project + ") ");
-		}
-		if (type != null && !"".equals(type)) {
-			queryDefinition.append("and (field[Type]=" + type + ") ");
-		}
-		queryDefinition.append(")");
-		Option op2 = new Option("queryDefinition", queryDefinition.toString());
-		ol.add(op2);
+    public Map<String, String> searchOrigIssue(List<String> fields, String SW_SIDVal, String type, String project) {
+        String commandName = "issues";
+        Command cmd = new Command("im", commandName);
+        MultiValue mv = new MultiValue();
+        mv.setSeparator(",");
+        for (String field : fields) {
+            mv.add(field);
+        }
+        OptionList ol = new OptionList();
+        Option op = new Option("fields", mv);
+        ol.add(op);
+        StringBuffer queryDefinition = new StringBuffer("( (field[SW_SID] contains " + SW_SIDVal + ") ");
+        if (project != null && !"".equals(project)) {
+            queryDefinition.append("and (field[Project]=" + project + ") ");
+        }
+        if (type != null && !"".equals(type)) {
+            queryDefinition.append("and (field[Type]=" + type + ") ");
+        }
+        queryDefinition.append(")");
+        Option op2 = new Option("queryDefinition", queryDefinition.toString());
+        ol.add(op2);
 
-		cmd.setOptionList(ol);
-		List<Map<String, String>> resultList = new ArrayList<>();
-		Response res = null;
-		try {
-			res = conn.execute(cmd);
-			logger.info("getAllFunctionListDoc cmd : " + cmd);
-			WorkItemIterator it = res.getWorkItems();
-			Map<String, String> issueMap = null;
-			while (it.hasNext()) {
-				issueMap = new HashMap<String, String>();
-				WorkItem wi = it.next();
-				for (String field : fields) {
-					issueMap.put(field, wi.getField(field).getValueAsString());
-				}
-				resultList.add(issueMap);
-			}
-		} catch (APIException e) {
-			logger.error("getAllFunctionListDoc Exception", e);
-		}
-		Map<String, String> origMap = null;
-		for (int i = 0; i < resultList.size(); i++) {
-			Map<String, String> issueMap = resultList.get(i);
-			String issueProject = issueMap.get("Project");
-			if (project != null && !"".equals(project)// 当传递的Project不为空时，则判断查询到的数据project与传递是否一致，一致则返回
-					&& issueProject.equals(project)) {
-				origMap = issueMap;
-				break;
-			} else {
-				if (origMap == null)
-					origMap = issueMap;
-				else {
-					String createdDate = issueMap.get("Created Date");
-					String orCreatedDate = origMap.get("Created Date");
-					Date target = new Date(createdDate);
-					Date orgi = new Date(orCreatedDate);
-					if (target.before(orgi)) {// 比对，获取最开始的一条数据
-						origMap = issueMap;
-					}
-				}
-			}
-		}
-		return origMap;
+        cmd.setOptionList(ol);
+        List<Map<String, String>> resultList = new ArrayList<>();
+        Response res = null;
+        try {
+            res = conn.execute(cmd);
+            logger.info("getAllFunctionListDoc cmd : " + cmd);
+            WorkItemIterator it = res.getWorkItems();
+            Map<String, String> issueMap = null;
+            while (it.hasNext()) {
+                issueMap = new HashMap<String, String>();
+                WorkItem wi = it.next();
+                for (String field : fields) {
+                    issueMap.put(field, wi.getField(field).getValueAsString());
+                }
+                resultList.add(issueMap);
+            }
+        } catch (APIException e) {
+            logger.error("getAllFunctionListDoc Exception", e);
+        }
+        Map<String, String> origMap = null;
+        for (int i = 0; i < resultList.size(); i++) {
+            Map<String, String> issueMap = resultList.get(i);
+            String issueProject = issueMap.get("Project");
+            if (project != null && !"".equals(project)// 当传递的Project不为空时，则判断查询到的数据project与传递是否一致，一致则返回
+                    && issueProject.equals(project)) {
+                origMap = issueMap;
+                break;
+            } else {
+                if (origMap == null)
+                    origMap = issueMap;
+                else {
+                    String createdDate = issueMap.get("Created Date");
+                    String orCreatedDate = origMap.get("Created Date");
+                    Date target = new Date(createdDate);
+                    Date orgi = new Date(orCreatedDate);
+                    if (target.before(orgi)) {// 比对，获取最开始的一条数据
+                        origMap = issueMap;
+                    }
+                }
+            }
+        }
+        return origMap;
     }
 
     //获取静态组
-    public String[] getStaticGroup(String staticGroup){
+    public String[] getStaticGroup(String staticGroup) {
         Command cmd = new Command("aa", "groups");
         cmd.addOption(new Option("members"));
 
         cmd.addSelection(staticGroup);
-        String  ids = "";
+        String ids = "";
         Response res = null;
         try {
             res = conn.execute(cmd);
             WorkItemIterator it = res.getWorkItems();
             while (it.hasNext()) {
                 WorkItem wi = it.next();
-                ids  = wi.getField("members").getValueAsString();
+                ids = wi.getField("members").getValueAsString();
             }
         } catch (APIException e) {
             logger.error("getAllFunctionListDoc Exception", e);
@@ -2156,10 +2200,10 @@ public class MKSCommand {
     }
 
     //根据project获取组
-    public List<String> getGroupsByProject(String project ) throws APIException {
-       List<String> gorups = new ArrayList<>();
+    public List<String> getGroupsByProject(String project) throws APIException {
+        List<String> gorups = new ArrayList<>();
         Command cmd = new Command("im", "projects");
-        cmd.addOption(new Option("fields","permittedGroups"));
+        cmd.addOption(new Option("fields", "permittedGroups"));
         cmd.addSelection(project);
         Response res = conn.execute(cmd);
         String str = "";
@@ -2171,136 +2215,137 @@ public class MKSCommand {
             }
         }
         String[] s = str.split(",");
-        for(int i=0;i<s.length;i++){
+        for (int i = 0; i < s.length; i++) {
             gorups.add(s[i]);
         }
-       return gorups;
+        return gorups;
     }
-	//根据静态组查询用户
-	public List<User>  getProjects(String projectName) throws APIException{
-	    Command cmd = new Command("im", "issues");
-	    cmd.addOption(new Option("fields","TeamMembers"));
-	    String query = "((field[Type]=Project)and(field[Project]="+projectName+"))";
-	    cmd.addOption(new Option("queryDefinition",query));
-	    Response res = conn.execute(cmd);
-	    String str = "";
-	    if (res != null) {
-	        WorkItemIterator it = res.getWorkItems();
-	        while (it.hasNext()) {
-	            WorkItem wi = it.next();
-	            str = wi.getField("TeamMembers").getValueAsString();
-	        }
-	    }
-	    List<User> us = new ArrayList<>();
-	    if(str!=null){
-	        String[] s = str.split(",");
-	        for(int i=0;i<s.length;i++){
-	            User u = getAllUsers1(Arrays.asList("fullname","name","Email"),s[i]);
-	            us.add(u);
-	        }
-	    }
-	
-	    return us;
-	}
+
+    //根据静态组查询用户
+    public List<User> getProjects(String projectName) throws APIException {
+        Command cmd = new Command("im", "issues");
+        cmd.addOption(new Option("fields", "TeamMembers"));
+        String query = "((field[Type]=Project)and(field[Project]=" + projectName + "))";
+        cmd.addOption(new Option("queryDefinition", query));
+        Response res = conn.execute(cmd);
+        String str = "";
+        if (res != null) {
+            WorkItemIterator it = res.getWorkItems();
+            while (it.hasNext()) {
+                WorkItem wi = it.next();
+                str = wi.getField("TeamMembers").getValueAsString();
+            }
+        }
+        List<User> us = new ArrayList<>();
+        if (str != null) {
+            String[] s = str.split(",");
+            for (int i = 0; i < s.length; i++) {
+                User u = getAllUsers1(Arrays.asList("fullname", "name", "Email"), s[i]);
+                us.add(u);
+            }
+        }
+
+        return us;
+    }
 
     /**
-     *
      * @param projectName
-     * @param dynamicGroupName
+     * @param
      * @return
      * @throws APIException
      */
-	public List<User> getProjectDynaUsers(String projectName, List<String> dynamicGroups) throws APIException {
-		List<User> users = new ArrayList<User>();
-		Command cmd = new Command("im", "dynamicgroups");
-		cmd.addOption(new Option("fields", "membership"));
-		for (String group : dynamicGroups) {
-			cmd.addSelection(group);
-		}
-		List<String> userIdList = new ArrayList<String>();
-		Response res = conn.execute(cmd);
-		if (res != null) {
-			WorkItemIterator groupsItemItera = res.getWorkItems();
-			if (groupsItemItera != null) {
-				while (groupsItemItera.hasNext()) {
-					WorkItem groupItem = groupsItemItera.next();
-					String groupDGName = groupItem.getId();
-					List<String> projectUserList = new ArrayList<String>();
-					Field field = groupItem.getField("membership");
-					ItemList itemList = (ItemList) field.getValue();
-					if (!itemList.isEmpty()) {
-						for (int i = 0; i < itemList.size(); i++) {
-							Item item = (Item) itemList.get(i);
-							String project = item.getId();
-							if (!projectName.equals(project))// 只查询当前项目
-								continue;
-							Field userField = item.getField("Users");
-							ItemList userList = (ItemList) userField.getValue();
-							if (!userList.isEmpty()) {
-								for (int j = 0; j < userList.size(); j++) {
-									Item user = (Item) userList.get(j);
-									userIdList.add(user.getId());
-								}
-							}
-							Field groupField = item.getField("Groups");// 处理组成员
-							ItemList groupList = (ItemList) groupField.getValue();
-							if (!groupList.isEmpty()) {
-								for (int j = 0; j < groupList.size(); j++) {
-									Item group = (Item) groupList.get(j);
-									String groupName = group.getId();
-									List<String> members = getGroupMembers(groupName);
-									if (members != null && !members.isEmpty()) {
-										userIdList.addAll(members);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return getAllUsers(Arrays.asList("fullname", "name", "Email"), userIdList);
-	}
-    
+    public List<User> getProjectDynaUsers(String projectName, List<String> dynamicGroups) throws APIException {
+        List<User> users = new ArrayList<User>();
+        Command cmd = new Command("im", "dynamicgroups");
+        cmd.addOption(new Option("fields", "membership"));
+        for (String group : dynamicGroups) {
+            cmd.addSelection(group);
+        }
+        List<String> userIdList = new ArrayList<String>();
+        Response res = conn.execute(cmd);
+        if (res != null) {
+            WorkItemIterator groupsItemItera = res.getWorkItems();
+            if (groupsItemItera != null) {
+                while (groupsItemItera.hasNext()) {
+                    WorkItem groupItem = groupsItemItera.next();
+                    String groupDGName = groupItem.getId();
+                    List<String> projectUserList = new ArrayList<String>();
+                    Field field = groupItem.getField("membership");
+                    ItemList itemList = (ItemList) field.getValue();
+                    if (!itemList.isEmpty()) {
+                        for (int i = 0; i < itemList.size(); i++) {
+                            Item item = (Item) itemList.get(i);
+                            String project = item.getId();
+                            if (!projectName.equals(project))// 只查询当前项目
+                                continue;
+                            Field userField = item.getField("Users");
+                            ItemList userList = (ItemList) userField.getValue();
+                            if (!userList.isEmpty()) {
+                                for (int j = 0; j < userList.size(); j++) {
+                                    Item user = (Item) userList.get(j);
+                                    userIdList.add(user.getId());
+                                }
+                            }
+                            Field groupField = item.getField("Groups");// 处理组成员
+                            ItemList groupList = (ItemList) groupField.getValue();
+                            if (!groupList.isEmpty()) {
+                                for (int j = 0; j < groupList.size(); j++) {
+                                    Item group = (Item) groupList.get(j);
+                                    String groupName = group.getId();
+                                    List<String> members = getGroupMembers(groupName);
+                                    if (members != null && !members.isEmpty()) {
+                                        userIdList.addAll(members);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return getAllUsers(Arrays.asList("fullname", "name", "Email"), userIdList);
+    }
+
     /**
      * 获取文档下所有条目数据
+     *
      * @param docId
      * @return
-     * @throws APIException 
+     * @throws APIException
      */
-    public List<String> getDocContents(String docId, Map<String,String> SWSIDMap) throws APIException{
-    	Command cmd = new Command("im", "issues");
-		MultiValue mv = new MultiValue();
-		mv.setSeparator(",");
-		mv.add("ID");
-		mv.add("SW_SID");
-		mv.add("SW_ID");
-		Option op = new Option("fields", mv);
-		cmd.addOption(op);
-		String queryDefinition = "((field[Document ID]=" +docId+ "))";
-		cmd.addOption(new Option("queryDefinition", queryDefinition));
-		Response res = conn.execute(cmd);
-		List<String> issueList = new ArrayList<>();
-		if (res != null) {
-			WorkItemIterator contentIter = res.getWorkItems();
-			while(contentIter.hasNext()){
-				WorkItem wi = contentIter.next();
-				String issueId = wi.getField("ID").getValueAsString();
-				String issueSWSID = wi.getField("SW_SID").getValueAsString();
-				AlmController.log.info("ALM-ID = " + issueId + " || " + "SW_SID = " + issueSWSID);
-				SWSIDMap.put( issueSWSID, issueId);
-				issueList.add(issueId);
-			}
-		}
-		return issueList;
+    public List<String> getDocContents(String docId, Map<String, String> SWSIDMap) throws APIException {
+        Command cmd = new Command("im", "issues");
+        MultiValue mv = new MultiValue();
+        mv.setSeparator(",");
+        mv.add("ID");
+        mv.add("SW_SID");
+        mv.add("SW_ID");
+        Option op = new Option("fields", mv);
+        cmd.addOption(op);
+        String queryDefinition = "((field[Document ID]=" + docId + "))";
+        cmd.addOption(new Option("queryDefinition", queryDefinition));
+        Response res = conn.execute(cmd);
+        List<String> issueList = new ArrayList<>();
+        if (res != null) {
+            WorkItemIterator contentIter = res.getWorkItems();
+            while (contentIter.hasNext()) {
+                WorkItem wi = contentIter.next();
+                String issueId = wi.getField("ID").getValueAsString();
+                String issueSWSID = wi.getField("SW_SID").getValueAsString();
+                AlmController.log.info("ALM-ID = " + issueId + " || " + "SW_SID = " + issueSWSID);
+                SWSIDMap.put(issueSWSID, issueId);
+                issueList.add(issueId);
+            }
+        }
+        return issueList;
     }
 
     //根据用户查询用户信息
     public List<User> getAllUsers(List<String> fields, List<String> userIdList) throws APIException {
-        if(userIdList == null || userIdList.isEmpty()){//如果动态组查询为空，则直接返回空数据
-        	return new ArrayList<User>();
+        if (userIdList == null || userIdList.isEmpty()) {//如果动态组查询为空，则直接返回空数据
+            return new ArrayList<User>();
         }
-    	List<User> list = new ArrayList<User>();
+        List<User> list = new ArrayList<User>();
         Command cmd = new Command("im", "users");
         MultiValue mv = new MultiValue();
         mv.setSeparator(",");
@@ -2309,7 +2354,7 @@ public class MKSCommand {
         }
         Option op = new Option("fields", mv);
         cmd.addOption(op);
-        for(String userId : userIdList){
+        for (String userId : userIdList) {
             cmd.addSelection(userId);
         }
         Response res = null;
@@ -2324,11 +2369,11 @@ public class MKSCommand {
                     field = field.split("::")[0];
                 }
                 String value = wi.getField(field).getValueAsString();
-                if(field.equals("fullname")){
+                if (field.equals("fullname")) {
                     user.setUserName(value);
-                }else if(field.equals("name")){
+                } else if (field.equals("name")) {
                     user.setLogin_ID(value);
-                }else if(field.equals("Email")){
+                } else if (field.equals("Email")) {
                     user.setEmail(value);
                 }
             }

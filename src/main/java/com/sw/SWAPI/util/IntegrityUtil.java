@@ -11,6 +11,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+import com.mks.api.Command;
+import com.mks.api.Option;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.config.RequestConfig;
@@ -281,6 +283,7 @@ public class IntegrityUtil {
 
         String action_Type = docJSON.getString("action_Type");
         String project = docJSON.getString("Project");
+        String Document_Short_Title = docJSON.getString("item_name");
         String doc_SW_SID = docJSON.getString("SW_SID");
         String issue_Type = docJSON.getString("issue_Type");
         String targetState = AnalysisXML.getTypeTargetState(issue_Type);
@@ -298,6 +301,15 @@ public class IntegrityUtil {
                         return "206 - Document has created in project: [" + project + "]!";
                     }
                 }
+                //验证名称重复
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("Project", project);
+                jsonObject.put("Type", issue_Type);
+                jsonObject.put("Document Short Title", Document_Short_Title);
+                String infoName = mks.checkIdAndName(jsonObject);
+                if (!"success".equals(infoName)) {
+                    return infoName;
+                }
             } catch (Exception e) {
                 return "207 - 根据SW_SID查询错误，请联系管理员!";
             }
@@ -311,9 +323,9 @@ public class IntegrityUtil {
                 } else {
                     String curState = docList.get(0).get("State");
                     if (!(curState.equals(targetState) && Constants.DOC_PUBLISHED_STATE.equals(curState))) {
-                    	//如果目标状态为Published，那么 当前状态与目标状态都一致时，允许更新
-                    	return "205 - Document now is in reivew, can not update!";
-                    }else if (!Constants.DOC_INIT_STATE.equals(curState)) {
+                        //如果目标状态为Published，那么 当前状态与目标状态都一致时，允许更新
+                        return "205 - Document now is in reivew, can not update!";
+                    } else if (!Constants.DOC_INIT_STATE.equals(curState)) {
                         return "205 - Document now is in reivew or published, can not update!";
                     }
                 }
@@ -410,12 +422,6 @@ public class IntegrityUtil {
         log.info("数据发送成功");
     }
 
-    /**
-     * 设置表头和数据
-     *
-     * @param data
-     * @param http
-     */
     public void setDataToEntity(String data, HttpEntityEnclosingRequestBase http) {
         http.setHeader("Authorization", "Access_Token=" + SW_TOKEN);
         http.setHeader("Access_Token", SW_TOKEN);
@@ -457,9 +463,6 @@ public class IntegrityUtil {
         return client;
     }
 
-    /**
-     * SW配置文件
-     */
     private void loadSWConfig() {
         try {
             if (is == null) {
@@ -475,6 +478,7 @@ public class IntegrityUtil {
             e.printStackTrace();
         }
     }
+
 
     /**
      * 处理条目数据
