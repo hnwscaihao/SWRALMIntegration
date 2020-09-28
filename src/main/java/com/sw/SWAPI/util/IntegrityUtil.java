@@ -314,25 +314,30 @@ public class IntegrityUtil {
                 return "207 - 根据SW_SID查询错误，请联系管理员!";
             }
         }
-        if ("update".equals(action_Type)) {
-            try {
-                docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, project);
+		if ("update".equals(action_Type)) {
+			try {
+				docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, project);
 
-                if (docList == null || docList.isEmpty()) {
-                    return "204 - Document hadn't create。Please check you action type!";
-                } else {
-                    String curState = docList.get(0).get("State");
-                    if (!(curState.equals(targetState) && Constants.DOC_PUBLISHED_STATE.equals(curState))) {
-                        //如果目标状态为Published，那么 当前状态与目标状态都一致时，允许更新
-                        return "205 - Document now is in reivew, can not update!";
-                    } else if (!Constants.DOC_INIT_STATE.equals(curState)) {
-                        return "205 - Document now is in reivew or published, can not update!";
-                    }
-                }
-            } catch (APIException e) {
-                return "207 - 根据SW_SID查询错误，请联系管理员!";
-            }
-        }
+				if (docList == null || docList.isEmpty()) {
+					return "204 - Document hadn't create。Please check you action type!";
+				} else {
+					String curState = docList.get(0).get("State");
+					log.info("更新状态判断：curState = " + curState + "||targetState = " + targetState);
+					if (Constants.DOC_PUBLISHED_STATE.equals(curState)) {
+						log.info("Published更新判断 " + !curState.equals(targetState));
+						if (!curState.equals(targetState) ) {
+							// 如果目标状态为Published，那么 当前状态与目标状态都一致时，允许更新
+							return "205 - Document now is in reivew, can not update!";
+						}
+					} else if (!Constants.DOC_INIT_STATE.equals(curState)) {
+						return "205 - Document now is in reivew or published, can not update!";
+					}
+
+				}
+			} catch (APIException e) {
+				return "207 - 根据SW_SID查询错误，请联系管理员!";
+			}
+		}
 
         //验证条目
         for (JSONObject issueJSON : contentsList) {
