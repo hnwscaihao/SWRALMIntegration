@@ -16,6 +16,7 @@ import com.mks.api.Option;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.config.Registry;
@@ -25,6 +26,7 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClients;
@@ -427,7 +429,10 @@ public class IntegrityUtil {
         log.info("data:" + data.toJSONString());
         setDataToEntity(data.toString(), httpPost);
         try {
-            client.execute(httpPost);
+        	CloseableHttpResponse response = client.execute(httpPost);
+        	log.info("反馈数据状态："+ response.getStatusLine().getStatusCode());
+        	BasicResponseHandler hander = new BasicResponseHandler();
+        	log.info("反馈数据信息：" + hander.handleResponse(response));
         } catch (Exception e) {
             log.error("数据发送失败：" + e);
         }
