@@ -346,11 +346,10 @@ public class IntegrityUtil {
                 return verificationIssue;
             }
             String issue_action_Type = issueJSON.getString("action_Type");
-            String docType = issueJSON.getString("issue_Type");
             String SW_SID = issueJSON.getString("SW_SID");
             String Old_SW_SID = issueJSON.getString("Old_SW_SID");
             String issueProject = issueJSON.getString("Project");
-            String issueType = docType.substring(0, docType.lastIndexOf(" "));
+            String issueType = issue_Type.substring(0, issue_Type.lastIndexOf(" "));
             if ("add".equals(issue_action_Type)) {
                 Map<String, String> issueMap =
                         mks.searchOrigIssue(Arrays.asList("ID", "Document ID", "SW_SID", "Project"),
@@ -360,20 +359,20 @@ public class IntegrityUtil {
                 }
             }
             if ("update".equals(issue_action_Type)) {
-                String id = mks.getIssueBySWID("SW_SID", Old_SW_SID, issueProject, issue_Type, "ID");
+                String id = mks.getIssueBySWID("SW_SID", Old_SW_SID, issueProject, issueType, "ID");
                 if (id == null || "".equals(id)) {
                     return "通过SW_SID查询不到需要update的ALM数据: " + Old_SW_SID;
                 }
             }
             if ("delete".equals(issue_action_Type)) {
-                String id = mks.getIssueBySWID("SW_SID", SW_SID, issueProject, null, "ID");
+                String id = mks.getIssueBySWID("SW_SID", SW_SID, issueProject, issueType, "ID");
                 if (id == null || "".equals(id)) {
                     return "通过SW_SID查询不到需要delete的ALM数据: " + SW_SID;
                 }
             }
             if ("move".equals(issue_action_Type)) {
                 if (Old_SW_SID != null && !"".equals(Old_SW_SID)) {
-                    String id = mks.getIssueBySWID("SW_SID", SW_SID, issueProject, null, "ID");
+                    String id = mks.getIssueBySWID("SW_SID", SW_SID, issueProject, issueType, "ID");
                     if (id == null || "".equals(id)) {
                         return "通过SW_SID查询不到需要move的ALM数据: " + SW_SID;
                     }
