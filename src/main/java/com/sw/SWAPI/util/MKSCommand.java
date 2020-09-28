@@ -1971,7 +1971,8 @@ public class MKSCommand {
         try {
             Response execute = conn.execute(cmd);
             WorkItemIterator it = execute.getWorkItems();
-            if (it.next() != null) {
+            WorkItem wi = it.next();
+            if (wi != null && params.getString("Document Short Title").equals(wi.getField("Document Short Title").getValueAsString())) {
                 return "206 - Short Title is exist , Please input again ";
             }
         } catch (Exception e) {
