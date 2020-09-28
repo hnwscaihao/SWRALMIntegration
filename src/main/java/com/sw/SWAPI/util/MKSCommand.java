@@ -1950,7 +1950,8 @@ public class MKSCommand {
         List<String> list = new ArrayList<>();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             if (!String.valueOf(entry.getValue()).isEmpty()) {
-                list.add(String.format("(field[%s]=%s)", entry.getKey(), entry.getValue()));
+                if (entry.getKey().equals(""))
+                    list.add(String.format("(field[%s]=%s)", entry.getKey(), entry.getValue()));
             }
         }
         if (list.size() > 0) {
@@ -1961,7 +1962,9 @@ public class MKSCommand {
 
     public String checkIdAndName(JSONObject params) {
         Command cmd = new Command("im", "issues");
-        cmd.addOption(new Option("queryDeffinition", query(params)));
+        String query = query(params);
+        logger.info("query:" + query);
+        cmd.addOption(new Option("queryDefinition", query));
         try {
             Response execute = conn.execute(cmd);
             WorkItemIterator it = execute.getWorkItems();
