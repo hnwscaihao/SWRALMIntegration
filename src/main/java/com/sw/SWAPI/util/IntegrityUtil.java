@@ -187,7 +187,7 @@ public class IntegrityUtil {
                         branchDeleIssueList);
             } catch (MsgArgumentException e) {
                 log.error("清理缓存！");
-                throw e;
+                return jsonInfo;
             } catch (APIException e) {
                 log.error("处理数据失败 201 - 处理数据失败! " + APIExceptionUtil.getMsg(e));
                 return jsonInfo;
@@ -429,10 +429,10 @@ public class IntegrityUtil {
         log.info("data:" + data.toJSONString());
         setDataToEntity(data.toString(), httpPost);
         try {
-        	CloseableHttpResponse response = client.execute(httpPost);
-        	log.info("反馈数据状态："+ response.getStatusLine().getStatusCode());
-        	BasicResponseHandler hander = new BasicResponseHandler();
-        	log.info("反馈数据信息：" + hander.handleResponse(response));
+            CloseableHttpResponse response = client.execute(httpPost);
+            log.info("反馈数据状态：" + response.getStatusLine().getStatusCode());
+            BasicResponseHandler hander = new BasicResponseHandler();
+            log.info("反馈数据信息：" + hander.handleResponse(response));
         } catch (Exception e) {
             log.error("数据发送失败：" + e);
         }
