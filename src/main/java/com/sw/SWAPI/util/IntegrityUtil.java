@@ -64,157 +64,109 @@ public class IntegrityUtil {
     @SuppressWarnings("deprecation")
     public JSONObject dealData(List<JSONObject> listData) throws APIException {
         log.info("开始实际导入数据");
-
         JSONObject jsonInfo = new JSONObject();
-        List<JSONObject> contentsList = new ArrayList<>(listData.size());
-        JSONObject docJSON = sortContainsAndGetDoc(listData, contentsList);
-        log.info("条目数据排序完成");
-        Map<String, JSONObject> SWJSONMap = new HashMap<String, JSONObject>(contentsList.size() * 4 / 3);
-        Map<String, Boolean> SWDealMap = new HashMap<String, Boolean>(contentsList.size() * 4 / 3);
-        Map<String, List<String>> SWMap = new HashMap<String, List<String>>(contentsList.size() * 4 / 3);// 记录SW_ID对应的ALMID
-        for (JSONObject obj : contentsList) {
-            String swSid = obj.getString(Constants.SW_SID_FIELD);
-            SWJSONMap.put(swSid, obj);// 通过Map将每个JSON记录
-            SWDealMap.put(swSid, false);// 通过Map记录SWSID对应数据是否处理。防止排序失败导致数据处理异常
-        }
-        // mks.initMksCommand(host, port, loginName, passWord);
-        boolean newDoc = false; // 判断是否是新增文档
-        boolean branch = false;// 判断是否是复用文档
-        Map<String, String> SWSIDMap = new HashMap<>();// 存放已保存ID
-        String action_Type = docJSON.getString("action_Type");
-        String project = docJSON.getString("Project");// 创建到的目标项目，通过分别查询
         String docId = null;
-        String doc_SW_SID = docJSON.getString("SW_SID");
-        String docIssueId = docJSON.getString("issue_id");
-        String doc_SW_ID = docJSON.getString("SW_ID");
-        String issue_Type = docJSON.getString("issue_Type");
-        String curState = null;//原始文档状态，判断Component Requirement Specification Document在Published时 也要能修改数据，同时触发钉钉通知
-        String targetState = AnalysisXML.getTypeTargetState(issue_Type);
-        String synCount = null;
-        long startDoc = System.currentTimeMillis();
-        jsonInfo.put("Project", project);
-        jsonInfo.put("Action", "CreationFail");
-        jsonInfo.put("D_Issue_ID", docIssueId);//SW_SID
-        jsonInfo.put("D_Item_ID", doc_SW_ID);//SW_ID
-        if ("add".equals(action_Type)) {//
-            List<Map<String, String>> docList = null;
-            docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, null);
-            long endDocQuery = System.currentTimeMillis();
-            if (docList == null || docList.isEmpty() || docList.size() == 0) {
-                docId = createDoc(docJSON, SWSIDMap, mks);// 当前未创建，创建新的文档
-                long endDocCreate = System.currentTimeMillis();
-                log.info("创建文档" + docList.size() + "|| 花费时间：" + (endDocCreate - endDocQuery));
-            } else {
-                branch = true;
-                Map<String, String> origInfo = null;
-                for (Map<String, String> docInfo : docList) {
-                    if (origInfo == null) {
-                        origInfo = docInfo;
-                    } else {
-                        String createdDate = docInfo.get("Created Date");
-                        String orCreatedDate = origInfo.get("Created Date");
-                        Date target = new Date(createdDate);
-                        Date orgi = new Date(orCreatedDate);
-                        if (target.before(orgi)) {// 比对，获取最开始的一条数据
+        try {
+            List<JSONObject> contentsList = new ArrayList<>(listData.size());
+            JSONObject docJSON = sortContainsAndGetDoc(listData, contentsList);
+            log.info("条目数据排序完成");
+            Map<String, JSONObject> SWJSONMap = new HashMap<String, JSONObject>(contentsList.size() * 4 / 3);
+            Map<String, Boolean> SWDealMap = new HashMap<String, Boolean>(contentsList.size() * 4 / 3);
+            Map<String, List<String>> SWMap = new HashMap<String, List<String>>(contentsList.size() * 4 / 3);// 记录SW_ID对应的ALMID
+            for (JSONObject obj : contentsList) {
+                String swSid = obj.getString(Constants.SW_SID_FIELD);
+                SWJSONMap.put(swSid, obj);// 通过Map将每个JSON记录
+                SWDealMap.put(swSid, false);// 通过Map记录SWSID对应数据是否处理。防止排序失败导致数据处理异常
+            }
+            // mks.initMksCommand(host, port, loginName, passWord);
+            boolean newDoc = false; // 判断是否是新增文档
+            boolean branch = false;// 判断是否是复用文档
+            Map<String, String> SWSIDMap = new HashMap<>();// 存放已保存ID
+            String action_Type = docJSON.getString("action_Type");
+            String project = docJSON.getString("Project");// 创建到的目标项目，通过分别查询
+            String doc_SW_SID = docJSON.getString("SW_SID");
+            String docIssueId = docJSON.getString("issue_id");
+            String doc_SW_ID = docJSON.getString("SW_ID");
+            String issue_Type = docJSON.getString("issue_Type");
+            String curState = null;//原始文档状态，判断Component Requirement Specification Document在Published时 也要能修改数据，同时触发钉钉通知
+            String targetState = AnalysisXML.getTypeTargetState(issue_Type);
+            String synCount = null;
+            long startDoc = System.currentTimeMillis();
+            jsonInfo.put("Project", project);
+            jsonInfo.put("Action", "CreationFail");
+            jsonInfo.put("D_Issue_ID", docIssueId);//SW_SID
+            jsonInfo.put("D_Item_ID", doc_SW_ID);//SW_ID
+            if ("add".equals(action_Type)) {//
+                List<Map<String, String>> docList = null;
+                docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, null);
+                long endDocQuery = System.currentTimeMillis();
+                if (docList == null || docList.isEmpty() || docList.size() == 0) {
+                    docId = createDoc(docJSON, SWSIDMap, mks);// 当前未创建，创建新的文档
+                    long endDocCreate = System.currentTimeMillis();
+                    log.info("创建文档" + docList.size() + "|| 花费时间：" + (endDocCreate - endDocQuery));
+                } else {
+                    branch = true;
+                    Map<String, String> origInfo = null;
+                    for (Map<String, String> docInfo : docList) {
+                        if (origInfo == null) {
                             origInfo = docInfo;
+                        } else {
+                            String createdDate = docInfo.get("Created Date");
+                            String orCreatedDate = origInfo.get("Created Date");
+                            Date target = new Date(createdDate);
+                            Date orgi = new Date(orCreatedDate);
+                            if (target.before(orgi)) {// 比对，获取最开始的一条数据
+                                origInfo = docInfo;
+                            }
                         }
                     }
+                    try {
+                        docId = mks.branchDocument(origInfo.get("ID"), project);
+                        /** 复用后更新文档SW_ID、SW_SID、ISSUEID等信息 */
+                        origInfo.put("ID", docId);
+                        updateDoc(origInfo, docJSON, false, true);
+                        /** 复用后更新文档SW_ID、SW_SID、ISSUEID等信息 */
+                        log.info("分支创建成功 ：" + project + " | " + docId);
+                        long endDocCreate = System.currentTimeMillis();
+                        log.info("创建文档分支" + docList.size() + "|| 花费时间：" + (endDocCreate - endDocQuery));
+                    } catch (APIException e) {
+                        docJSON = null;
+                        docId = null;
+                        action_Type = null;
+                        log.error("208 - 创建分支错误! " + APIExceptionUtil.getMsg(e));
+                        return jsonInfo;
+                    }
                 }
-                try {
-                    docId = mks.branchDocument(origInfo.get("ID"), project);
-                    /** 复用后更新文档SW_ID、SW_SID、ISSUEID等信息 */
-                    origInfo.put("ID", docId);
-                    updateDoc(origInfo, docJSON, false, true);
-                    /** 复用后更新文档SW_ID、SW_SID、ISSUEID等信息 */
-                    log.info("分支创建成功 ：" + project + " | " + docId);
-                    long endDocCreate = System.currentTimeMillis();
-                    log.info("创建文档分支" + docList.size() + "|| 花费时间：" + (endDocCreate - endDocQuery));
-                } catch (APIException e) {
-                    docJSON = null;
-                    docId = null;
-                    action_Type = null;
-                    log.error("208 - 创建分支错误! " + APIExceptionUtil.getMsg(e));
-                    return jsonInfo;
-                }
-            }
-            newDoc = true;
-        } else if ("update".equals(action_Type)) {
-            doc_SW_SID = docJSON.getString("Old_SW_SID");
-            List<Map<String, String>> docList = null;
-            long endDocQuery = 0;
-            docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, project);
-            endDocQuery = System.currentTimeMillis();
-            log.error("查询数据花费时间" + (endDocQuery - startDoc));
+                newDoc = true;
+            } else if ("update".equals(action_Type)) {
+                doc_SW_SID = docJSON.getString("Old_SW_SID");
+                List<Map<String, String>> docList = null;
+                long endDocQuery = 0;
+                docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, project);
+                endDocQuery = System.currentTimeMillis();
+                log.error("查询数据花费时间" + (endDocQuery - startDoc));
 
-            Map<String, String> docInfo = docList.get(0);
-            curState = docInfo.get("State");
-            // Component Requirement Specification Document判断时，如果已经处于Published状态，则允许更新
-            if (curState.equals(targetState) && Constants.DOC_PUBLISHED_STATE.equals(curState)) {
-                synCount = docInfo.get("SWR Synchronize Count");
+                Map<String, String> docInfo = docList.get(0);
+                curState = docInfo.get("State");
+                // Component Requirement Specification Document判断时，如果已经处于Published状态，则允许更新
+                if (curState.equals(targetState) && Constants.DOC_PUBLISHED_STATE.equals(curState)) {
+                    synCount = docInfo.get("SWR Synchronize Count");
+                }
+                docId = docInfo.get("ID");
+                updateDoc(docInfo, docJSON, false, true);
+                long endDocUpdate = System.currentTimeMillis();
+                log.info("创建文档" + docList.size() + "|| 花费时间：" + (endDocUpdate - endDocQuery));
             }
-            docId = docInfo.get("ID");
-            updateDoc(docInfo, docJSON, false, true);
-            long endDocUpdate = System.currentTimeMillis();
-            log.info("创建文档" + docList.size() + "|| 花费时间：" + (endDocUpdate - endDocQuery));
-        }
-        /** 如果是分支创建，文档分支创建成功后，需要将SW_SID-ALMID查询出来，进行处理 */
-        List<String> branchDeleIssueList = null;// 记录复用文档后，需要移除的数据
-        if (branch) {
-            try {
-                long branchStart = System.currentTimeMillis();
-                branchDeleIssueList = mks.getDocContents(docId, SWSIDMap);
-                long branchEnd = System.currentTimeMillis();
-                log.info("分支查询数据为： " + Arrays.asList(branchDeleIssueList));
-                log.info("分支条目查询|| 花费时间：" + (branchEnd - branchStart));
-            } catch (APIException e1) {
-                SWSIDMap = null;
-                contentsList = null;
-                docJSON = null;
-                SWJSONMap = null;
-                SWDealMap = null;
-                SWMap = null;
-                docId = null;
-                log.error("209 - 查询分支文档数据失败! " + APIExceptionUtil.getMsg(e1));
-                return jsonInfo;
-            }
-        }
-        /** 如果是分支创建，文档分支创建成功后，需要将SW_SID-ALMID查询出来，进行处理 */
-        /** 处理数据1 */
-        long contentStart = System.currentTimeMillis();
-        for (int i = 0; i < contentsList.size(); i++) {
-            try {
-                dealContentJson(contentsList.get(i), SWSIDMap, SWMap, SWDealMap, SWJSONMap, docId, branch, newDoc,
-                        branchDeleIssueList);
-            } catch (MsgArgumentException e) {
-                log.error("清理缓存！");
-                return jsonInfo;
-            } catch (APIException e) {
-                log.error("处理数据失败 201 - 处理数据失败! " + APIExceptionUtil.getMsg(e));
-                return jsonInfo;
-            }
-        }
-        long contentEnd = System.currentTimeMillis();
-        log.info(" 条目处理总花费  花费时间：" + (contentEnd - contentStart));
-        /** 处理追溯3 */
-        for (int i = 0; i < contentsList.size(); i++) {
-            JSONObject contentObj = contentsList.get(i);
-            try {
-                dealRelationship(contentObj, SWSIDMap, SWMap);
-                contentObj = null;// 处理完成，将此数据设置null
-            } catch (APIException e) {
-                contentObj = null;// 处理完成，将此数据设置null
-                return jsonInfo;
-            }
-        }
-        long tranceEnd = System.currentTimeMillis();
-        log.info(" 追溯处理总花费  花费时间：" + (tranceEnd - contentEnd));
-        /** 如果分支创建完成，需要删除结构的，进行结构删除。 */
-        if (branchDeleIssueList != null) {
-            for (String issueId : branchDeleIssueList) {
+            /** 如果是分支创建，文档分支创建成功后，需要将SW_SID-ALMID查询出来，进行处理 */
+            List<String> branchDeleIssueList = null;// 记录复用文档后，需要移除的数据
+            if (branch) {
                 try {
-                    mks.removecontent(issueId);
-                    mks.deleteissue(issueId);
-                } catch (APIException e) {
+                    long branchStart = System.currentTimeMillis();
+                    branchDeleIssueList = mks.getDocContents(docId, SWSIDMap);
+                    long branchEnd = System.currentTimeMillis();
+                    log.info("分支查询数据为： " + Arrays.asList(branchDeleIssueList));
+                    log.info("分支条目查询|| 花费时间：" + (branchEnd - branchStart));
+                } catch (APIException e1) {
                     SWSIDMap = null;
                     contentsList = null;
                     docJSON = null;
@@ -222,56 +174,108 @@ public class IntegrityUtil {
                     SWDealMap = null;
                     SWMap = null;
                     docId = null;
-                    log.error("210 - 删除条目失败! " + APIExceptionUtil.getMsg(e));
+                    log.error("209 - 查询分支文档数据失败! " + APIExceptionUtil.getMsg(e1));
                     return jsonInfo;
                 }
             }
-        }
-        long deleteEnd = System.currentTimeMillis();
-        log.info(" 删除多余条目处理总花费  花费时间：" + (deleteEnd - tranceEnd));
-        /** 如果分支创建完成，需要删除结构的，进行结构删除。 */
-        SWDealMap = null;// 置空，回收对象
-        SWJSONMap = null;// 置空，回收对象
-        SWSIDMap = null;// 置空，回收对象
-        contentsList = null;// 置空，回收对象
-        // 新增后修改状态为评审 in approve
-        log.info("数据下发完成 开始修改状态 Doc_id : " + docId);
-        String assignedUser = docJSON.getString("Assigned_User");
-        try {
-            Map<String, String> dataMap = new HashMap<String, String>();// 普通字段
-            log.info("curState: " + curState + "||targetState:" + targetState + "||synCount:" + synCount);
-            if (curState != null && curState.equals(targetState) && targetState.equals(Constants.DOC_PUBLISHED_STATE)) {
-                //当前状态等于目标状态 且目标状态为Published时，允许更新
-                Integer synCountInt = synCount != null ? Integer.valueOf(synCount) : 0;
-                synCountInt++;
-                dataMap.put("SWR Synchronize Count", String.valueOf(synCountInt));
-            } else {
-                dataMap.put("State", targetState);
+            /** 如果是分支创建，文档分支创建成功后，需要将SW_SID-ALMID查询出来，进行处理 */
+            /** 处理数据1 */
+            long contentStart = System.currentTimeMillis();
+            for (int i = 0; i < contentsList.size(); i++) {
+                try {
+                    dealContentJson(contentsList.get(i), SWSIDMap, SWMap, SWDealMap, SWJSONMap, docId, branch, newDoc,
+                            branchDeleIssueList);
+                } catch (MsgArgumentException e) {
+                    log.error("清理缓存！");
+                    return jsonInfo;
+                } catch (APIException e) {
+                    log.error("处理数据失败 201 - 处理数据失败! " + APIExceptionUtil.getMsg(e));
+                    return jsonInfo;
+                }
             }
-            dataMap.put("Assigned User", assignedUser);
-            mks.editIssue(docId, dataMap, new HashMap<String, String>());
-        } catch (APIException e) {
-            log.error("211 - 修改文档状态失败! " + APIExceptionUtil.getMsg(e));
-            return jsonInfo;
-        }
-        long editEnd = System.currentTimeMillis();
-        log.info(" 变更文档状态  花费时间：" + (editEnd - deleteEnd));
-        try {
-            String label = "Autobaseline:from SWR :" + doc_SW_ID;
-            log.info("基线标题===" + label + "|基线文档id===" + docId);
-            mks.createBaseLine(label, docId);// 自动创建基线信息
-            long labelEnd = System.currentTimeMillis();
-            log.info(" 自动添加文档基线  花费时间：" + (labelEnd - editEnd));
-        } catch (APIException e) {
-            // TODO Auto-generated catch block
-            SWSIDMap = null;
-            contentsList = null;
-            docJSON = null;
-            SWJSONMap = null;
-            SWDealMap = null;
-            SWMap = null;
-            docId = null;
-            log.error("210 - 文档基线创建失败! " + APIExceptionUtil.getMsg(e));
+            long contentEnd = System.currentTimeMillis();
+            log.info(" 条目处理总花费  花费时间：" + (contentEnd - contentStart));
+            /** 处理追溯3 */
+            for (int i = 0; i < contentsList.size(); i++) {
+                JSONObject contentObj = contentsList.get(i);
+                try {
+                    dealRelationship(contentObj, SWSIDMap, SWMap);
+                    contentObj = null;// 处理完成，将此数据设置null
+                } catch (APIException e) {
+                    contentObj = null;// 处理完成，将此数据设置null
+                    return jsonInfo;
+                }
+            }
+            long tranceEnd = System.currentTimeMillis();
+            log.info(" 追溯处理总花费  花费时间：" + (tranceEnd - contentEnd));
+            /** 如果分支创建完成，需要删除结构的，进行结构删除。 */
+            if (branchDeleIssueList != null) {
+                for (String issueId : branchDeleIssueList) {
+                    try {
+                        mks.removecontent(issueId);
+                        mks.deleteissue(issueId);
+                    } catch (APIException e) {
+                        SWSIDMap = null;
+                        contentsList = null;
+                        docJSON = null;
+                        SWJSONMap = null;
+                        SWDealMap = null;
+                        SWMap = null;
+                        docId = null;
+                        log.error("210 - 删除条目失败! " + APIExceptionUtil.getMsg(e));
+                        return jsonInfo;
+                    }
+                }
+            }
+            long deleteEnd = System.currentTimeMillis();
+            log.info(" 删除多余条目处理总花费  花费时间：" + (deleteEnd - tranceEnd));
+            /** 如果分支创建完成，需要删除结构的，进行结构删除。 */
+            SWDealMap = null;// 置空，回收对象
+            SWJSONMap = null;// 置空，回收对象
+            SWSIDMap = null;// 置空，回收对象
+            contentsList = null;// 置空，回收对象
+            // 新增后修改状态为评审 in approve
+            log.info("数据下发完成 开始修改状态 Doc_id : " + docId);
+            String assignedUser = docJSON.getString("Assigned_User");
+            try {
+                Map<String, String> dataMap = new HashMap<String, String>();// 普通字段
+                log.info("curState: " + curState + "||targetState:" + targetState + "||synCount:" + synCount);
+                if (curState != null && curState.equals(targetState) && targetState.equals(Constants.DOC_PUBLISHED_STATE)) {
+                    //当前状态等于目标状态 且目标状态为Published时，允许更新
+                    Integer synCountInt = synCount != null ? Integer.valueOf(synCount) : 0;
+                    synCountInt++;
+                    dataMap.put("SWR Synchronize Count", String.valueOf(synCountInt));
+                } else {
+                    dataMap.put("State", targetState);
+                }
+                dataMap.put("Assigned User", assignedUser);
+                mks.editIssue(docId, dataMap, new HashMap<String, String>());
+            } catch (APIException e) {
+                log.error("211 - 修改文档状态失败! " + APIExceptionUtil.getMsg(e));
+                return jsonInfo;
+            }
+            long editEnd = System.currentTimeMillis();
+            log.info(" 变更文档状态  花费时间：" + (editEnd - deleteEnd));
+            try {
+                String label = "Autobaseline:from SWR :" + doc_SW_ID;
+                log.info("基线标题===" + label + "|基线文档id===" + docId);
+                mks.createBaseLine(label, docId);// 自动创建基线信息
+                long labelEnd = System.currentTimeMillis();
+                log.info(" 自动添加文档基线  花费时间：" + (labelEnd - editEnd));
+            } catch (APIException e) {
+                // TODO Auto-generated catch block
+                SWSIDMap = null;
+                contentsList = null;
+                docJSON = null;
+                SWJSONMap = null;
+                SWDealMap = null;
+                SWMap = null;
+                docId = null;
+                log.error("210 - 文档基线创建失败! " + APIExceptionUtil.getMsg(e));
+                return jsonInfo;
+            }
+        } catch (Exception e) {
+            log.info("数据处理错误");
             return jsonInfo;
         }
         jsonInfo.put("Action", "CreationPass");
