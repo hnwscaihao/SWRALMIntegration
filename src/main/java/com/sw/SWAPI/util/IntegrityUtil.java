@@ -573,7 +573,7 @@ public class IntegrityUtil {
         String oldSWSID = jsonData.getString("Old_SW_SID");// 旧ID
         if (oldSWSID != null && !"".equals(oldSWSID)) {// OLD SW_SID不为空时，才需要移动
             String project = jsonData.getString("Project");// 文档id
-            String docType = jsonData.getString("issue_Type");
+            String docType = AnalysisXML.getAlmType(jsonData.getString("issue_Type"));
             String uuid = jsonData.getString("DOC_UUID");
             String issueType = docType.substring(0, docType.lastIndexOf(" "));
             String id = SWIDMap.get(oldSWSID);// 复用时，可以通过SW_SID - ALM ID
@@ -661,7 +661,7 @@ public class IntegrityUtil {
 //		log.info("-------------修改文档-----------");
         String SW_SID = jsonData.getString("SW_SID");
         String docId = docInfo.get("ID");
-        String issue_Type = jsonData.getString("issue_Type");// 创建文档类型或创建条目类型(创建时必须)
+        String issue_Type = AnalysisXML.getAlmType(jsonData.getString("issue_Type"));// 创建文档类型或创建条目类型(创建时必须)
         Map<String, String> docdataMap = new HashMap<String, String>();// 普通字段
         Map<String, String> docmap = new AnalysisXML().resultFile(issue_Type);
         for (String key : docmap.keySet()) {
@@ -712,7 +712,7 @@ public class IntegrityUtil {
                            String docId, boolean docChange, boolean dealDoc) throws MsgArgumentException, APIException {
         log.info("-------------新增条目-----------");
         verification(jsonData);
-        String docType = jsonData.getString("issue_Type");// 创建文档类型或创建条目类型(创建时必须)
+        String docType = AnalysisXML.getAlmType(jsonData.getString("issue_Type"));// 创建文档类型或创建条目类型(创建时必须)
         String SW_SID = jsonData.getString("SW_SID");
         String SW_ID = jsonData.getString("SW_ID");
         String project = jsonData.getString("Project");
@@ -988,7 +988,7 @@ public class IntegrityUtil {
     public String createDoc(JSONObject jsonData, Map<String, String> SWIDMap, MKSCommand mks) {
         log.info("-------------新增文档-----------");
         verification(jsonData);
-        String issue_Type = jsonData.getString("issue_Type");// 创建文档类型或创建条目类型(创建时必须)
+        String issue_Type = AnalysisXML.getAlmType(jsonData.getString("issue_Type"));// 创建文档类型或创建条目类型(创建时必须)
         String SW_SID = jsonData.getString("SW_SID");
         log.info("创建SW_SID : " + SW_SID);
         // 先判断是否创建过
@@ -1037,7 +1037,7 @@ public class IntegrityUtil {
     public String UpDoc(JSONObject jsonData, Map<String, String> SWIDMap, Map<String, List<String>> SWMap, String docId
             , boolean docChange, boolean dealDoc, List<String> changeList) throws MsgArgumentException, APIException {
         log.info("-------------修改条目-----------");
-        String doc_Type = jsonData.getString("issue_Type");
+        String doc_Type = AnalysisXML.getAlmType(jsonData.getString("issue_Type"));
         String issue_Type = doc_Type.substring(0, doc_Type.lastIndexOf(" "));
         Map<String, String> dataMap = new HashMap<String, String>();// 普通字段
         Map<String, String> richDataMap = new HashMap<String, String>();// 富文本字段
@@ -1192,7 +1192,7 @@ public class IntegrityUtil {
             log.info("Issue ID获取不到：" + SW_SID);
             return;// 获取不到issueID
         }
-        String doc_Type = jsonData.getString("issue_Type");
+        String doc_Type = AnalysisXML.getAlmType(jsonData.getString("issue_Type"));
         String issue_Type = doc_Type.substring(0, doc_Type.lastIndexOf(" "));
         String project = jsonData.getString("Project");// 所属项目
         /** Modify By Cai Hao, 添加关联关系 */
@@ -1452,7 +1452,7 @@ public class IntegrityUtil {
             /** 变更更新文档数据 */
             String doc_SW_SID = jsonData.getString("Old_SW_SID");
             List<Map<String, String>> docList = null;
-            String issue_Type = jsonData.getString("issue_Type");
+            String issue_Type = AnalysisXML.getAlmType(jsonData.getString("issue_Type"));
             String project = jsonData.getString("Project");
             try {
                 docList = mks.queryDocByQuery(doc_SW_SID, issue_Type, project);

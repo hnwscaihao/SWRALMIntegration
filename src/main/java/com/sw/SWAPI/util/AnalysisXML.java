@@ -44,7 +44,7 @@ public class AnalysisXML {
                 Element stu = (Element) iterator.next();
                 List<Attribute> attributes = stu.attributes();
 //               System.out.println("======获取属性值======");
-                if (stu.attribute("swr").getValue().equals(type1)) {
+                if (stu.attribute("swr").getValue().equals(type1)||stu.attribute("alm").getValue().equals(type1)) {
                     Iterator iterator1 = stu.elementIterator();
 
                     while (iterator1.hasNext()) {
@@ -100,7 +100,7 @@ public class AnalysisXML {
                 List<Attribute> attributes = stu.attributes();
 //               System.out.println("======获取属性值======");
                 String s = "";
-                if (stu.attribute("swr").getValue().equals(type)) {
+                if (stu.attribute("swr").getValue().equals(type) || stu.attribute("alm").getValue().equals(type)) {
                     Iterator iterator1 = stu.elementIterator();
 
                     while (iterator1.hasNext()) {
@@ -136,7 +136,7 @@ public class AnalysisXML {
                 Element stu = (Element) iterator.next();
                 List<Attribute> attributes = stu.attributes();
 //               System.out.println("======获取属性值======");
-                if (stu.attribute("swr").getValue().equals(type)) {
+                if (stu.attribute("swr").getValue().equals(type) || stu.attribute("alm").getValue().equals(type)) {
                     for (Attribute attribute : attributes) {
                         if (attribute.getName().equals("alm")) {
                             s = attribute.getValue();
