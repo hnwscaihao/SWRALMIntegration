@@ -4,6 +4,7 @@ package com.sw.SWAPI.util;
 import com.alibaba.fastjson.JSONObject;
 import com.mks.api.*;
 import com.mks.api.response.*;
+import com.sw.SWAPI.Error.MsgArgumentException;
 import com.sw.SWAPI.controller.AlmController;
 import com.sw.SWAPI.damain.Project;
 import com.sw.SWAPI.damain.User;
@@ -727,6 +728,79 @@ public class MKSCommand {
             value = FORMAT.format(new Date(value));
         }
         return value;
+    }
+
+    public void updateUserInfo(JSONObject user, CmdRunner cmdRunner) throws APIException {
+        //判断数据是否合法
+        String id = user.getString("id");
+        if ("".equals(id)) {
+            logger.error("id不能为空!");
+            throw new MsgArgumentException("202", "id不能为空!");
+        }
+        String name = user.getString("name");
+        if ("".equals(name)) {
+            logger.error("name不能为空!");
+            throw new MsgArgumentException("202", "name不能为空!");
+        }
+        String email = user.getString("email");
+        if ("".equals(email)) {
+            logger.error("email不能为空!");
+            throw new MsgArgumentException("202", "email不能为空!");
+        }
+        String password = user.getString("password");
+        if ("".equals(password)) {
+            logger.error("password不能为空!");
+            throw new MsgArgumentException("202", "password不能为空!");
+        }
+        //查询是否存在
+        Command cmd = new Command(Command.AA, "users");
+        cmd.addOption(new Option("user", "admin"));
+        Response res;
+        if (cmdRunner != null) {
+            res = cmdRunner.execute(cmd);
+        } else {
+            res = conn.execute(cmd);
+        }
+        List<String> usersId = new ArrayList<>();
+        if (res != null) {
+            WorkItemIterator wi = res.getWorkItems();
+            while (wi.hasNext()) {
+                WorkItem it = wi.next();
+                usersId.add(it.getId());
+            }
+        }
+        logger.warn("usersId个数:" + usersId.size());
+        if (usersId.contains(id)) {
+            //更新
+            logger.info("更新id：" + id);
+            Command command = new Command(Command.INTEGRITY, "editmksdomainuser");
+            command.addOption(new Option("email", email));
+            command.addOption(new Option("fullName", name));
+            command.addOption(new Option("userPassword", password));
+            command.addSelection(id);
+            if (cmdRunner != null) {
+                Response execute = cmdRunner.execute(command);
+                logger.info("测试环境更新完成:" + id);
+            } else {
+                conn.execute(command);
+                logger.info("正式环境更新完成:" + id);
+            }
+        } else {
+            //新增
+            logger.info("新增id：" + id);
+            Command command = new Command(Command.INTEGRITY, "createmksdomainuser");
+            command.addOption(new Option("email", email));
+            command.addOption(new Option("fullName", name));
+            command.addOption(new Option("userPassword", password));
+            command.addOption(new Option("loginID", id));
+            if (cmdRunner != null) {
+                cmdRunner.execute(command);
+                logger.info("测试环境更新完成:" + id);
+            } else {
+                conn.execute(command);
+                logger.info("正式环境更新完成:" + id);
+            }
+        }
     }
 
     public String getUserNames(List<String> userIds) throws APIException {

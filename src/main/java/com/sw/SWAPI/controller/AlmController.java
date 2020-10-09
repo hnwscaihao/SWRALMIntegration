@@ -2,6 +2,10 @@ package com.sw.SWAPI.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mks.api.CmdRunner;
+import com.mks.api.IntegrationPoint;
+import com.mks.api.IntegrationPointFactory;
+import com.mks.api.Session;
 import com.mks.api.response.APIException;
 import com.sw.SWAPI.Error.MsgArgumentException;
 import com.sw.SWAPI.damain.Project;
@@ -34,6 +38,8 @@ public class AlmController {
 
     @Value("${token}")
     private String token;
+    @Value("${ce_host}")
+    private String ce_host;
 
     private MKSCommand mks;
 
@@ -188,7 +194,7 @@ public class AlmController {
                 return ResultJson("data", info);
             }
             try {
-            	IntegrityCallable call = new IntegrityCallable(listData);
+                IntegrityCallable call = new IntegrityCallable(listData);
                 Thread t = new Thread(call);
                 t.start();
             } catch (Exception e) {
@@ -211,6 +217,46 @@ public class AlmController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", ResultJson("DOC_ID", util.changeExecution(jsonData)));
         log.info("变更完成：");
+        return jsonObject;
+    }
+
+    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
+    public JSONObject updateUserInfo(@RequestBody JSONObject jsonData) {
+        getToken(jsonData.getString("Access_Token"));
+        JSONArray users = jsonData.getJSONArray("Users");
+        //生产环境
+        if (mks == null) {
+            mks = new MKSCommand();
+        }
+        try {
+            for (Object user : users) {
+                mks.updateUserInfo((JSONObject) JSONObject.toJSON(user), null);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new MsgArgumentException("202", e.getMessage());
+        }
+        //测试环境
+        try {
+            IntegrationPointFactory instance = IntegrationPointFactory.getInstance();
+            IntegrationPoint mksIp = instance.createIntegrationPoint(ce_host, 7001, 4, 16);
+            Session session = mksIp.createSession("admin", "admin");
+            CmdRunner cmdRunner = session.createCmdRunner();
+            cmdRunner.setDefaultHostname(ce_host);
+            cmdRunner.setDefaultPort(7001);
+            cmdRunner.setDefaultUsername("admin");
+            cmdRunner.setDefaultPassword("admin");
+            for (Object user : users) {
+                mks.updateUserInfo((JSONObject) JSONObject.toJSON(user), cmdRunner);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new MsgArgumentException("203", e.getMessage());
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", "200");
+        jsonObject.put("message", "success");
         return jsonObject;
     }
 
