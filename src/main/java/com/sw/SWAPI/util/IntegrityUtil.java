@@ -87,7 +87,7 @@ public class IntegrityUtil {
             String doc_SW_SID = docJSON.getString("SW_SID");
             String docIssueId = docJSON.getString("issue_id");
             String doc_SW_ID = docJSON.getString("SW_ID");
-            String issue_Type = docJSON.getString("issue_Type");
+            String issue_Type = AnalysisXML.getAlmType(docJSON.getString("issue_Type"));
             String curState = null;//原始文档状态，判断Component Requirement Specification Document在Published时 也要能修改数据，同时触发钉钉通知
             String targetState = AnalysisXML.getTypeTargetState(issue_Type);
             String synCount = null;
@@ -291,7 +291,7 @@ public class IntegrityUtil {
         String project = docJSON.getString("Project");
         String Document_Short_Title = docJSON.getString("item_name");
         String doc_SW_SID = docJSON.getString("SW_SID");
-        String issue_Type = docJSON.getString("issue_Type");
+        String issue_Type = AnalysisXML.getAlmType(docJSON.getString("issue_Type"));
         String targetState = AnalysisXML.getTypeTargetState(issue_Type);
         List<Map<String, String>> docList = null;
         String verificationDoc = verification(docJSON);
