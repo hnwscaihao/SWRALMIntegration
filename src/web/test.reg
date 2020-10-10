@@ -1,0 +1,15 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\openupload]
+@="URL:openupload Protocol"
+"URL Protocol"=""
+
+[HKEY_CLASSES_ROOT\openupload\DefaultIcon]
+@="cmd.exe,1"
+
+[HKEY_CLASSES_ROOT\openupload\shell]
+
+[HKEY_CLASSES_ROOT\openupload\shell\open]
+
+[HKEY_CLASSES_ROOT\openupload\shell\open\command]
+@="cmd /c integrity gui --hostname=192.168.6.130 --port=7001 --user=admin --password=admin"
