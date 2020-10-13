@@ -38,8 +38,6 @@ public class AlmController {
 
     @Value("${token}")
     private String token;
-    @Value("${ce_host}")
-    private String ce_host;
 
     private MKSCommand mks;
 
@@ -237,21 +235,16 @@ public class AlmController {
             throw new MsgArgumentException("202", e.getMessage());
         }
         //测试环境
+        CmdRunner cmdRunner = mks.getCmdRunner();
         try {
-            IntegrationPointFactory instance = IntegrationPointFactory.getInstance();
-            IntegrationPoint mksIp = instance.createIntegrationPoint(ce_host, 7001, 4, 16);
-            Session session = mksIp.createSession("admin", "admin");
-            CmdRunner cmdRunner = session.createCmdRunner();
-            cmdRunner.setDefaultHostname(ce_host);
-            cmdRunner.setDefaultPort(7001);
-            cmdRunner.setDefaultUsername("admin");
-            cmdRunner.setDefaultPassword("admin");
             for (Object user : users) {
                 mks.updateUserInfo((JSONObject) JSONObject.toJSON(user), cmdRunner);
             }
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new MsgArgumentException("203", e.getMessage());
+        }finally {
+            mks.closeCmdRunner(cmdRunner);
         }
 
         JSONObject jsonObject = new JSONObject();

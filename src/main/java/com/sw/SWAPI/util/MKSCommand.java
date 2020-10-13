@@ -14,6 +14,7 @@ import connect.Connection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
@@ -80,6 +81,45 @@ public class MKSCommand {
         APIMajor = Integer.parseInt(args[4]);
         APIMinor = Integer.parseInt(args[5]);
         createSession();
+    }
+
+    public CmdRunner getCmdRunner() {
+        try {
+            Properties prop = new Properties();
+            prop.load(MKSCommand.class.getClassLoader().getSystemResourceAsStream("sw.properties"));
+            String ce_host = prop.getProperty("ce_host");
+            String user = prop.getProperty("ce_user");
+            String password = prop.getProperty("ce_password");
+            IntegrationPointFactory instance = IntegrationPointFactory.getInstance();
+            IntegrationPoint mksIp = instance.createIntegrationPoint(ce_host, port, APIMajor, APIMinor);
+            Session session = mksIp.createSession(user, password);
+            CmdRunner cmdRunner = session.createCmdRunner();
+            cmdRunner.setDefaultHostname(ce_host);
+            cmdRunner.setDefaultPort(port);
+            cmdRunner.setDefaultUsername(user);
+            cmdRunner.setDefaultPassword(password);
+            return cmdRunner;
+        } catch (Exception e) {
+            logger.info("错误：" + e.getMessage());
+        }
+        return null;
+    }
+
+    public void closeCmdRunner(CmdRunner cmdRunner) {
+        try {
+            Properties prop = new Properties();
+            prop.load(MKSCommand.class.getClassLoader().getSystemResourceAsStream("sw.properties"));
+            String ce_host = prop.getProperty("ce_host");
+            String user = prop.getProperty("ce_user");
+            Command cmd = new Command("aa", "disconnect");
+            cmd.addOption(new Option("hostname", ce_host));
+            cmd.addOption(new Option("port", String.valueOf(port)));
+            cmd.addOption(new Option("user", user));
+            cmdRunner.execute(cmd);
+            logger.info("断开链接," + ce_host + ":" + port);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
     }
 
 
@@ -779,7 +819,7 @@ public class MKSCommand {
             command.addOption(new Option("userPassword", password));
             command.addSelection(id);
             if (cmdRunner != null) {
-                Response execute = cmdRunner.execute(command);
+                cmdRunner.execute(command);
                 logger.info("测试环境更新完成:" + id);
             } else {
                 conn.execute(command);
