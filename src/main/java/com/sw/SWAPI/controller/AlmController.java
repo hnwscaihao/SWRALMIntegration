@@ -199,7 +199,6 @@ public class AlmController {
                 log.error("多线程错误：" + e.getMessage());
                 throw new MsgArgumentException("210", e.getMessage());
             }
-            log.info("返");
         } else {
             log.info("-------------数据下发 缓存中 UUID " + docUUID + "-------------");
             MapCache.cacheVal(docUUID, jsonData);
@@ -243,7 +242,7 @@ public class AlmController {
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new MsgArgumentException("203", e.getMessage());
-        }finally {
+        } finally {
             mks.closeCmdRunner(cmdRunner);
         }
 
