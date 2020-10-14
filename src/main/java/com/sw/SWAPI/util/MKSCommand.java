@@ -1575,6 +1575,7 @@ public class MKSCommand {
         for (String field : fields) {
             mv.add(field);
         }
+        mv.add("isActive");//判断是否失效
         Option op = new Option("fields", mv);
         cmd.addOption(op);
 
@@ -1584,18 +1585,20 @@ public class MKSCommand {
         while (it.hasNext()) {
             Project project = new Project();
             WorkItem wi = it.next();
-            for (String field : fields) {
-                if (field.contains("::")) {
-                    field = field.split("::")[0];
-                }
-                String value = wi.getField(field).getValueAsString();
-                if (field.equals("name")) {
-                    project.setProject(value);
-                } else if (field.equals("backingIssueID")) {
-                    project.setPID(value);
-                }
-            }
-            list.add(project);
+            if(wi.getField("isActive").getValueAsString().equalsIgnoreCase("true")) {
+            	 for (String field : fields) {
+                     if (field.contains("::")) {
+                         field = field.split("::")[0];
+                     }
+                     String value = wi.getField(field).getValueAsString();
+                     if (field.equals("name")) {
+                         project.setProject(value);
+                     } else if (field.equals("backingIssueID")) {
+                         project.setPID(value);
+                     }
+                 }
+                 list.add(project);
+			}
         }
         return list;
     }
