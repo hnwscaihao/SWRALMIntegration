@@ -1,6 +1,7 @@
 package com.sw.SWAPI.util;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mks.api.*;
 import com.mks.api.response.*;
@@ -852,6 +853,20 @@ public class MKSCommand {
         }
     }
 
+    public void deleteUsers(JSONArray userIds, CmdRunner cmdRunner) throws APIException {
+        for (Object userId : userIds) {
+            Command command = new Command(Command.INTEGRITY, "deletemksdomainuser");
+            command.addSelection(String.valueOf(userId));
+            if (cmdRunner != null) {
+                cmdRunner.execute(command);
+                logger.info("测试环境删除完成:" + userId);
+            } else {
+                conn.execute(command);
+                logger.info("正式环境删除完成:" + userId);
+            }
+        }
+    }
+
     public String getUserNames(List<String> userIds) throws APIException {
         String user = "";
         if (userIds != null && userIds.size() > 0) {
@@ -1594,20 +1609,20 @@ public class MKSCommand {
         while (it.hasNext()) {
             Project project = new Project();
             WorkItem wi = it.next();
-            if(wi.getField("isActive").getValueAsString().equalsIgnoreCase("true")) {
-            	 for (String field : fields) {
-                     if (field.contains("::")) {
-                         field = field.split("::")[0];
-                     }
-                     String value = wi.getField(field).getValueAsString();
-                     if (field.equals("name")) {
-                         project.setProject(value);
-                     } else if (field.equals("backingIssueID")) {
-                         project.setPID(value);
-                     }
-                 }
-                 list.add(project);
-			}
+            if (wi.getField("isActive").getValueAsString().equalsIgnoreCase("true")) {
+                for (String field : fields) {
+                    if (field.contains("::")) {
+                        field = field.split("::")[0];
+                    }
+                    String value = wi.getField(field).getValueAsString();
+                    if (field.equals("name")) {
+                        project.setProject(value);
+                    } else if (field.equals("backingIssueID")) {
+                        project.setPID(value);
+                    }
+                }
+                list.add(project);
+            }
         }
         return list;
     }

@@ -252,6 +252,40 @@ public class AlmController {
         return jsonObject;
     }
 
+    @RequestMapping(value = "deleteUsers", method = RequestMethod.POST)
+    public JSONObject deleteUsers(@RequestBody JSONObject jsonData) {
+        getToken(jsonData.getString("Access_Token"));
+        JSONArray userIds = jsonData.getJSONArray("UserId");
+        if (!(userIds.size() > 0)) {
+            log.error("删除的id不能为空!");
+            throw new MsgArgumentException("202", "删除的id不能为空!");
+        }
+        //生产环境
+        if (mks == null) {
+            mks = new MKSCommand();
+        }
+        try {
+            mks.deleteUsers(userIds, null);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new MsgArgumentException("202", e.getMessage());
+        }
+        //测试环境
+        CmdRunner cmdRunner = mks.getCmdRunner();
+        try {
+            mks.deleteUsers(userIds, cmdRunner);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new MsgArgumentException("203", e.getMessage());
+        } finally {
+            mks.closeCmdRunner(cmdRunner);
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", "200");
+        jsonObject.put("message", "success");
+        return jsonObject;
+    }
 
     /**
      * token验证
