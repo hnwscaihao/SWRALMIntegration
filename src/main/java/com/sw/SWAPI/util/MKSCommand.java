@@ -830,14 +830,16 @@ public class MKSCommand {
                 logger.error("password不能为空!");
                 throw new MsgArgumentException("202", "password不能为空!");
             }
+            if ("".equals(name)) {
+                logger.error("name不能为空!");
+                throw new MsgArgumentException("202", "name不能为空!");
+            }
             logger.info("新增id：" + id);
             Command command = new Command(Command.INTEGRITY, "createmksdomainuser");
             if (!"".equals(email)) {
                 command.addOption(new Option("email", email));
             }
-            if (!"".equals(name)) {
-                command.addOption(new Option("fullName", name));
-            }
+            command.addOption(new Option("fullName", name));
             command.addOption(new Option("userPassword", password));
             command.addOption(new Option("loginID", id));
             if (cmdRunner != null) {
