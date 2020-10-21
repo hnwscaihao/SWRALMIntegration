@@ -778,20 +778,9 @@ public class MKSCommand {
             throw new MsgArgumentException("202", "id不能为空!");
         }
         String name = user.getString("name");
-        if ("".equals(name)) {
-            logger.error("name不能为空!");
-            throw new MsgArgumentException("202", "name不能为空!");
-        }
         String email = user.getString("email");
-        if ("".equals(email)) {
-            logger.error("email不能为空!");
-            throw new MsgArgumentException("202", "email不能为空!");
-        }
         String password = user.getString("password");
-        if ("".equals(password)) {
-            logger.error("password不能为空!");
-            throw new MsgArgumentException("202", "password不能为空!");
-        }
+
         //查询是否存在
         Command cmd = new Command(Command.AA, "users");
         cmd.addOption(new Option("user", "admin"));
@@ -814,9 +803,19 @@ public class MKSCommand {
             //更新
             logger.info("更新id：" + id);
             Command command = new Command(Command.INTEGRITY, "editmksdomainuser");
-            command.addOption(new Option("email", email));
-            command.addOption(new Option("fullName", name));
-            command.addOption(new Option("userPassword", password));
+            if ("".equals(email) && "".equals(name) && "".equals(password)) {
+                logger.error("email,name,password 需有一个有值!");
+                throw new MsgArgumentException("202", "email,name,password 需有一个有值!");
+            }
+            if (!"".equals(email)) {
+                command.addOption(new Option("email", email));
+            }
+            if (!"".equals(name)) {
+                command.addOption(new Option("fullName", name));
+            }
+            if (!"".equals(password)) {
+                command.addOption(new Option("userPassword", password));
+            }
             command.addSelection(id);
             if (cmdRunner != null) {
                 cmdRunner.execute(command);
@@ -827,10 +826,18 @@ public class MKSCommand {
             }
         } else {
             //新增
+            if ("".equals(password)) {
+                logger.error("password不能为空!");
+                throw new MsgArgumentException("202", "password不能为空!");
+            }
             logger.info("新增id：" + id);
             Command command = new Command(Command.INTEGRITY, "createmksdomainuser");
-            command.addOption(new Option("email", email));
-            command.addOption(new Option("fullName", name));
+            if (!"".equals(email)) {
+                command.addOption(new Option("email", email));
+            }
+            if (!"".equals(name)) {
+                command.addOption(new Option("fullName", name));
+            }
             command.addOption(new Option("userPassword", password));
             command.addOption(new Option("loginID", id));
             if (cmdRunner != null) {
