@@ -39,6 +39,12 @@ public class AlmController {
     @Value("${token}")
     private String token;
 
+    @Value("${host}")
+    private String host;
+
+    @Value("${ce_host}")
+    private String ce_host;
+
     private MKSCommand mks;
 
     private IntegrityUtil util = new IntegrityUtil();
@@ -233,17 +239,21 @@ public class AlmController {
             log.error(e.getMessage());
             throw new MsgArgumentException("202", e.getMessage());
         }
-        //测试环境
-        CmdRunner cmdRunner = mks.getCmdRunner();
-        try {
-            for (Object user : users) {
-                mks.updateUserInfo((JSONObject) JSONObject.toJSON(user), cmdRunner);
+        log.info("正式：" + host);
+        log.info("测试：" + ce_host);
+        if (!host.equals(ce_host)) {
+            //测试环境
+            CmdRunner cmdRunner = mks.getCmdRunner();
+            try {
+                for (Object user : users) {
+                    mks.updateUserInfo((JSONObject) JSONObject.toJSON(user), cmdRunner);
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new MsgArgumentException("203", e.getMessage());
+            } finally {
+                mks.closeCmdRunner(cmdRunner);
             }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new MsgArgumentException("203", e.getMessage());
-        } finally {
-            mks.closeCmdRunner(cmdRunner);
         }
 
         JSONObject jsonObject = new JSONObject();
@@ -270,17 +280,20 @@ public class AlmController {
             log.error(e.getMessage());
             throw new MsgArgumentException("202", e.getMessage());
         }
-        //测试环境
-        CmdRunner cmdRunner = mks.getCmdRunner();
-        try {
-            mks.deleteUsers(userIds, cmdRunner);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new MsgArgumentException("203", e.getMessage());
-        } finally {
-            mks.closeCmdRunner(cmdRunner);
+        log.info("正式：" + host);
+        log.info("测试：" + ce_host);
+        if (!host.equals(ce_host)) {
+            //测试环境
+            CmdRunner cmdRunner = mks.getCmdRunner();
+            try {
+                mks.deleteUsers(userIds, cmdRunner);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new MsgArgumentException("203", e.getMessage());
+            } finally {
+                mks.closeCmdRunner(cmdRunner);
+            }
         }
-
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", "200");
         jsonObject.put("message", "success");
