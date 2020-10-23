@@ -1990,7 +1990,7 @@ public class MKSCommand {
         StringBuffer queryDefinition = new StringBuffer("((");
         for (int i = 0; i < SW_IDList.size(); i++) {
             String SW_ID = SW_IDList.get(i);
-            queryDefinition.append("(field[SW_ID] contains " + SW_ID + ")");
+            queryDefinition.append("(field[SW_ID] contains LIKE" + SW_ID + ")");
             if (i < SW_IDList.size() - 1) {
                 queryDefinition.append(" or ");
             }
@@ -2026,7 +2026,7 @@ public class MKSCommand {
         StringBuffer queryDefinition = new StringBuffer("( (");
         for (int i = 0; i < SW_IDList.size(); i++) {
             String SW_ID = SW_IDList.get(i);
-            queryDefinition.append("(field[SW_ID] contains " + SW_ID + ") ");
+            queryDefinition.append("(field[SW_ID] contains LIKE" + SW_ID + ") ");
             if (i < SW_IDList.size() - 1) {
                 queryDefinition.append(" or ");
             }
@@ -2066,7 +2066,7 @@ public class MKSCommand {
         StringBuffer queryDefinition = new StringBuffer("((");
         for (int i = 0; i < SW_IDList.size(); i++) {
             String SW_ID = SW_IDList.get(i);
-            queryDefinition.append("(field[SW_ID] contains " + SW_ID + ")");
+            queryDefinition.append("(field[SW_ID] contains LIKE" + SW_ID + ")");
             if (i < SW_IDList.size() - 1) {
                 queryDefinition.append(" or ");
             }
@@ -2123,7 +2123,7 @@ public class MKSCommand {
     }
 
     public List<Map<String, String>> queryDocByQuery(String doc_SW_SID, String issue_Type, String project) throws APIException {
-        StringBuffer queryDifinition = new StringBuffer("( (field[SW_SID] contains " + doc_SW_SID + ") ");
+        StringBuffer queryDifinition = new StringBuffer("( (field[SW_SID] contains LIKE" + doc_SW_SID + ") ");
         if (project != null && !"".equals(project)) {
             queryDifinition.append("and (field[Project] = " + project + ") ");
         }
@@ -2270,7 +2270,7 @@ public class MKSCommand {
         OptionList ol = new OptionList();
         Option op = new Option("fields", mv);
         ol.add(op);
-        StringBuffer queryDefinition = new StringBuffer("( (field[SW_SID] contains " + SW_SIDVal + ") ");
+        StringBuffer queryDefinition = new StringBuffer("( (field[SW_SID] contains LIKE" + SW_SIDVal + ") ");
         if (project != null && !"".equals(project)) {
             queryDefinition.append("and (field[Project]=" + project + ") ");
         }
