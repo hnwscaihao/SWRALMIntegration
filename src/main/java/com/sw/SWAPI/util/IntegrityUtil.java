@@ -56,10 +56,25 @@ public class IntegrityUtil {
     public static String SW_HOST = null;
     public static String URL = null;
     private static CloseableHttpClient client = null;
+
     /**
      * 文件临时路径
      */
-    private String filePath = "C:\\\\Program Files\\\\Integrity\\\\ILMServer12\\\\data\\\\tmp";
+    //private String filePath = "C:\\\\Program Files\\\\Integrity\\\\ILMServer12\\\\data\\\\tmp";
+    private String filePath = null;
+
+    public IntegrityUtil() {
+        try {
+            InputStream is = IntegrityUtil.class.getClassLoader().getSystemResourceAsStream("sw.properties");
+            Properties properties = new Properties();
+            properties.load(is);
+            log.info("文件路径："+properties.getProperty("filePath"));
+            this.filePath = properties.getProperty("filePath");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
 
     @SuppressWarnings("deprecation")
     public JSONObject dealData(List<JSONObject> listData) throws APIException {
