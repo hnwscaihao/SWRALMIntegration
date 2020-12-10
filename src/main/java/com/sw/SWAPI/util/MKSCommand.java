@@ -782,6 +782,12 @@ public class MKSCommand {
         return value;
     }
 
+    /**
+     * 更新用户信息
+     * @param user
+     * @param cmdRunner
+     * @throws APIException
+     */
     public void updateUserInfo(JSONObject user, CmdRunner cmdRunner) throws APIException {
         //判断数据是否合法
         String id = user.getString("id");
@@ -863,6 +869,12 @@ public class MKSCommand {
         }
     }
 
+    /**
+     * 删除用户
+     * @param userIds
+     * @param cmdRunner
+     * @throws APIException
+     */
     public void deleteUsers(JSONArray userIds, CmdRunner cmdRunner) throws APIException {
         for (Object userId : userIds) {
             Command command = new Command(Command.INTEGRITY, "deletemksdomainuser");
