@@ -1,8 +1,9 @@
 package com.sw.SWAPI.util;
+
 /**
- * 附件PO对象
- * @author WangWei
- * @time 2018年1月9日 下午1:55:18
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 附件信息
  */
 public class Attachment {
 	private String name;//name

@@ -6,11 +6,12 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import com.sw.SWAPI.damain.ConfigureField;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.mks.api.response.APIException;
+import com.sw.SWAPI.damain.ConfigureField;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -134,11 +135,11 @@ public class IntegrityFactory {
 	}
 
 	public void setHost(String host) {
-		this.host = host;
+		IntegrityFactory.host = host;
 	}
 
 	public void setPort(int port) {
-		this.port = port;
+		IntegrityFactory.port = port;
 	}
 
 	public String getHost() {

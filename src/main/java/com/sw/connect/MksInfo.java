@@ -1,5 +1,10 @@
 package com.sw.connect;
 
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 连接信息类
+ */
 public class MksInfo {
 
 	private String host;

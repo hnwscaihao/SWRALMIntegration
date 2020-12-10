@@ -12,19 +12,26 @@ import org.seimicrawler.xpath.JXDocument;
 import org.seimicrawler.xpath.JXNode;
 
 import java.io.*;
-import java.util.List;
 
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 将System Weaver传递的RTF文件转换为Html富文本信息
+ */
 public class ConvertRTFToHtml {
 
 	private ActiveXComponent word ;
 	
 	/** 图片附件路径*/
 	private static String imgSrc = "mks:///item/field?fieldid=Text Attachments&attachmentname=";
-	
-    public static void main(String[] args) throws IOException {
-    }
-
-    public String RTFToHtml(String inPath,String toPath){
+    /**
+     * 将RTF转换为Html
+     * @param inPath
+     * @param toPath
+     * @return
+     */
+    @SuppressWarnings("unused")
+	public String RTFToHtml(String inPath,String toPath){
         ComThread.InitSTA();
         if(word == null || word.m_pDispatch == 0){
             word = new ActiveXComponent("KWPS.Application");
@@ -35,7 +42,6 @@ public class ConvertRTFToHtml {
                 new Object[] { inPath, new Variant(false), new Variant(true) }, new int[1]).toDispatch();
         Dispatch.invoke(doc, "SaveAs", Dispatch.Method, new Object[] { toPath, new Variant(10) }, new int[1]); // 这里的new
         Variant f = new Variant(false);
-//        ComThread.Release();
 
         try {
             File file = new File(toPath+".htm");
@@ -50,8 +56,13 @@ public class ConvertRTFToHtml {
         return toPath+".htm";
     }
 
-    //获取的输入流保存在本地
-    public static String sc(InputStream is,String outfile){
+    /**
+     * 将数据保存到本地
+     * @param is
+     * @param outfile
+     * @return
+     */
+    public static void saveData2File(InputStream is,String outfile){
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(outfile);
@@ -69,16 +80,15 @@ public class ConvertRTFToHtml {
                 e.printStackTrace();
             }
         }
-
-        return "0";
     }
 
     /**
-     * 解析html文件
+     * 读取Html文件
+     * @param path
      * @return
+     * @throws IOException
      */
     public String readHtml(String path) throws IOException {
-//        JXDocument underTest = JXDocument.create(path);
         Document document = Jsoup.parse(new File(path), "GBK");
         dealImg(document);//处理图片信息
         JXDocument jxDocument = JXDocument.create(document);
@@ -91,7 +101,6 @@ public class ConvertRTFToHtml {
     
     /**
 	 * 处理图片，更换路径 
-	 * 
 	 * @param doc
 	 * @throws Exception
 	 */

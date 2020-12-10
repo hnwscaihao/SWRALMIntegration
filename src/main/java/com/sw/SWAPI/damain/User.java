@@ -2,6 +2,11 @@ package com.sw.SWAPI.damain;
 
 import lombok.Data;
 
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 用户信息类
+ */
 @Data
 public class User {
 

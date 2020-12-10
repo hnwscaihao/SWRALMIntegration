@@ -12,6 +12,11 @@ import org.apache.commons.logging.LogFactory;
 
 import com.mks.api.response.APIException;
 
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 连接Factory
+ */
 public class IntegrityFactory {
 
 	private static Log log = LogFactory.getLog(IntegrityFactory.class);

@@ -1,48 +1,47 @@
 package com.sw.SWAPI.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
 import java.util.*;
 
-/*
- *Dom4j解析xml
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 解析XML配置
  */
 public class AnalysisXML {
-
-    private static final Log log = LogFactory.getLog(AnalysisXML.class);
 
     public static Map<String, String> relationshipMap = new HashMap<String, String>();
 
     private final static String SPLIT_FLAG = "|q|q|";
 
-    public String resultCategory(String type1, String type2) {
+    /**
+     * 获取Category值
+     * @param type1
+     * @param type2
+     * @return String
+     */
+    @SuppressWarnings("rawtypes")
+	public String resultCategory(String type1, String type2) {
         String s = "";
         // 1.创建Reader对象
         SAXReader reader = new SAXReader();
         // 2.加载xml
         Document document = null;
-        SAXReader saxReader = new SAXReader();
         try {
-
             // 返回读取指定资源的输入流
-            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("Category.xml");
-//           writeToLocal(pathxml,in);
+            InputStream in = ClassLoader.getSystemResourceAsStream("Category.xml");
             document = reader.read(in);
-
             // 3.获取根节点
             Element rootElement = document.getRootElement();
             Iterator iterator = rootElement.elementIterator();
             while (iterator.hasNext()) {
                 Element stu = (Element) iterator.next();
-                List<Attribute> attributes = stu.attributes();
 //               System.out.println("======获取属性值======");
                 if (stu.attribute("swr").getValue().equals(type1)||stu.attribute("alm").getValue().equals(type1)) {
                     Iterator iterator1 = stu.elementIterator();
@@ -77,19 +76,22 @@ public class AnalysisXML {
         return relationshipField;
     }
 
-    public Map<String, String> resultFile(String type) {
+    /**
+     * 获取ALM与System Weaver之间Type的对应关系
+     * @param type
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+	public Map<String, String> resultFile(String type) {
         Map<String, String> map = new HashMap<String, String>();
-        String jdsx = type;
         // 1.创建Reader对象
         SAXReader reader = new SAXReader();
         // 2.加载xml
         Document document = null;
-        SAXReader saxReader = new SAXReader();
         try {
 
             // 返回读取指定资源的输入流
-            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("file.xml");
-//           writeToLocal(pathxml,in);
+            InputStream in = ClassLoader.getSystemResourceAsStream("file.xml");
             document = reader.read(in);
 
             // 3.获取根节点
@@ -97,9 +99,6 @@ public class AnalysisXML {
             Iterator iterator = rootElement.elementIterator();
             while (iterator.hasNext()) {
                 Element stu = (Element) iterator.next();
-                List<Attribute> attributes = stu.attributes();
-//               System.out.println("======获取属性值======");
-                String s = "";
                 if (stu.attribute("swr").getValue().equals(type) || stu.attribute("alm").getValue().equals(type)) {
                     Iterator iterator1 = stu.elementIterator();
 
@@ -116,17 +115,21 @@ public class AnalysisXML {
         return map;
     }
 
-    public String resultType(String type) {
+    /**
+     * 通过System Weaver传递的Type，获取ALM中实际的Type名称
+     * @param type
+     * @return
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public String resultType(String type) {
         // 1.创建Reader对象
         SAXReader reader = new SAXReader();
         // 2.加载xml
         Document document = null;
         String s = "";
         try {
-
             // 返回读取指定资源的输入流
-            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("file.xml");
-//           writeToLocal(pathxml,in);
+            InputStream in = ClassLoader.getSystemResourceAsStream("file.xml");
             document = reader.read(in);
 
             // 3.获取根节点
@@ -135,15 +138,13 @@ public class AnalysisXML {
             while (iterator.hasNext()) {
                 Element stu = (Element) iterator.next();
                 List<Attribute> attributes = stu.attributes();
-//               System.out.println("======获取属性值======");
                 if (stu.attribute("swr").getValue().equals(type) || stu.attribute("alm").getValue().equals(type)) {
                     for (Attribute attribute : attributes) {
-                        if (attribute.getName().equals("alm")) {
+                        if ("alm".equals(attribute.getName())) {
                             s = attribute.getValue();
                         }
                     }
                 }
-//
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,7 +152,13 @@ public class AnalysisXML {
         return s;
     }
 
-    public static String getAlmType(String type) {
+    /**
+     * 通过System Weaver传递的Type，获取ALM中实际的Type名称
+     * @param type
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+	public static String getAlmType(String type) {
         // 1.创建Reader对象
         SAXReader reader = new SAXReader();
         // 2.加载xml
@@ -159,8 +166,7 @@ public class AnalysisXML {
         try {
 
             // 返回读取指定资源的输入流
-            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("file.xml");
-//           writeToLocal(pathxml,in);
+            InputStream in = ClassLoader.getSystemResourceAsStream("file.xml");
             document = reader.read(in);
 
             // 3.获取根节点
@@ -186,7 +192,8 @@ public class AnalysisXML {
      * @param type
      * @return
      */
-    public static String getTypeTargetState(String type) {
+    @SuppressWarnings("rawtypes")
+	public static String getTypeTargetState(String type) {
         // 1.创建Reader对象
         SAXReader reader = new SAXReader();
         // 2.加载xml
@@ -194,8 +201,7 @@ public class AnalysisXML {
         try {
 
             // 返回读取指定资源的输入流
-            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("file.xml");
-//           writeToLocal(pathxml,in);
+            InputStream in = ClassLoader.getSystemResourceAsStream("file.xml");
             document = reader.read(in);
 
             // 3.获取根节点
@@ -221,7 +227,8 @@ public class AnalysisXML {
      * @param type
      * @return
      */
-    public static String getTypeFilterGroup(String type) {
+    @SuppressWarnings("rawtypes")
+	public static String getTypeFilterGroup(String type) {
         // 1.创建Reader对象
         SAXReader reader = new SAXReader();
         // 2.加载xml
@@ -229,8 +236,7 @@ public class AnalysisXML {
         try {
 
             // 返回读取指定资源的输入流
-            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("file.xml");
-//           writeToLocal(pathxml,in);
+            InputStream in = ClassLoader.getSystemResourceAsStream("file.xml");
             document = reader.read(in);
 
             // 3.获取根节点
@@ -250,18 +256,23 @@ public class AnalysisXML {
         return "";
     }
 
-    public static String resultRelationShipFile(String type1, String type2) {
+    /**
+     * 获取两个类型之间的关系字段
+     * @param type1
+     * @param type2
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+	public static String resultRelationShipFile(String type1, String type2) {
         String RelationShipFile = "";
         // 1.创建Reader对象
         SAXReader reader = new SAXReader();
         // 2.加载xml
         Document document = null;
-        SAXReader saxReader = new SAXReader();
         try {
 
             // 返回读取指定资源的输入流
-            InputStream in = AnalysisXML.class.getClassLoader().getSystemResourceAsStream("RelationshipFile.xml");
-//           writeToLocal(pathxml,in);
+            InputStream in = ClassLoader.getSystemResourceAsStream("RelationshipFile.xml");
             document = reader.read(in);
 
             // 3.获取根节点
@@ -269,9 +280,6 @@ public class AnalysisXML {
             Iterator iterator = rootElement.elementIterator();
             while (iterator.hasNext()) {
                 Element stu = (Element) iterator.next();
-                List<Attribute> attributes = stu.attributes();
-//               System.out.println("======获取属性值======");
-                String s = "";
                 if (stu.attribute("alm").getValue().equals(type1)) {
                     Iterator iterator1 = stu.elementIterator();
 
@@ -287,12 +295,6 @@ public class AnalysisXML {
             e.printStackTrace();
         }
         return RelationShipFile;
-    }
-
-    public static void main(String[] arg) {
-        String sl = new AnalysisXML().resultCategory("Feature Function List", "c1s");
-//       new AnalysisXML().resultCategory("Feature Function List");
-        System.out.println(sl);
     }
 
 }

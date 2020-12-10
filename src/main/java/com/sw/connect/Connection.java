@@ -5,13 +5,18 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sw.SWAPI.util.APIExceptionUtil;
 import com.mks.api.CmdRunner;
 import com.mks.api.Command;
 import com.mks.api.Session;
 import com.mks.api.response.APIException;
 import com.mks.api.response.Response;
+import com.sw.SWAPI.util.APIExceptionUtil;
 
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 连接类
+ */
 public class Connection {
 
 	private static Log log = LogFactory.getLog(Connection.class);

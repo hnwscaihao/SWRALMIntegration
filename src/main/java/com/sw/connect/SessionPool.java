@@ -1,4 +1,4 @@
-package connect;
+package com.sw.connect;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -19,6 +19,11 @@ import com.mks.api.response.APIException;
 import com.mks.api.response.Response;
 import com.sw.SWAPI.util.APIExceptionUtil;
 
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 连接池类
+ */
 public class SessionPool {
 
 	private static Log logger = LogFactory.getLog(SessionPool.class);
@@ -34,7 +39,7 @@ public class SessionPool {
 	public SessionPool(MksInfo mksinfo) {
 		super();
 		this.mksinfo = mksinfo;
-		System.out.println("********************************User: " + mksinfo.getUser());
+		logger.info("********************************User: " + mksinfo.getUser());
 		init();
 		check();
 	}
@@ -61,7 +66,6 @@ public class SessionPool {
 		Session session = ip.createNamedSession(null,null,mksinfo.getUser(), mksinfo.getPassword());
 		session.setDefaultUsername(mksinfo.getUser());
 		session.setAutoReconnect(true);
-		System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
 		Command imConnect = new Command("im", "connect");
 		CmdRunner cmdRunner = session.createCmdRunner();
 		cmdRunner.setDefaultUsername(mksinfo.getUser());
@@ -71,12 +75,14 @@ public class SessionPool {
 		try {
 			Response res = cmdRunner.execute(imConnect);
 			logger.info("********************************Result: " + res.getExitCode());
-		}catch (APIException e){
-			logger.info("获取session失败："+e.getMessage());
+		}catch(APIException e){
+			logger.info("********************************Session get Failure" );
+			logger.info("******************************** " + APIExceptionUtil.getMsg(e));
 		}finally {
 			if(cmdRunner != null) {
 				cmdRunner.release();
 			}
+			
 		}
 		return session;
 	}

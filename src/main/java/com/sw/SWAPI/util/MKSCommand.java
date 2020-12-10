@@ -10,6 +10,7 @@ import com.sw.SWAPI.controller.AlmController;
 import com.sw.SWAPI.damain.Project;
 import com.sw.SWAPI.damain.User;
 import com.sw.SWAPI.util.Attachment;
+
 import connect.Connection;
 
 
@@ -26,7 +27,11 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: System Weaver集成API接口
+ */
 @Component
 public class MKSCommand {
 
@@ -58,6 +63,8 @@ public class MKSCommand {
     //    private static Connection Connection;
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    public static final  Pattern LASTVALUE   = Pattern.compile("\\(([^\\)]+)\\)");
+
     public static Connection conn;
 //    private static Connection conn = new Connection();
 
@@ -65,11 +72,11 @@ public class MKSCommand {
 //        new IntegrityFactory();
     }
 
-    public MKSCommand(String _hostname, int _port, String _user, String _password, int _apimajor, int _apiminor) {
-        hostname = _hostname;
-        port = _port;
-        user = _user;
-        password = _password;
+    public MKSCommand(String hostname, int port, String user, String password, int apimajor, int apiminor) {
+        hostname = hostname;
+        port = port;
+        user = user;
+        password = password;
 //		createSession();
         getSession();
     }
@@ -87,7 +94,8 @@ public class MKSCommand {
     public CmdRunner getCmdRunner() {
         try {
             Properties prop = new Properties();
-            prop.load(MKSCommand.class.getClassLoader().getSystemResourceAsStream("sw.properties"));
+//            prop.load(MKSCommand.class.getClassLoader().getSystemResourceAsStream("sw.properties"));
+            prop.load(ClassLoader.getSystemResourceAsStream("sw.properties"));
             String ce_host = prop.getProperty("ce_host");
             String user = prop.getProperty("ce_user");
             String password = prop.getProperty("ce_password");
@@ -109,7 +117,8 @@ public class MKSCommand {
     public void closeCmdRunner(CmdRunner cmdRunner) {
         try {
             Properties prop = new Properties();
-            prop.load(MKSCommand.class.getClassLoader().getSystemResourceAsStream("sw.properties"));
+//            prop.load(MKSCommand.class.getClassLoader().getSystemResourceAsStream("sw.properties"));
+            prop.load(ClassLoader.getSystemResourceAsStream("sw.properties"));
             String ce_host = prop.getProperty("ce_host");
             String user = prop.getProperty("ce_user");
             Command cmd = new Command("aa", "disconnect");
@@ -124,21 +133,21 @@ public class MKSCommand {
     }
 
 
-    public void setCmd(String _type, String _cmd, ArrayList<Option> _ops, String _sel) {
-        mksCommand = new Command(_type, _cmd);
-        String cmdStrg = (new StringBuilder(String.valueOf(_type))).append(" ").append(_cmd).append(" ").toString();
-        if (_ops != null && _ops.size() > 0) {
-            for (int i = 0; i < _ops.size(); i++) {
-                cmdStrg = (new StringBuilder(String.valueOf(cmdStrg))).append(_ops.get(i).toString()).append(" ")
+    public void setCmd(String type, String cmd, ArrayList<Option> ops, String sel) {
+        mksCommand = new Command(type, cmd);
+        String cmdStrg = (new StringBuilder(String.valueOf(type))).append(" ").append(cmd).append(" ").toString();
+        if (ops != null && ops.size() > 0) {
+            for (int i = 0; i < ops.size(); i++) {
+                cmdStrg = (new StringBuilder(String.valueOf(cmdStrg))).append(ops.get(i).toString()).append(" ")
                         .toString();
                 // Option o = new Option(_ops.get(i).toString());
-                mksCommand.addOption(_ops.get(i));
+                mksCommand.addOption(ops.get(i));
             }
 
         }
-        if (_sel != null && _sel != "") {
-            cmdStrg = (new StringBuilder(String.valueOf(cmdStrg))).append(_sel).toString();
-            mksCommand.addSelection(_sel);
+        if (sel != null && sel != "") {
+            cmdStrg = (new StringBuilder(String.valueOf(cmdStrg))).append(sel).toString();
+            mksCommand.addSelection(sel);
         }
         currentCommand = cmdStrg;
         // logger.info((new StringBuilder("Command:
@@ -470,7 +479,7 @@ public class MKSCommand {
                 }
             }
             String[] ids = {};
-            if (!value.equals("") && value != null) {
+            if (!"".equals(value) && value != null) {
                 ids = value.split(",");
                 for (int i = 0; i < ids.length; i++) {
                     list.add(shujz(ids[i]));
@@ -575,9 +584,9 @@ public class MKSCommand {
             }
         }
         SelectionList contents = null;
-        if (sl != null && sl.size() >= 1)
+        if (sl != null && sl.size() >= 1) {
             contents = contains(sl);
-
+        }
         if (contents.size() > 0) {
             SelectionList contains = new SelectionList();
             contains.add(contents);
@@ -741,11 +750,13 @@ public class MKSCommand {
                 boolean canAdd = true;
                 if (needFilter) {
                     String currentCategory = map.get("Category");
-                    if (!currentCategory.equals(category))
+                    if (!currentCategory.equals(category)) {
                         canAdd = false;
+                    }
                 }
-                if (canAdd)
+                if (canAdd) {
                     returnResult.add(map);
+                }
             }
         } catch (APIException e) {
             logger.error(e.getMessage());
@@ -783,7 +794,8 @@ public class MKSCommand {
         String password = user.getString("password");
 
         //查询是否存在
-        Command cmd = new Command(Command.INTEGRITY, "mksdomainusers");
+        Command cmd = new Command(Command.AA, "users");
+        cmd.addOption(new Option("user", "admin"));
         Response res;
         if (cmdRunner != null) {
             res = cmdRunner.execute(cmd);
@@ -879,7 +891,7 @@ public class MKSCommand {
                 WorkItemIterator iterator = res.getWorkItems();
                 while (iterator.hasNext()) {
                     WorkItem item = iterator.next();
-                    if (item.getField("isActive").getValueAsString().equalsIgnoreCase("true")) {
+                    if ("true".equalsIgnoreCase(item.getField("isActive").getValueAsString())) {
                         user = user + item.getField("fullname").getValueAsString() + ",";
                     }
                 }
@@ -979,7 +991,7 @@ public class MKSCommand {
         Option op = new Option("fields", mv);
         cmd.addOption(op);
         Response res = null;
-        if (type.equals("Test Suite")) {
+        if ("Test Suite".equals(type)) {
             res = conn.execute(cmd);
             WorkItemIterator wk = res.getWorkItems();
             while (wk.hasNext()) {
@@ -991,7 +1003,7 @@ public class MKSCommand {
                 }
                 result.add(map);
             }
-        } else if (type.equals("Test Case")) {
+        } else if ("Test Case".equals(type)) {
             try {
                 res = conn.execute(cmd);
                 WorkItemIterator wk = res.getWorkItems();
@@ -1004,8 +1016,10 @@ public class MKSCommand {
                             Item item = (Item) value;
                             value = item.getId();
                         }
-                        if ("verdict".equals(field))
+                        if ("verdict".equals(field)) {
                             field = "verdictType";
+                        }
+
                         map.put(field, value);
                     }
                     result.add(map);
@@ -1062,7 +1076,7 @@ public class MKSCommand {
                             Item item = (Item) itemList.get(i);
                             String visiblePick = item.getId();
                             Field attribute = item.getField("active");
-                            if (attribute != null && attribute.getValueAsString().equalsIgnoreCase("true")
+                            if (attribute != null && "true".equalsIgnoreCase(attribute.getValueAsString())
                                     && !pickVals.contains(visiblePick)) {
                                 pickVals.add(visiblePick);
                             }
@@ -1100,63 +1114,7 @@ public class MKSCommand {
         return projects;
     }
 
-    /**
-     * 初始化MKSCommand中的参数，并获得连接
-     */
-    public static void initMksCommand(String host, int port, String defaultUser, String pwd) {
-//        try {
-//            logger.info("host:" + host + "; defaultUser:" + defaultUser + "; pwd:" + pwd);
-//            cmd = new MKSCommand(host, port, defaultUser, pwd, 4, 16);
-//            logger.info("已连接：" + host);
-////			cmd.getSession();
-//        } catch (Exception e) {
-//            logger.info("无法连接!");
-//            System.exit(0);
-//
-//        }
-    }
 
-    /**
-     * issues
-     * 获取当前选中id的List集合
-     *
-     * @return
-     * @throws Exception
-     */
-    public static Map<String, String> getSelectedIdList() throws Exception {
-        Map<String, String> list = new HashMap<String, String>();
-        List<String> caseIds = new ArrayList<String>();
-        String issueCount = ENVIRONMENTVAR.get(Constants.MKSSI_NISSUE);
-        if (issueCount != null && issueCount.trim().length() > 0) {
-            for (int index = 0; index < Integer.parseInt(issueCount); index++) {
-                String id = ENVIRONMENTVAR.get(String.format(Constants.MKSSI_ISSUE_X, index));
-                tsIds.add(id);//获取到当前选中的id添加进集合Ids集合
-            }
-        } else {
-            logger.info("身份验证失败!! :" + issueCount);
-        }
-//		tsIds.add("21604");//本地aocun
-//查詢project
-        Command cmd = new Command("im", "issues");
-        cmd.addOption(new Option("fields", "Project,id"));
-        String query = "((field[Type]=Project) and ((field[Project Manager]=" + longinUser + ") or (field[Created By]=" + longinUser + ") ))";
-        cmd.addOption(new Option("queryDefinition", query));
-        Response res = null;
-        try {
-            res = conn.execute(cmd);
-            WorkItemIterator it = res.getWorkItems();
-            while (it.hasNext()) {
-                WorkItem wi = it.next();
-                String value = wi.getField("Project").getValueAsString();
-                String projectid = wi.getId();
-                list.put(projectid, value);
-            }
-        } catch (APIException e) {
-            logger.error(e.getMessage());
-            throw e;
-        }
-        return list;
-    }
 
     //根据id获取项目名称
     public String getProjectNameById(String id) {
@@ -1218,58 +1176,6 @@ public class MKSCommand {
         return list;
     }
 
-    //查询peoject组用户
-    public static void getProjectDynamicGroupsMember(List<String> Groups, String currentProject) throws APIException {
-        Command cmd = new Command("im", "dynamicgroups");
-        cmd.addOption(new Option("fields", "membership"));
-        for (String group : Groups) {
-            cmd.addSelection(group);
-        }
-        Response res = conn.execute(cmd);
-        if (res != null) {
-            WorkItemIterator groupsItemItera = res.getWorkItems();
-            if (groupsItemItera != null) {
-                while (groupsItemItera.hasNext()) {
-                    WorkItem groupItem = groupsItemItera.next();
-                    String groupDGName = groupItem.getId();
-                    List<String> projectUserList = new ArrayList<String>();
-                    Field field = groupItem.getField("membership");
-                    ItemList itemList = (ItemList) field.getValue();
-                    if (!itemList.isEmpty()) {
-                        for (int i = 0; i < itemList.size(); i++) {
-                            Item item = (Item) itemList.get(i);
-                            String project = item.getId();
-                            if (!currentProject.equals(project))//只查询当前项目
-                                continue;
-                            Field userField = item.getField("Users");
-                            ItemList userList = (ItemList) userField.getValue();
-                            if (!userList.isEmpty()) {
-                                for (int j = 0; j < userList.size(); j++) {
-                                    Item user = (Item) userList.get(j);
-                                    projectUserList.add(user.getId());
-                                }
-                            }
-                            Field groupField = item.getField("Groups");//处理组成员
-                            ItemList groupList = (ItemList) groupField.getValue();
-                            if (!groupList.isEmpty()) {
-                                for (int j = 0; j < groupList.size(); j++) {
-                                    Item group = (Item) groupList.get(j);
-                                    String groupName = group.getId();
-                                    List<String> members = getGroupMembers(groupName);
-                                    if (members != null && !members.isEmpty()) {
-                                        projectUserList.addAll(members);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    DealService.allUserList.addAll(projectUserList);
-                    DealService.groupMemberRecord.put(groupDGName, projectUserList);
-                }
-            }
-        }
-    }
-
     /**
      * Description 查询组成员
      *
@@ -1279,10 +1185,6 @@ public class MKSCommand {
      */
     public static List<String> getGroupMembers(String groupName) throws APIException {
         List<String> members = new ArrayList<String>();
-        if (DealService.groupMemberRecord.get(groupName) != null) {
-            members = DealService.groupMemberRecord.get(groupName);
-            return members;
-        }
         Command cmd = new Command("aa", "groups");
         cmd.addOption(new Option("members"));
         cmd.addSelection(groupName);
@@ -1301,104 +1203,7 @@ public class MKSCommand {
                 }
             }
         }
-        DealService.groupMemberRecord.put(groupName, members);
         return members;
-    }
-
-    public void getAllUserIdAndName(List<String> users) throws APIException {
-        Command cmd = new Command(Command.IM, "users");
-        cmd.addOption(new Option("fields", "fullname"));
-        for (String user : users) {
-            cmd.addSelection(user);
-        }
-        Response res = conn.execute(cmd);
-        if (res != null) {
-            WorkItemIterator workItemItera = res.getWorkItems();
-            if (workItemItera != null) {
-                while (workItemItera.hasNext()) {
-                    WorkItem workItem = workItemItera.next();
-                    String Id = workItem.getId();
-                    String fullname = workItem.getField("fullname").getValueAsString();
-                    fullname = fullname != null ? fullname + "(" + Id + ")" : Id;
-                    DealService.USERNAME_RECORD.put(fullname, Id);
-                    DealService.USERID_RECORD.put(Id, fullname);
-                }
-            }
-        }
-    }
-
-    //获取用户的权限和名字
-    public static List<String> getAllUserIdAndName1(List<String> users) throws APIException {
-        List<String> list = new ArrayList<String>();
-        Command cmd = new Command(Command.IM, "users");
-        cmd.addOption(new Option("fields", "fullname"));
-        for (String user : users) {
-            cmd.addSelection(user);
-        }
-        Response res = conn.execute(cmd);
-        if (res != null) {
-            WorkItemIterator workItemItera = res.getWorkItems();
-            if (workItemItera != null) {
-                while (workItemItera.hasNext()) {
-                    WorkItem workItem = workItemItera.next();
-                    String Id = workItem.getId();
-                    String fullname = workItem.getField("fullname").getValueAsString();
-                    fullname = fullname != null ? fullname + "(" + Id + ")" : Id;
-                    DealService.USERNAME_RECORD.put(fullname, Id);
-                    DealService.USERID_RECORD.put(Id, fullname);
-                    list.add(fullname);
-                }
-            }
-        }
-        return list;
-    }
-
-    //获取所有的用户
-    public void getAllUser() throws APIException {
-        List<String> list = new ArrayList<String>();
-        Command cmd = new Command(Command.IM, "users");
-        cmd.addOption(new Option("fields", "fullname,isActive"));
-        Response res = conn.execute(cmd);
-        if (res != null) {
-            WorkItemIterator workItemItera = res.getWorkItems();
-            if (workItemItera != null) {
-                while (workItemItera.hasNext()) {
-                    WorkItem workItem = workItemItera.next();
-                    String Id = workItem.getId();
-                    String isActive = workItem.getField("isActive").getValueAsString();
-                    if (isActive.equals("true")) { //判断是否是有效用户
-                        String fullname = workItem.getField("fullname").getValueAsString();
-                        fullname = fullname != null ? fullname + "(" + Id + ")" : Id;
-                        DealService.All_user.add(fullname);
-                    }
-                }
-            }
-        }
-    }
-
-    //修改动态组
-    public void updateDynamicGroup(String projectName, String dynamicGroupName, List<String> userJoint) throws APIException {
-        if (userJoint.size() > 0) {
-            Command cmd = new Command("im", "editdynamicgroup");
-            MultiValue mv = new MultiValue();
-            mv.setSeparator(",");
-            for (String field : userJoint) {
-                String[] s = field.split("\\(");
-                if (s.length > 1) {
-                    mv.add(getValuesInParentheses(field));
-                } else {
-                    mv.add(field);
-                }
-            }
-            cmd.addOption(new Option("projectmembership", projectName + "=u=" + mv));
-            cmd.addSelection(dynamicGroupName);
-            conn.execute(cmd);
-        } else {
-            Command cmd = new Command("im", "editdynamicgroup");
-            cmd.addOption(new Option("projectmembership", projectName + "=nomembers"));
-            cmd.addSelection(dynamicGroupName);
-            conn.execute(cmd);
-        }
     }
 
     //获取最后一个口号中的值
@@ -1407,114 +1212,12 @@ public class MKSCommand {
             return msg;
         }
         String projectId = "";
-        Pattern p = Pattern.compile("\\(([^\\)]+)\\)");
-        Matcher m = p.matcher(msg);
+
+        Matcher m = LASTVALUE.matcher(msg);
         while (m.find()) {
             projectId = m.group().substring(1, m.group().length() - 1);
         }
-//		String newstr = projectId.replace("/"+projectId+"/g","");
         return projectId;
-    }
-
-    //查询peoject组用户
-    public static Map<String, List<String>> getProjectDynamicGroupsMember1(List<String> Groups, String currentProject) throws APIException {
-        Map<String, List<String>> result = new HashMap<String, List<String>>();
-        Command cmd = new Command("im", "dynamicgroups");
-        cmd.addOption(new Option("fields", "membership"));
-        for (String group : Groups) {
-            cmd.addSelection(group);
-        }
-        Response res = conn.execute(cmd);
-        if (res != null) {
-            WorkItemIterator groupsItemItera = res.getWorkItems();
-            if (groupsItemItera != null) {
-                while (groupsItemItera.hasNext()) {
-                    WorkItem groupItem = groupsItemItera.next();
-                    String groupDGName = groupItem.getId();
-                    List<String> projectUserList = new ArrayList<String>();
-                    Field field = groupItem.getField("membership");
-                    ItemList itemList = (ItemList) field.getValue();
-                    if (!itemList.isEmpty()) {
-                        for (int i = 0; i < itemList.size(); i++) {
-                            Item item = (Item) itemList.get(i);
-                            String project = item.getId();
-                            if (!currentProject.equals(project))//只查询当前项目
-                                continue;
-                            Field userField = item.getField("Users");
-                            ItemList userList = (ItemList) userField.getValue();
-                            if (!userList.isEmpty()) {
-                                for (int j = 0; j < userList.size(); j++) {
-                                    Item user = (Item) userList.get(j);
-                                    projectUserList.add(user.getId());
-                                }
-                            }
-                            Field groupField = item.getField("Groups");//处理组成员
-                            ItemList groupList = (ItemList) groupField.getValue();
-                            if (!groupList.isEmpty()) {
-                                for (int j = 0; j < groupList.size(); j++) {
-                                    Item group = (Item) groupList.get(j);
-                                    String groupName = group.getId();
-                                    List<String> members = getGroupMembers1(groupName, result);
-                                    if (members != null && !members.isEmpty()) {
-                                        projectUserList.addAll(members);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    result.put(groupDGName, projectUserList);
-                }
-            }
-        }
-        return result;
-    }
-
-    public static List<String> getGroupMembers1(String groupName, Map<String, List<String>> result) throws APIException {
-        List<String> members = new ArrayList<String>();
-        if (result.get(groupName) != null) {
-            members = result.get(groupName);
-            return members;
-        }
-        Command cmd = new Command("aa", "groups");
-        cmd.addOption(new Option("members"));
-        cmd.addSelection(groupName);
-        Response res = conn.execute(cmd);
-        if (res != null) {
-            WorkItemIterator workItemItera = res.getWorkItems();
-            while (workItemItera.hasNext()) {
-                WorkItem workItem = workItemItera.next();
-                Field field = workItem.getField("members");
-                ItemList itemList = (ItemList) field.getValue();
-                if (!itemList.isEmpty()) {
-                    for (int i = 0; i < itemList.size(); i++) {
-                        Item user = (Item) itemList.get(i);
-                        members.add(user.getId());
-                    }
-                }
-            }
-        }
-        result.put(groupName, members);
-        return members;
-    }
-
-
-    //修改project动态组
-    public void updateProjectDynamicGroup(String projectId, Map<String, List<String>> fieldValue) throws APIException {
-        Command cmd = new Command(Command.IM, "editissue");
-        if (fieldValue != null) {
-            for (String key : fieldValue.keySet()) {
-                String str = "";
-                for (String s : fieldValue.get(key)) {
-                    str += getValuesInParentheses(s) + ",";
-                }
-                if (!str.equals("")) {
-                    str = str.substring(0, str.length() - 1);
-                }
-                cmd.addOption(new Option("field", key + "=" + str));
-            }
-        }
-        cmd.addSelection(projectId);
-        conn.execute(cmd);
     }
 
     //查询所有用户
@@ -1541,11 +1244,11 @@ public class MKSCommand {
                     field = field.split("::")[0];
                 }
                 String value = wi.getField(field).getValueAsString();
-                if (field.equals("fullname")) {
+                if ("fullname".equals(field)) {
                     user.setUserName(value);
-                } else if (field.equals("name")) {
+                } else if ("name".equals(field)) {
                     user.setLogin_ID(value);
-                } else if (field.equals("Email")) {
+                } else if ("Email".equals(field)) {
                     user.setEmail(value);
                 }
             }
@@ -1577,11 +1280,11 @@ public class MKSCommand {
                     field = field.split("::")[0];
                 }
                 String value = wi.getField(field).getValueAsString();
-                if (field.equals("fullname")) {
+                if ("fullname".equals(field)) {
                     user.setUserName(value);
-                } else if (field.equals("name")) {
+                } else if ("name".equals(field)) {
                     user.setLogin_ID(value);
-                } else if (field.equals("Email")) {
+                } else if ("Email".equals(field)) {
                     user.setEmail(value);
                 }
             }
@@ -1614,9 +1317,9 @@ public class MKSCommand {
                         field = field.split("::")[0];
                     }
                     String value = wi.getField(field).getValueAsString();
-                    if (field.equals("name")) {
+                    if ("name".equals(field)) {
                         project.setProject(value);
-                    } else if (field.equals("backingIssueID")) {
+                    } else if ("backingIssueID".equals(field)) {
                         project.setPID(value);
                     }
                 }
@@ -1770,7 +1473,7 @@ public class MKSCommand {
             ol.add(op2);
         }
         for (Entry<String, String> entry : fields.entrySet()) {
-            if (entry.getKey().equals("Text")) {
+            if ("Text".equals(entry.getKey())) {
                 Option op = new Option("richContentField", entry.getKey() + "=" + entry.getValue());
                 ol.add(op);
             } else {
@@ -1941,7 +1644,7 @@ public class MKSCommand {
         if (map != null) {
             for (Entry<String, String> entrty : map.entrySet()) {
                 String value = entrty.getValue();
-                if (value == null || value.equals("null")) {
+                if (value == null || "null".equals(value)) {
                     value = "";
                 }
                 cmd.addOption(new Option("field", entrty.getKey() + "=" + value));
@@ -1950,7 +1653,7 @@ public class MKSCommand {
         if (richContentMap != null && richContentMap.size() > 0) {
             for (Entry<String, String> entrty : map.entrySet()) {
                 String value = entrty.getValue();
-                if (value == null || value.equals("null")) {
+                if (value == null || "null".equals(value)) {
                     value = "";
                 }
                 cmd.addOption(new Option("richContentField", entrty.getKey() + "=" + value));
@@ -2090,7 +1793,7 @@ public class MKSCommand {
         List<String> list = new ArrayList<>();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             if (!String.valueOf(entry.getValue()).isEmpty()) {
-                if (entry.getKey().equals("Document Short Title")) {
+                if ("Document Short Title".equals(entry.getKey())) {
                     list.add(String.format("(field[%s] contains %s)", entry.getKey(), entry.getValue()));
                 } else {
                     list.add(String.format("(field[%s]=%s)", entry.getKey(), entry.getValue()));
@@ -2308,9 +2011,9 @@ public class MKSCommand {
                 origMap = issueMap;
                 break;
             } else {
-                if (origMap == null)
+                if (origMap == null) {
                     origMap = issueMap;
-                else {
+                } else {
                     String createdDate = issueMap.get("Created Date");
                     String orCreatedDate = origMap.get("Created Date");
                     Date target = new Date(createdDate);
@@ -2423,8 +2126,10 @@ public class MKSCommand {
                         for (int i = 0; i < itemList.size(); i++) {
                             Item item = (Item) itemList.get(i);
                             String project = item.getId();
-                            if (!projectName.equals(project))// 只查询当前项目
+                            if (!projectName.equals(project)){// 只查询当前项目
                                 continue;
+                            }
+
                             Field userField = item.getField("Users");
                             ItemList userList = (ItemList) userField.getValue();
                             if (!userList.isEmpty()) {
@@ -2516,11 +2221,11 @@ public class MKSCommand {
                     field = field.split("::")[0];
                 }
                 String value = wi.getField(field).getValueAsString();
-                if (field.equals("fullname")) {
+                if ("fullname".equals(field)) {
                     user.setUserName(value);
-                } else if (field.equals("name")) {
+                } else if ("name".equals(field)) {
                     user.setLogin_ID(value);
-                } else if (field.equals("Email")) {
+                } else if ("Email".equals(field)) {
                     user.setEmail(value);
                 }
             }

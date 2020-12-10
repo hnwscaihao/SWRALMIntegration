@@ -1,13 +1,13 @@
 package com.sw.SWAPI.damain;
 
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
 
 
-
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 基础配置类
+ */
 @Data
 public class ConfigureField {
 

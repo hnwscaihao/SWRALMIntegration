@@ -36,6 +36,11 @@ public class MapCache {
 		list.add(json);
 	}
 	
+	/**
+	 * 获取缓存好的数据
+	 * @param key
+	 * @return
+	 */
 	public static List<JSONObject> getList(String key){
 		if(key != null){
 			return currentMap.get(key);
@@ -43,6 +48,10 @@ public class MapCache {
 		return new ArrayList<>();
 	}
 	
+	/**
+	 * 清除缓存数据
+	 * @param key
+	 */
 	public static void clearCache(String key){
 		if(key != null){
 			currentMap.remove(key);
@@ -78,6 +87,12 @@ public class MapCache {
 		return null;
 	}
 	
+	/**
+	 * 获取UUID缓存的数据
+	 * @param uuid
+	 * @param SWSID
+	 * @return
+	 */
 	public static Map<String,String> getSWSIDMap(String uuid){
 		Map<String,String> idMap = swSIdMap.get(uuid);
 		if(idMap == null){
@@ -86,12 +101,22 @@ public class MapCache {
 		return idMap;
 	}
 	
+	/**
+	 * 清除UUID缓存数据
+	 * @param uuid
+	 */
 	public static void clearSWSIDCache(String uuid){
 		if(uuid != null){
 			swSIdMap.remove(uuid);
 		}
 	}
 	
+	/**
+	 * 根据UUID缓存同一批次下发数据的SWID-ALMID
+	 * @param uuid
+	 * @param SWID
+	 * @param almId
+	 */
 	public static void cacheSWID(String uuid, String SWID, String almId){
 		Map<String,List<String>> swMap = swIdMap.get(uuid);
 		if(swMap == null){
@@ -105,6 +130,11 @@ public class MapCache {
 		swList.add(almId);
 	}
 	
+	/**
+	 * 根据UUI的获取数据
+	 * @param uuid
+	 * @return
+	 */
 	public static Map<String,List<String>> getSWIDCacheMap(String uuid){
 		if(uuid != null){
 			return swIdMap.get(uuid);
@@ -112,6 +142,10 @@ public class MapCache {
 		return null;
 	}
 	
+	/**
+	 * 清除缓存数据
+	 * @param uuid
+	 */
 	public static void clearSWIDCache(String uuid){
 		if(uuid != null){
 			swIdMap.remove(uuid);

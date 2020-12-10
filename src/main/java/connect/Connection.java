@@ -2,16 +2,16 @@ package connect;
 
 import java.util.Iterator;
 
-import com.sw.SWAPI.damain.ConfigureField;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sw.SWAPI.util.APIExceptionUtil;
 import com.mks.api.CmdRunner;
 import com.mks.api.Command;
 import com.mks.api.Session;
 import com.mks.api.response.APIException;
 import com.mks.api.response.Response;
+import com.sw.SWAPI.damain.ConfigureField;
+import com.sw.SWAPI.util.APIExceptionUtil;
 
 public class Connection {
 

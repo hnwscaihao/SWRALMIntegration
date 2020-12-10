@@ -5,9 +5,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 应用初始化
+ */
 @SpringBootApplication
 @EnableCaching
-//@ComponentScan({"com.sw"})
 public class SwapiApplication {
 
 	public static void main(String[] args) {

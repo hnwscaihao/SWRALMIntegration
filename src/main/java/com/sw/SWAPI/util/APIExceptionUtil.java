@@ -2,11 +2,20 @@ package com.sw.SWAPI.util;
 
 import com.mks.api.response.APIException;
 import com.mks.api.response.Response;
-import com.mks.api.response.WorkItem;
 import com.mks.api.response.WorkItemIterator;
 
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: ALM异常处理类
+ */
 public class APIExceptionUtil {
 
+	/**
+	 * 获取ALM异常信息
+	 * @param e
+	 * @return String
+	 */
 	public static String getMsg(APIException e) {
 		String msg = e.getMessage();
 		Response res = e.getResponse();
@@ -24,23 +33,5 @@ public class APIExceptionUtil {
 			}
 		}
 		return msg;
-	}
-
-	public static String getResult(Response res) {
-		try {
-			if (res.getResult() != null) {
-				return res.getResult().getMessage();
-			}
-			WorkItemIterator wit = res.getWorkItems();
-			while (wit.hasNext()) {
-				WorkItem wi = wit.next();
-				if (wi.getResult() != null) {
-					return wi.getResult().getMessage();
-				}
-			}
-			return null;
-		} catch (Exception e) {
-			return "";
-		}
 	}
 }

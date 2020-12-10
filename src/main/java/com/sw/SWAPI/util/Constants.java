@@ -4,87 +4,15 @@
 package com.sw.SWAPI.util;
 
 /**
- * 连接相关实体类 lxg
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 定义常量
  */
 public class Constants {
 
-	/** *Export all items in the view */
-	public static final String EXPORT_ALL_ITEMS = "ALL";
-
-	/** *Export selected items */
-	public static final String EXPORT_SELECTED_ITEMS = "SELECTED";
-
-	public static final String USER_HOME = "user.home";
-
-	public static final String USERNAME = "USERNAME";
-
-	/** * */
-	public static final String MKSSI_HOST = "MKSSI_HOST";
-
-	/** * */
-	public static final String MKSSI_USER = "MKSSI_USER";
-
-	/** * */
-	public static final String MKSSI_PORT = "MKSSI_PORT";
-
-	/** * */
-	public static final String PROCESSOR_LEVEL = "PROCESSOR_LEVEL";
-
-	/**
-	 * * the MKS Query Definition of current view
-	 * MKSSI_QUERYDEFINITION=(field["Type"] = "Component Maturity")
-	 */
-	public static final String MKSSI_QUERYDEFINITION = "MKSSI_QUERYDEFINITION";
-
-	/**
-	 * * MKSSI_SORTASCENDING=true
-	 */
-	public static final String MKSSI_SORTASCENDING = "MKSSI_SORTASCENDING";
-
-	/**
-	 * * the sort field MKSSI_SORTFIELD=ID
-	 */
-	public static final String MKSSI_SORTFIELD = "MKSSI_SORTFIELD";
 	public static final String ISSUES = "issues";
+	
 	public static final String FIELDS = "fields";
-	public static final String QUERY_DEFINITION = "queryDefinition";
-	public static final String ITEMLIST = "com.mks.api.response.ItemList";
-	/**
-	 * * the issues of selected in current view MKSSI_NISSUE=5
-	 */
-	public static final String MKSSI_NISSUE = "MKSSI_NISSUE";
-
-	/**
-	 * * the issues ID of selected in current view MKSSI_ISSUE3=4444,
-	 * MKSSI_ISSUE4=4445, MKSSI_ISSUE1=4442
-	 */
-	public static final String MKSSI_ISSUE_X = "MKSSI_ISSUE%s";
-
-	/** * issues */
-	public static final String MKSSI_WINDOW = "MKSSI_WINDOW";
-
-	/**
-	 * * the MKS Query Name of current view. MKSSI_QUERY=zhangjian:Component
-	 * Maturity
-	 */
-	public static final String MKSSI_QUERY = "MKSSI_QUERY";
-
-	/** * */
-	public static final String NUMBER_OF_PROCESSORS = "NUMBER_OF_PROCESSORS";
-
-	/** * the field count of display in current view */
-	public static final String MKSSI_NFIELD = "MKSSI_NFIELD";
-
-	/**
-	 * * MKSSI_FIELD1=ID, MKSSI_FIELD2=Type, MKSSI_FIELD3=State
-	 */
-	public static final String MKSSI_FIELD_X = "MKSSI_FIELD%s";
-
-	/**
-	 * * the field width of pre columns MKSSI_FIELD1_WIDTH=50
-	 * ,MKSSI_FIELD2_WIDTH=150
-	 */
-	public static final String MKSSI_FIELD_X_WIDTH = "MKSSI_FIELD%s_WIDTH";
 	
 	public static final String DOC_UUID = "DOC_UUID";
 
@@ -97,6 +25,10 @@ public class Constants {
 	public static final String SW_SID_FIELD = "SW_SID";
 
 	public static final String SW_SID_SPLIT = "-";
+	
+	public static final String COMMA_SPLIT = ",";
+	
+	public static final String POINT_SPLIT = ".";
 	
 	public static final String CATEGORY = "Category";
 	
@@ -116,4 +48,34 @@ public class Constants {
 	public static final String TEXT_ATTACHMENT = "Text Attachments";
 	
 	public static final String ATTACHMENT = "Attachments";
+	
+	public static final String ADD = "add";
+	
+	public static final String UPDATE = "update";
+	
+	public static final String MOVE = "move";
+	
+	public static final String DELETE = "delete";
+	
+	public static final String MOVE_UPDATE = "move/update";
+	
+	public static final String SUCCESS = "success";
+
+	public static final String PROJECT_FIELD = "Project";
+	
+	public static final String ISSUE_TYPE = "issue_Type";
+	
+	public static final String ISSUE_ID = "issue_id";
+
+	public static final String ITEM_NAME = "item_name";
+	
+	public static final String NULL_STRING = "null";
+	
+	public static final String EMPTY_ATTACHMENTS = "[]";
+	
+	public static final String DOCUMENT = "Document";
+	
+	public static final String SUITE = "Suite";
+	
+	public static final String TRUE_STRING = "true";
 }

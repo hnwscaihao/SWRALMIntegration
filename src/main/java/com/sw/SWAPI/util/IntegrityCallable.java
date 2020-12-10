@@ -1,21 +1,23 @@
 package com.sw.SWAPI.util;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mks.api.response.APIException;
-import com.sw.SWAPI.Error.MsgArgumentException;
 import com.sw.SWAPI.controller.AlmController;
 
+/**
+ * @author: liuxiaoguang
+ * @Date: 2020/7/16 15:28
+ * @Description: 异步执行类
+ */
 public class IntegrityCallable implements Runnable {
 
-    private List<JSONObject> listData;
+    private List<JSONObject> listData;//需要执行的数据
 
     public IntegrityCallable(List<JSONObject> listData) {
         this.listData = listData;
     }
-
 
     @Override
     public void run() {
@@ -32,7 +34,7 @@ public class IntegrityCallable implements Runnable {
             e.printStackTrace();
         }
         AlmController.log.info("json:" + json);
-        util.executionSychSW(json);
+        util.executionSychSw(json);
     }
 
     public List<JSONObject> getListData() {

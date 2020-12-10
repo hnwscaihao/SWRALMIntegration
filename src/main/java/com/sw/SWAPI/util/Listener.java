@@ -1,6 +1,5 @@
 package com.sw.SWAPI.util;
 
-import com.sw.SWAPI.damain.ConfigureField;
 import connect.Connection;
 import connect.IntegrityFactory;
 import lombok.SneakyThrows;
@@ -9,6 +8,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+
+import com.sw.SWAPI.damain.ConfigureField;
 
 /**
  * 定义事件监听器
@@ -43,7 +44,7 @@ public class Listener implements ApplicationListener<ApplicationReadyEvent> {
         configureField.setPort(port);
         configureField.setLoginName(loginName);
         configureField.setPassWord(passWord);
-        new MKSCommand().conn = new Connection(configureField);
+        MKSCommand.conn = new Connection(configureField);
         System.out.println("项目启动成功: " + url);
 
     }

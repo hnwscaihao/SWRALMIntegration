@@ -3,23 +3,21 @@ package com.sw.SWAPI.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mks.api.CmdRunner;
-import com.mks.api.IntegrationPoint;
-import com.mks.api.IntegrationPointFactory;
-import com.mks.api.Session;
 import com.mks.api.response.APIException;
 import com.sw.SWAPI.Error.MsgArgumentException;
 import com.sw.SWAPI.damain.Project;
 import com.sw.SWAPI.damain.User;
 import com.sw.SWAPI.util.*;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Decoder;
 
-import java.util.*;
-
 import static com.sw.SWAPI.util.ResultJson.*;
+
+import java.util.*;
 
 /**
  * @author: liuxiaoguang
@@ -30,290 +28,290 @@ import static com.sw.SWAPI.util.ResultJson.*;
 @RequestMapping(value = "/alm")
 public class AlmController {
 
+	public static final Log log = LogFactory.getLog(AlmController.class);
 
-    public static final Log log = LogFactory.getLog(AlmController.class);
+	@Value("${token}")
+	private String token;
 
+	@Value("${host}")
+	private String host;
 
-    String filePath = "C:\\\\Program Files\\\\Integrity\\\\ILMServer12\\\\data\\\\tmp";
+	@Value("${ce_host}")
+	private String testHost;
 
-    @Value("${token}")
-    private String token;
+	private MKSCommand mks;
 
-    @Value("${host}")
-    private String host;
+	private IntegrityUtil util = new IntegrityUtil();
 
-    @Value("${ce_host}")
-    private String ce_host;
+	/**
+	 * 查询所有用户
+	 * 
+	 * @Author liuxiaoguang
+	 * @Date 2020/7/16 15:33
+	 * @Param []
+	 * @Return com.alibaba.fastjson.JSONArray
+	 * @Exception 获取ALM中所有用户信息
+	 */
+	@RequestMapping(value = "/getAllUsers", method = RequestMethod.GET)
+	public JSONArray getAllUsers() {
 
-    private MKSCommand mks;
+		List<User> allUsers = new ArrayList<User>();
+		try {
+			log.info("开始链接：");
+			if (mks == null) {
+				mks = new MKSCommand();
+			}
+			allUsers = mks.getAllUsers(Arrays.asList("fullname", "name", "Email"));
+		} catch (APIException e) {
+			log.info("error: " + "查询所有用户错误！" + e.getMessage());
+			e.printStackTrace();
+		}
 
-    private IntegrityUtil util = new IntegrityUtil();
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < allUsers.size(); i++) {
+			JSONObject jsonObject = new JSONObject();
+			User user = allUsers.get(i);
+			jsonObject.put("userName", user.getUserName());
+			jsonObject.put("login_ID", user.getLogin_ID());
+			jsonObject.put("email", user.getEmail());
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray;
+	}
 
-    /**
-     * @Description
-     * @Author liuxiaoguang
-     * @Date 2020/7/16 15:33
-     * @Param []
-     * @Return com.alibaba.fastjson.JSONObject
-     * @Exception 获取ALM中所有用户信息
-     */
-    @RequestMapping(value = "/getAllUsers", method = RequestMethod.GET)
-    public JSONArray getAllUsers() {
+	/**
+	 * 根据Type和Project查询用户组
+	 * 
+	 * @param jsonData
+	 * @return com.alibaba.fastjson.JSONArray
+	 */
+	@RequestMapping(value = "/getAllUsersByProject", method = RequestMethod.POST)
+	public JSONArray getAllUsers(@RequestBody JSONObject jsonData) {
+		getToken(jsonData.getString("Access_Token"));
+		String project = jsonData.getString("project");
+		// 根据类型判断获取的动态组，Component获取Review
+		String type = jsonData.getString("type");
+		List<String> dynamicGroups = Arrays.asList(AnalysisXML.getTypeFilterGroup(type).split(","));
+		log.info("project-----" + project);
+		if (mks == null) {
+			mks = new MKSCommand();
+		}
+		List<User> allUsers = new ArrayList<User>();
+		try {
+			allUsers = mks.getProjectDynaUsers(project, dynamicGroups);
+		} catch (APIException e) {
+			log.error("error: " + "查询所有用户错误！" + e.getMessage());
+			e.printStackTrace();
+		}
 
-        List<User> allUsers = new ArrayList<User>();
-        try {
-            log.info("开始链接：");
-            if (mks == null) {
-                mks = new MKSCommand();
-            }
-            allUsers = mks.getAllUsers(Arrays.asList("fullname", "name", "Email"));
-        } catch (APIException e) {
-            log.info("error: " + "查询所有用户错误！" + e.getMessage());
-            e.printStackTrace();
-        }
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < allUsers.size(); i++) {
+			JSONObject jsonObject = new JSONObject();
+			User user = allUsers.get(i);
+			jsonObject.put("userName", user.getUserName());
+			jsonObject.put("login_ID", user.getLogin_ID());
+			jsonObject.put("email", user.getEmail());
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray;
+	}
 
-        // mks.close(host,port,loginName);
+	/**
+	 * 查询所有有效的项目
+	 * 
+	 * @Author liuxiaoguang
+	 * @Date 2020/7/17 14:53
+	 * @Param []
+	 * @Return com.alibaba.fastjson.JSONArray
+	 * @Exception 获取ALM中Project列表
+	 */
+	@RequestMapping(value = "/getAllProjects", method = RequestMethod.POST)
+	public JSONArray getAllProject(@RequestBody JSONObject jsonData) {
+		getToken(jsonData.getString("Access_Token"));
+		log.info("-------------查询所用项目-------------");
+		if (mks == null) {
+			mks = new MKSCommand();
+		}
+		List<Project> allProjects = new ArrayList<Project>();
+		try {
+			allProjects = mks.getAllprojects(Arrays.asList("backingIssueID", "name"));
+		} catch (APIException e) {
+			log.error("error: " + "查询所有project错误！" + e.getMessage());
+			e.printStackTrace();
+		}
 
-        JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < allUsers.size(); i++) {
-            JSONObject jsonObject = new JSONObject();
-            User user = allUsers.get(i);
-            jsonObject.put("userName", user.getUserName());
-            jsonObject.put("login_ID", user.getLogin_ID());
-            jsonObject.put("email", user.getEmail());
-            jsonArray.add(jsonObject);
-        }
-        return jsonArray;
-    }
+		JSONArray jsonArray = new JSONArray();
+		for (int i = 0; i < allProjects.size(); i++) {
+			JSONObject jsonObject = new JSONObject();
+			Project project = allProjects.get(i);
+			jsonObject.put("project", project.getProject());
+			jsonObject.put("PID", project.getPID());
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray;
+	}
 
-    @RequestMapping(value = "/getAllUsersByProject", method = RequestMethod.POST)
-    public JSONArray getAllUsers(@RequestBody JSONObject jsonData) {
-        getToken(jsonData.getString("Access_Token"));
-        String project = jsonData.getString("project");
-        String type = jsonData.getString("type");// 根据类型判断获取的动态组，Component获取Review
-        // Committee Leader，其他获取
-        List<String> dynamicGroups = Arrays.asList(AnalysisXML.getTypeFilterGroup(type).split(","));
+	/**
+	 * 下发数据
+	 * 
+	 * @Author liuxiaoguang
+	 * @Date 2020/7/22 10:02
+	 * @Param [jsonData]
+	 * @Return com.alibaba.fastjson.JSONObject
+	 * @Exception 创建 修改 删除 移动文档条目
+	 */
+	@RequestMapping(value = "/releaseData", method = RequestMethod.POST)
+	public JSONObject createDocument(@RequestBody JSONObject jsonData) {
+		getToken(jsonData.getString("Access_Token"));
 
-//		if ("Component Requirement Specification Document".equals(type)) {// Component到In
-//			dynamicGroups.add("Project Team");
-////			dynamicGroups.add("Review Committee Leader DG");
-//		} else {// 其他到In Approve，查询Project Manager DG
-//			dynamicGroups.add("Project Manager DG");
-//		}
+		if (mks == null) {
+			mks = new MKSCommand();
+		}
+		String docUuid = jsonData.getString(Constants.DOC_UUID);
+		// 结尾标记，标识本次文档数据传输完毕
+		String end = jsonData.get("end").toString();
+		// 移动到父id下面的位置 参数 first last before:name after:name
+		// 所有参数存入缓存
+		if (Constants.TRUE_STRING.equals(end)) {
+			log.info("-------------数据下发 缓存完毕 UUID " + docUuid + "-------------");
+			MapCache.cacheVal(docUuid, jsonData);
+			// 保存排序后条目数据
+			List<JSONObject> listData = MapCache.getList(docUuid);
+			MapCache.clearCache(docUuid);
 
-        log.info("project-----" + project);
-        // MKSCommand mks = new MKSCommand();
-        // mks.initMksCommand("192.168.120.128", 7001, "admin", "admin");
-        if (mks == null) {
-            mks = new MKSCommand();
-        }
-        List<User> allUsers = new ArrayList<User>();
-        try {
-            allUsers = mks.getProjectDynaUsers(project, dynamicGroups);
-        } catch (APIException e) {
-            log.error("error: " + "查询所有用户错误！" + e.getMessage());
-            e.printStackTrace();
-        }
+			String info = util.checkData(listData);
+			log.warn("校验数据：" + info);
+			if (!Constants.SUCCESS.equals(info)) {
+				return ResultJson("data", info);
+			}
+			try {
+				IntegrityCallable call = new IntegrityCallable(listData);
+				Thread t = new Thread(call);
+				t.start();
+			} catch (Exception e) {
+				log.error("多线程错误：" + e.getMessage());
+				throw new MsgArgumentException("210", e.getMessage());
+			}
+		} else {
+			log.info("-------------数据下发 缓存中 UUID " + docUuid + "-------------");
+			MapCache.cacheVal(docUuid, jsonData);
+			return ResultJson("data", "");
+		}
+		return ResultJson("data", "");
+	}
 
-        JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < allUsers.size(); i++) {
-            JSONObject jsonObject = new JSONObject();
-            User user = allUsers.get(i);
-            jsonObject.put("userName", user.getUserName());
-            jsonObject.put("login_ID", user.getLogin_ID());
-            jsonObject.put("email", user.getEmail());
-            jsonArray.add(jsonObject);
-        }
-        return jsonArray;
-    }
+	/**
+	 * 变更执行
+	 * 
+	 * @param jsonData
+	 * @return com.alibaba.fastjson.JSONObject
+	 */
+	@RequestMapping(value = "/changeAction", method = RequestMethod.POST)
+	public JSONObject changeAction1(@RequestBody JSONObject jsonData) {
+		getToken(jsonData.getString("Access_Token"));
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("data", ResultJson("DOC_ID", util.changeExecution(jsonData)));
+		log.info("变更完成：");
+		return jsonObject;
+	}
 
-    /**
-     * @Description
-     * @Author liuxiaoguang
-     * @Date 2020/7/17 14:53
-     * @Param []
-     * @Return com.alibaba.fastjson.JSONObject
-     * @Exception 获取ALM中Project列表
-     */
-    @RequestMapping(value = "/getAllProjects", method = RequestMethod.POST)
-    public JSONArray getAllProject(@RequestBody JSONObject jsonData) {
-        getToken(jsonData.getString("Access_Token"));
-        log.info("-------------查询所用项目-------------");
-        if (mks == null) {
-            mks = new MKSCommand();
-        }
-        List<Project> allUsers = new ArrayList<Project>();
-        try {
-            // mks.initMksCommand(host, port, loginName, passWord);
-            // mks.initMksCommand("192.168.120.128", 7001, "admin", "admin");
-            allUsers = mks.getAllprojects(Arrays.asList("backingIssueID", "name"));
-        } catch (APIException e) {
-            log.error("error: " + "查询所有project错误！" + e.getMessage());
-            e.printStackTrace();
-        }
+	/**
+	 * 同步用户信息到MKS Domain
+	 * @param jsonData
+	 * @return
+	 */
+	@RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
+	public JSONObject updateUserInfo(@RequestBody JSONObject jsonData) {
+		getToken(jsonData.getString("Access_Token"));
+		JSONArray users = jsonData.getJSONArray("Users");
+		// 生产环境
+		if (mks == null) {
+			mks = new MKSCommand();
+		}
+		try {
+			for (Object user : users) {
+				mks.updateUserInfo((JSONObject) JSONObject.toJSON(user), null);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new MsgArgumentException("202", e.getMessage());
+		}
+		log.info("正式：" + host);
+		log.info("测试：" + testHost);
+		if (!host.equals(testHost)) {
+			// 测试环境
+			CmdRunner cmdRunner = mks.getCmdRunner();
+			try {
+				for (Object user : users) {
+					mks.updateUserInfo((JSONObject) JSONObject.toJSON(user), cmdRunner);
+				}
+			} catch (Exception e) {
+				log.error(e.getMessage());
+				throw new MsgArgumentException("203", e.getMessage());
+			} finally {
+				mks.closeCmdRunner(cmdRunner);
+			}
+		}
 
-        // mks.close(host,port,loginName);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("status", "200");
+		jsonObject.put("message", "success");
+		return jsonObject;
+	}
 
-        JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < allUsers.size(); i++) {
-            JSONObject jsonObject = new JSONObject();
-            Project project = allUsers.get(i);
-            jsonObject.put("project", project.getProject());
-            jsonObject.put("PID", project.getPID());
-            jsonArray.add(jsonObject);
-        }
-        return jsonArray;
-    }
+	/**
+	 * 从MKS Domain删除用户
+	 * @param jsonData
+	 * @return
+	 */
+	@RequestMapping(value = "deleteUsers", method = RequestMethod.POST)
+	public JSONObject deleteUsers(@RequestBody JSONObject jsonData) {
+		getToken(jsonData.getString("Access_Token"));
+		JSONArray userIds = jsonData.getJSONArray("UserId");
+		if (!(userIds.size() > 0)) {
+			log.error("删除的id不能为空!");
+			throw new MsgArgumentException("202", "删除的id不能为空!");
+		}
+		// 生产环境
+		if (mks == null) {
+			mks = new MKSCommand();
+		}
+		try {
+			mks.deleteUsers(userIds, null);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw new MsgArgumentException("202", e.getMessage());
+		}
+		log.info("正式：" + host);
+		log.info("测试：" + testHost);
+		if (!host.equals(testHost)) {
+			// 测试环境
+			CmdRunner cmdRunner = mks.getCmdRunner();
+			try {
+				mks.deleteUsers(userIds, cmdRunner);
+			} catch (Exception e) {
+				log.error(e.getMessage());
+				throw new MsgArgumentException("203", e.getMessage());
+			} finally {
+				mks.closeCmdRunner(cmdRunner);
+			}
+		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("status", "200");
+		jsonObject.put("message", "success");
+		return jsonObject;
+	}
 
-    /**
-     * @Description
-     * @Author liuxiaoguang
-     * @Date 2020/7/22 10:02
-     * @Param [jsonData]
-     * @Return com.alibaba.fastjson.JSONObject
-     * @Exception 创建 修改 删除 移动文档条目
-     */
-    @RequestMapping(value = "/releaseData", method = RequestMethod.POST)
-    public JSONObject createDocument(@RequestBody JSONObject jsonData) {
-        getToken(jsonData.getString("Access_Token"));
+	/**
+	 * token验证
+	 */
+	public void getToken(String str) {
+		if (token.equals(str)) {
+			return;
+		} else {
+			log.error("token验证失败!");
+			throw new MsgArgumentException("201", "token Validation failed!");
+		}
+	}
 
-        // docID = ""; //文档id
-        if (mks == null) {
-            mks = new MKSCommand();
-        }
-//		log.info(jsonData);
-        String docUUID = jsonData.getString(Constants.DOC_UUID);
-        String end = jsonData.get("end").toString();// 结尾标记，标识本次文档数据传输完毕
-        // 移动到父id下面的位置 参数 first last before:name after:name
-        // String insertLocation = jsonData.get("insertLocation"));
-        if ("true".equals(end)) { // 所有参数存入缓存
-            log.info("-------------数据下发 缓存完毕 UUID " + docUUID + "-------------");
-            MapCache.cacheVal(docUUID, jsonData);
-            List<JSONObject> listData = MapCache.getList(docUUID);// 保存排序后条目数据
-            MapCache.clearCache(docUUID);
-
-            String info = util.checkData(listData);
-            log.warn("校验数据：" + info);
-            if (!"success".equals(info)) {
-                return ResultJson("data", info);
-            }
-            try {
-                IntegrityCallable call = new IntegrityCallable(listData);
-                Thread t = new Thread(call);
-                t.start();
-            } catch (Exception e) {
-                log.error("多线程错误：" + e.getMessage());
-                throw new MsgArgumentException("210", e.getMessage());
-            }
-        } else {
-            log.info("-------------数据下发 缓存中 UUID " + docUUID + "-------------");
-            MapCache.cacheVal(docUUID, jsonData);
-            return ResultJson("data", "");
-        }
-        return ResultJson("data", "");
-    }
-
-    // 变更反馈增删改条目
-    @RequestMapping(value = "/changeAction", method = RequestMethod.POST)
-    public JSONObject changeAction1(@RequestBody JSONObject jsonData) {
-        getToken(jsonData.getString("Access_Token"));
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("data", ResultJson("DOC_ID", util.changeExecution(jsonData)));
-        log.info("变更完成：");
-        return jsonObject;
-    }
-
-    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
-    public JSONObject updateUserInfo(@RequestBody JSONObject jsonData) {
-        getToken(jsonData.getString("Access_Token"));
-        JSONArray users = jsonData.getJSONArray("Users");
-        //生产环境
-        if (mks == null) {
-            mks = new MKSCommand();
-        }
-        try {
-            for (Object user : users) {
-                mks.updateUserInfo((JSONObject) JSONObject.toJSON(user), null);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new MsgArgumentException("202", e.getMessage());
-        }
-        log.info("正式：" + host);
-        log.info("测试：" + ce_host);
-        if (!host.equals(ce_host)) {
-            //测试环境
-            CmdRunner cmdRunner = mks.getCmdRunner();
-            try {
-                for (Object user : users) {
-                    mks.updateUserInfo((JSONObject) JSONObject.toJSON(user), cmdRunner);
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                throw new MsgArgumentException("203", e.getMessage());
-            } finally {
-                mks.closeCmdRunner(cmdRunner);
-            }
-        }
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("status", "200");
-        jsonObject.put("message", "success");
-        return jsonObject;
-    }
-
-    @RequestMapping(value = "deleteUsers", method = RequestMethod.POST)
-    public JSONObject deleteUsers(@RequestBody JSONObject jsonData) {
-        getToken(jsonData.getString("Access_Token"));
-        JSONArray userIds = jsonData.getJSONArray("UserId");
-        if (!(userIds.size() > 0)) {
-            log.error("删除的id不能为空!");
-            throw new MsgArgumentException("202", "删除的id不能为空!");
-        }
-        //生产环境
-        if (mks == null) {
-            mks = new MKSCommand();
-        }
-        try {
-            mks.deleteUsers(userIds, null);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new MsgArgumentException("202", e.getMessage());
-        }
-        log.info("正式：" + host);
-        log.info("测试：" + ce_host);
-        if (!host.equals(ce_host)) {
-            //测试环境
-            CmdRunner cmdRunner = mks.getCmdRunner();
-            try {
-                mks.deleteUsers(userIds, cmdRunner);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                throw new MsgArgumentException("203", e.getMessage());
-            } finally {
-                mks.closeCmdRunner(cmdRunner);
-            }
-        }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("status", "200");
-        jsonObject.put("message", "success");
-        return jsonObject;
-    }
-
-    /**
-     * token验证
-     */
-    public void getToken(String str) {
-        if (token.equals(str)) {
-            return;
-        } else {
-            log.error("token验证失败!");
-            throw new MsgArgumentException("201", "token Validation failed!");
-        }
-    }
-
-
-    public static void main(String[] str) {
-
-    }
 }
