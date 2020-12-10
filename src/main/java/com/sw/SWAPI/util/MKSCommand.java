@@ -794,8 +794,7 @@ public class MKSCommand {
         String password = user.getString("password");
 
         //查询是否存在
-        Command cmd = new Command(Command.AA, "users");
-        cmd.addOption(new Option("user", "admin"));
+        Command cmd = new Command(Command.INTEGRITY, "mksdomainusers");
         Response res;
         if (cmdRunner != null) {
             res = cmdRunner.execute(cmd);
