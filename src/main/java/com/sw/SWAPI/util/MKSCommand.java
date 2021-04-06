@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -35,7 +36,8 @@ import java.util.regex.Pattern;
 @Component
 public class MKSCommand {
 
-    //	private static final Logger logger = Logger.getLogger(MKSCommand.class.getName());
+    /** 日志记录*/
+    ;
     private static final Log logger = LogFactory.getLog(MKSCommand.class);
     private Session mksSession = null;
     private IntegrationPointFactory mksIpf = null;
@@ -55,18 +57,23 @@ public class MKSCommand {
     private static final String FIELDS = "fields";
     private static final String CONTAINS = "Contains";
     private static final String PARENT_FIELD = "Contained By";
+    private static final String DOCUMENT_SHORT_TITLE_FIELD = "Document Short Title";
 
     public static final Map<String, String> ENVIRONMENTVAR = System.getenv();
     public static MKSCommand cmd;
     public static List<String> tsIds = new ArrayList<String>();
     private static String longinUser;
-    //    private static Connection Connection;
+    /**
+     * fromat
+     */
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static final  Pattern LASTVALUE   = Pattern.compile("\\(([^\\)]+)\\)");
+    public static final Pattern LASTVALUE = Pattern.compile("\\(([^\\)]+)\\)");
 
     public static Connection conn;
-//    private static Connection conn = new Connection();
+    //    private static Connection conn = new Connection();
+    //AES算法的KEY；
+    private static final String KEY = "ABCDEFGHIJKLMNOP";
 
     public MKSCommand() {
 //        new IntegrityFactory();
@@ -81,7 +88,7 @@ public class MKSCommand {
         getSession();
     }
 
-    public MKSCommand(String args[]) {
+    public MKSCommand(String[] args) {
         hostname = args[0];
         port = Integer.parseInt(args[1]);
         user = args[2];
@@ -378,44 +385,15 @@ public class MKSCommand {
         return list;
     }
 
-    //查询caseid和name
-    public Map<String, String> getCaseInfoById(String id, List<String> fields) throws APIException {
-        Map<String, String> list = new HashMap<String, String>();
-        Command cmd = new Command("im", "issues");
-        MultiValue mv = new MultiValue();
-        mv.setSeparator(",");
-        for (String field : fields) {
-            mv.add(field);
-        }
-        Option op = new Option("fields", mv);
-        cmd.addOption(op);
 
-        cmd.addSelection(id);
-
-        Response res = null;
-        try {
-            res = conn.execute(cmd);
-            WorkItemIterator it = res.getWorkItems();
-            while (it.hasNext()) {
-                WorkItem wi = it.next();
-                Map<String, String> map = new HashMap<String, String>();
-                for (String field : fields) {
-                    if (field.contains("::")) {
-                        field = field.split("::")[0];
-                    }
-                    String value = wi.getField(field).getValueAsString();
-                    list.put(field, value);
-                }
-            }
-        } catch (APIException e) {
-            // success = false;
-            logger.error(e.getMessage());
-            throw e;
-        }
-        return list;
-    }
-
-    //根据id查询单个结果
+    /**
+     * 根据id查询单个结果
+     *
+     * @param id
+     * @param field
+     * @return
+     * @throws APIException
+     */
     public String getTypeById(String id, String field) throws APIException {
         String str = "";
         Command cmd = new Command("im", "issues");
@@ -493,7 +471,12 @@ public class MKSCommand {
         return list;
     }
 
-    //过滤id中的英文 lxg
+    /**
+     * 过滤id中的英文 lxg
+     *
+     * @param a
+     * @return
+     */
     public String shujz(String a) {
         String regEx = "[^0-9]";
         Pattern p = Pattern.compile(regEx);
@@ -701,19 +684,21 @@ public class MKSCommand {
         return returnResult;
     }
 
-    //未知错误 String dept = "";String trueType   = " "; lxg
+    /**
+     * 根据ID查询数据
+     *
+     * @param selectionList
+     * @param fields
+     * @return
+     * @throws APIException
+     * @throws Exception
+     */
     public List<Map<String, String>> queryIssues(SelectionList selectionList, List<String> fields) throws APIException, Exception {
         List<Map<String, String>> returnResult = new ArrayList<Map<String, String>>();
         String dept = "";
         String trueType = " ";
         boolean needFilter = false;
         String category = "";
-        if (!"Transmission".equals(dept) && trueType.contains("Test Specification")) {
-            needFilter = true;
-            category = trueType.substring(0, trueType.indexOf("Speci") - 1);
-            fields.add("Test Steps");//测试数据才需要额外查询Test Step数据
-            fields.add("Category");
-        }
         Command cmd = new Command("im", "issues");
         MultiValue mv = new MultiValue();
         mv.setSeparator(",");
@@ -784,6 +769,7 @@ public class MKSCommand {
 
     /**
      * 更新用户信息
+     *
      * @param user
      * @param cmdRunner
      * @throws APIException
@@ -795,6 +781,7 @@ public class MKSCommand {
             logger.error("id不能为空!");
             throw new MsgArgumentException("202", "id不能为空!");
         }
+
         String name = user.getString("name");
         String email = user.getString("email");
         String password = user.getString("password");
@@ -870,7 +857,53 @@ public class MKSCommand {
     }
 
     /**
+     * 记录用户loginId和密码
+     *
+     * @param loginId
+     * @param pwd
+     * @throws APIException
+     */
+    public void updateUserRecord(String loginId, String pwd) throws Exception {
+        HashMap<String, String> userRecord = new HashMap<>();
+        String queryCondition = "((field[Type] = User Record) and (field[Login ID] contains LIKE " + loginId + "))";// 定义查询User Record语句
+        //base64加密，弃用;
+        //String base64PWD = Base64.getEncoder().encodeToString(pwd.getBytes());
+        //Aes算法加密
+       // String base64PWD = Aes.aesEncrypt(pwd, KEY);
+        //测试
+        String base64PWD = pwd;
+        logger.info(base64PWD);
+        List<Map<String, String>> issueList = queryIssueByQuery(Arrays.asList("Login ID", "PWD", "ID", "Record_date"), queryCondition);
+        Map<String, String> userMap = null;
+        if (!issueList.isEmpty()) {//查询系统是否已有记录
+            for (Map<String, String> map : issueList) {
+                String existId = map.get("Login ID");
+                if (existId.equals(loginId)) {
+                    userMap = map;
+                    break;
+                }
+            }
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+        if (userMap != null) {//查询到记录，更新
+            String existBase64PWD = userMap.get("PWD");
+            if (!existBase64PWD.equals(base64PWD)) {//系统已保存时，判断密码是否更新，如果更新，则更新数据，否则不更新
+                userRecord.put("PWD", base64PWD);
+                userRecord.put("Record_date", sdf.format(new Date()));
+                editIssue(userMap.get("ID"), userRecord, null);
+            }
+        } else {//如果系统中没有记录数据，则创建新的
+            userRecord = new HashMap<String, String>(1);
+            userRecord.put("Record_date", sdf.format(new Date()));
+            userRecord.put("Login ID", loginId);
+            userRecord.put("PWD", base64PWD);
+            createIssue("User Record", userRecord, null);
+        }
+    }
+
+    /**
      * 删除用户
+     *
      * @param userIds
      * @param cmdRunner
      * @throws APIException
@@ -970,79 +1003,6 @@ public class MKSCommand {
     }
 
 
-    public List<Map<String, Object>> getResult(String sessionID, String suiteID, String type) throws APIException {
-        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-        SelectionList list = new SelectionList();
-        Command cmd = new Command("tm", "results");
-
-        //cmd.addOption(new Option("sessionID", sessionID));
-//		if (type.equals("Test Suite")) {
-        cmd.addOption(new Option("caseID", suiteID));
-//		} else if (type.equals("Test Case")) {
-//			cmd.addSelection(sessionID);
-//		}
-        List<String> fields = new ArrayList<String>();
-        fields.add("caseID");
-        fields.add("sessionID");
-        fields.add("verdict");
-        fields.add("Observed Result");
-        fields.add("Annotation");
-        fields.add("Result Serverity");
-        fields.add("Reproducibility");
-
-        fields.add("SW Version");
-        fields.add("HW Result Version");
-
-
-        MultiValue mv = new MultiValue();
-        mv.setSeparator(",");
-        for (String field : fields) {
-            mv.add(field);
-        }
-        Option op = new Option("fields", mv);
-        cmd.addOption(op);
-        Response res = null;
-        if ("Test Suite".equals(type)) {
-            res = conn.execute(cmd);
-            WorkItemIterator wk = res.getWorkItems();
-            while (wk.hasNext()) {
-                Map<String, Object> map = new HashMap<String, Object>();
-                WorkItem wi = wk.next();
-                for (String field : fields) {
-                    Object value = wi.getField(field).getValue();
-                    map.put(field, value);
-                }
-                result.add(map);
-            }
-        } else if ("Test Case".equals(type)) {
-            try {
-                res = conn.execute(cmd);
-                WorkItemIterator wk = res.getWorkItems();
-                while (wk.hasNext()) {
-                    Map<String, Object> map = new HashMap<String, Object>();
-                    WorkItem wi = wk.next();
-                    for (String field : fields) {
-                        Object value = wi.getField(field).getValue();
-                        if (value instanceof Item) {
-                            Item item = (Item) value;
-                            value = item.getId();
-                        }
-                        if ("verdict".equals(field)) {
-                            field = "verdictType";
-                        }
-
-                        map.put(field, value);
-                    }
-                    result.add(map);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-
-            }
-        }
-        return result;
-    }
-
     /**
      * Description 获取所有Field 类型，并把Pick值预先取出
      *
@@ -1125,28 +1085,6 @@ public class MKSCommand {
         return projects;
     }
 
-
-
-    //根据id获取项目名称
-    public String getProjectNameById(String id) {
-        String name = "";
-        Command cmd = new Command("im", "issues");
-        cmd.addOption(new Option("fields", "Project"));
-        cmd.addSelection(id);
-        Response res = null;
-        try {
-            res = conn.execute(cmd);
-            WorkItemIterator it = res.getWorkItems();
-            while (it.hasNext()) {
-                WorkItem wi = it.next();
-                name = wi.getField("Project").getValueAsString();
-            }
-        } catch (APIException e) {
-            logger.error(e.getMessage());
-        }
-        return name;
-    }
-
     /**
      * 获取所有的projectid
      * 获取当前选中id的List集合  id,name
@@ -1217,21 +1155,14 @@ public class MKSCommand {
         return members;
     }
 
-    //获取最后一个口号中的值
-    public static String getValuesInParentheses(String msg) {
-        if (msg.split("\\(").length == 1) {
-            return msg;
-        }
-        String projectId = "";
 
-        Matcher m = LASTVALUE.matcher(msg);
-        while (m.find()) {
-            projectId = m.group().substring(1, m.group().length() - 1);
-        }
-        return projectId;
-    }
-
-    //查询所有用户
+    /**
+     * 查询所有用户
+     *
+     * @param fields
+     * @return
+     * @throws APIException
+     */
     public List<User> getAllUsers(List<String> fields) throws APIException {
         List<User> list = new ArrayList<User>();
         Command cmd = new Command("im", "users");
@@ -1268,7 +1199,14 @@ public class MKSCommand {
         return list;
     }
 
-    //根据用户查询用户信息
+    /**
+     * 根据用户查询用户信息
+     *
+     * @param fields
+     * @param username
+     * @return
+     * @throws APIException
+     */
     public User getAllUsers1(List<String> fields, String username) throws APIException {
         List<User> list = new ArrayList<User>();
         Command cmd = new Command("im", "users");
@@ -1303,7 +1241,13 @@ public class MKSCommand {
         return user;
     }
 
-    //查询所有project
+    /**
+     * 查询所有project
+     *
+     * @param fields
+     * @return
+     * @throws APIException
+     */
     public List<Project> getAllprojects(List<String> fields) throws APIException {
         List<Project> list = new ArrayList<Project>();
         Command cmd = new Command("im", "projects");
@@ -1322,7 +1266,7 @@ public class MKSCommand {
         while (it.hasNext()) {
             Project project = new Project();
             WorkItem wi = it.next();
-            if (wi.getField("isActive").getValueAsString().equalsIgnoreCase("true")) {
+            if ("true".equalsIgnoreCase(wi.getField("isActive").getValueAsString())) {
                 for (String field : fields) {
                     if (field.contains("::")) {
                         field = field.split("::")[0];
@@ -1340,23 +1284,16 @@ public class MKSCommand {
         return list;
     }
 
-    //关闭integrity链接
-    public void close(String hostname, int port, String user) {
-//        List<User> list = new ArrayList<User>();
-//        Command cmd = new Command("aa", "disconnect");
-//        cmd.addOption(new Option("hostname", hostname));
-//        cmd.addOption(new Option("port", port+""));
-//        cmd.addOption(new Option("user", user));
-//        try {
-//            conn.execute(cmd);
-//            logger.info("断开链接： "+hostname);
-//        } catch (APIException e) {
-//            logger.info("断开链接错误 "+ hostname);
-//            e.printStackTrace();
-//        }
-    }
 
-    //创建文档
+    /**
+     * 创建文档
+     *
+     * @param type
+     * @param fieldsValue
+     * @param richFieldValue
+     * @return
+     * @throws APIException
+     */
     public String createDocument(String type, Map<String, String> fieldsValue, Map<String, String> richFieldValue) throws APIException {
         Command cmd = new Command("im", "createsegment");
         String id = null;
@@ -1505,7 +1442,14 @@ public class MKSCommand {
         return id;
     }
 
-    //修改项
+    /**
+     * 修改项
+     *
+     * @param id
+     * @param fieldValue
+     * @param richFieldValue
+     * @throws APIException
+     */
     public void editIssue(String id, Map<String, String> fieldValue, Map<String, String> richFieldValue)
             throws APIException {
         Command cmd = new Command(Command.IM, "editissue");
@@ -1606,7 +1550,12 @@ public class MKSCommand {
         return ol;
     }
 
-    //删除关联关系
+    /**
+     * 删除关联关系
+     *
+     * @param id
+     * @throws APIException
+     */
     public void removecontent(String id) throws APIException {
         Command cmd = new Command(Command.IM, "removecontent");
         cmd.addOption(new Option("forceConfirm", "yes"));
@@ -1614,7 +1563,14 @@ public class MKSCommand {
         conn.execute(cmd);
     }
 
-    //添加关联关系
+    /**
+     * 添加关联关系
+     *
+     * @param id
+     * @param RelationshipFile
+     * @param RelationshipId
+     * @throws APIException
+     */
     public void addRelationships(String id, String RelationshipFile, String RelationshipId) throws APIException {
         Command cmd = new Command(Command.IM, "editissue");
         cmd.addOption(new Option("addRelationships", RelationshipFile + ":" + RelationshipId));
@@ -1622,7 +1578,12 @@ public class MKSCommand {
         conn.execute(cmd);
     }
 
-    //删除项
+    /**
+     * 删除项
+     *
+     * @param id
+     * @throws APIException
+     */
     public void deleteissue(String id) throws APIException {
         Command cmd = new Command(Command.IM, "deleteissue");
         cmd.addOption(new Option("noconfirm"));
@@ -1632,7 +1593,14 @@ public class MKSCommand {
         conn.execute(cmd);
     }
 
-    //移动条目
+    /**
+     * 移动条目
+     *
+     * @param parentID
+     * @param insertLocation
+     * @param ids
+     * @throws APIException
+     */
     public void movecontent(String parentID, String insertLocation, String ids) throws APIException {
         Command cmd = new Command(Command.IM, "movecontent");
         cmd.addOption(new Option("parentID", parentID));
@@ -1646,7 +1614,15 @@ public class MKSCommand {
         conn.execute(cmd);
     }
 
-    //创建项
+    /**
+     * 创建项
+     *
+     * @param type
+     * @param map
+     * @param richContentMap
+     * @return
+     * @throws APIException
+     */
     public String createIssue(String type, Map<String, String> map, Map<String, String> richContentMap)
             throws APIException {
         String id = null;
@@ -1826,7 +1802,7 @@ public class MKSCommand {
             Response execute = conn.execute(cmd);
             WorkItemIterator it = execute.getWorkItems();
             WorkItem wi = it.next();
-            if (wi != null && params.getString("Document Short Title").equals(wi.getField("Document Short Title").getValueAsString())) {
+            if (wi != null && params.getString(DOCUMENT_SHORT_TITLE_FIELD).equals(wi.getField(DOCUMENT_SHORT_TITLE_FIELD).getValueAsString())) {
                 return "206 - Short Title is exist , Please input again ";
             }
         } catch (Exception e) {
@@ -1912,7 +1888,16 @@ public class MKSCommand {
         return list;
     }
 
-    //根据SWid获取ALMid
+    /**
+     * 根据SWid获取ALMid
+     *
+     * @param SWID
+     * @param IDvalue
+     * @param project
+     * @param type
+     * @param field
+     * @return
+     */
     public String getIssueBySWID(String SWID, String IDvalue, String project, String type, String field) {
         String commandName = "issues";
         Command cmd = new Command("im", commandName);
@@ -2038,29 +2023,14 @@ public class MKSCommand {
         return origMap;
     }
 
-    //获取静态组
-    public String[] getStaticGroup(String staticGroup) {
-        Command cmd = new Command("aa", "groups");
-        cmd.addOption(new Option("members"));
 
-        cmd.addSelection(staticGroup);
-        String ids = "";
-        Response res = null;
-        try {
-            res = conn.execute(cmd);
-            WorkItemIterator it = res.getWorkItems();
-            while (it.hasNext()) {
-                WorkItem wi = it.next();
-                ids = wi.getField("members").getValueAsString();
-            }
-        } catch (APIException e) {
-            logger.error("getAllFunctionListDoc Exception", e);
-        }
-        String[] id = ids.split(",");
-        return id;
-    }
-
-    //根据project获取组
+    /**
+     * 根据project获取组
+     *
+     * @param project
+     * @return
+     * @throws APIException
+     */
     public List<String> getGroupsByProject(String project) throws APIException {
         List<String> gorups = new ArrayList<>();
         Command cmd = new Command("im", "projects");
@@ -2082,7 +2052,13 @@ public class MKSCommand {
         return gorups;
     }
 
-    //根据静态组查询用户
+    /**
+     * 根据静态组查询用户
+     *
+     * @param projectName
+     * @return
+     * @throws APIException
+     */
     public List<User> getProjects(String projectName) throws APIException {
         Command cmd = new Command("im", "issues");
         cmd.addOption(new Option("fields", "TeamMembers"));
@@ -2137,7 +2113,7 @@ public class MKSCommand {
                         for (int i = 0; i < itemList.size(); i++) {
                             Item item = (Item) itemList.get(i);
                             String project = item.getId();
-                            if (!projectName.equals(project)){// 只查询当前项目
+                            if (!projectName.equals(project)) {// 只查询当前项目
                                 continue;
                             }
 
@@ -2203,7 +2179,14 @@ public class MKSCommand {
         return issueList;
     }
 
-    //根据用户查询用户信息
+    /**
+     * 根据用户查询用户信息
+     *
+     * @param fields
+     * @param userIdList
+     * @return
+     * @throws APIException
+     */
     public List<User> getAllUsers(List<String> fields, List<String> userIdList) throws APIException {
         if (userIdList == null || userIdList.isEmpty()) {//如果动态组查询为空，则直接返回空数据
             return new ArrayList<User>();
@@ -2245,4 +2228,42 @@ public class MKSCommand {
         return list;
     }
 
+    /**
+     * 获取已保存的密码
+     *
+     * @param loginId
+     * @return
+     * @throws APIException
+     */
+    public String getUserPWD(String loginId) throws MsgArgumentException, APIException {
+        String baseUserPwd = null;
+        String queryCondition = "((field[Type] = User Record) and (field[Login ID] contains LIKE " + loginId + "))";// 定义查询User Record语句
+        List<Map<String, String>> issueList = queryIssueByQuery(Arrays.asList("Login ID", "PWD", "ID", "Record_date"), queryCondition);
+        Map<String, String> userMap = null;
+        if (!issueList.isEmpty()) {//查询系统是否已有记录
+            for (Map<String, String> map : issueList) {
+                String existId = map.get("Login ID");
+                if (existId.equals(loginId)) {
+                    userMap = map;
+                    break;
+                }
+            }
+        }
+        if (userMap != null) {//查询到记录，返回
+            String recordDate = userMap.get("Record_date");
+            Date date = null;
+            Date curDate = new Date();
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
+                date = sdf.parse(recordDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (date != null && (curDate.getTime() - date.getTime()) / (1000 * 3600 * 24) > 30) {//如果获取出来的时间大于30，表示已过期
+                throw new MsgArgumentException("203", "当前域密码已过期，请重新注册您的域密码！");
+            }
+            baseUserPwd = userMap.get("PWD");
+        }
+        return baseUserPwd;
+    }
 }

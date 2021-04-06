@@ -61,7 +61,7 @@ public class SessionPool {
 		Session session = ip.createNamedSession(null,null,mksinfo.getUser(), mksinfo.getPassword());
 		session.setDefaultUsername(mksinfo.getUser());
 		session.setAutoReconnect(true);
-		System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
+//		System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
 		Command imConnect = new Command("im", "connect");
 		CmdRunner cmdRunner = session.createCmdRunner();
 		cmdRunner.setDefaultUsername(mksinfo.getUser());
@@ -72,7 +72,7 @@ public class SessionPool {
 			Response res = cmdRunner.execute(imConnect);
 			logger.info("********************************Result: " + res.getExitCode());
 		}catch (APIException e){
-			logger.info("获取session失败："+e.getMessage());
+			logger.info("获取session失败："+APIExceptionUtil.getMsg(e));
 		}finally {
 			if(cmdRunner != null) {
 				cmdRunner.release();
